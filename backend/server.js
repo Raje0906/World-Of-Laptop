@@ -101,43 +101,58 @@ app.use(
   }),
 );
 
-// Very permissive CORS configuration for debugging
+// CORS configuration for production and development
 const corsOptions = {
   origin: function (origin, callback) {
     // Log the incoming origin for debugging
     console.log('Incoming request from origin:', origin || 'No origin (non-browser request)');
     
-    // Allow all origins for now to debug the issue
-    // WARNING: This is not secure for production
-    return callback(null, true);
-    
-    /* Production CORS settings (commented out for now)
+    // Define allowed origins
     const allowedOrigins = [
+      // Development origins
       'http://localhost:3000',
       'http://localhost:8080',
+      'http://localhost:5173',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:8080',
+      'http://127.0.0.1:5173',
+      
+      // Production origins
       'https://world-of-laptop.vercel.app',
       'https://world-of-laptop.onrender.com',
       'https://world-of-laptop.netlify.app',
+      
+      // Vercel preview deployments
       /^https?:\/\/world-of-laptop(-\w+)?\.vercel\.app$/,
       /^https?:\/\/world-of-laptop(-\w+)?\.netlify\.app$/,
+      
+      // Render preview deployments
+      /^https?:\/\/world-of-laptop(-\w+)?\.onrender\.com$/,
     ];
 
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
     
+    // Check if origin is allowed
     const isAllowed = allowedOrigins.some(allowedOrigin => {
-      if (typeof allowedOrigin === 'string') return origin === allowedOrigin;
-      if (allowedOrigin instanceof RegExp) return allowedOrigin.test(origin);
+      if (typeof allowedOrigin === 'string') {
+        return origin === allowedOrigin;
+      }
+      if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
       return false;
     });
 
-    if (!isAllowed) {
+    if (isAllowed) {
+      return callback(null, true);
+    } else {
       const msg = `The CORS policy for this site does not allow access from ${origin}`;
       console.warn(msg);
       return callback(new Error(msg), false);
     }
-    
-    return callback(null, true);
-    */
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cache-Control', 'X-File-Name'],

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,15 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiClient } from "@/lib/apiClient";
 
 const loginSchema = z.object({
   identifier: z.string().min(1, "Email or phone number is required"),
   password: z.string().min(1, "Password is required"),
-  store_id: z.string().optional(),
+  store_id: z.string().min(1, "Please select a store"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -28,42 +27,33 @@ interface Store {
 }
 
 export function Login() {
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [stores, setStores] = useState<Store[]>([]);
   const [isRegistering, setIsRegistering] = useState(false);
-  const navigate = useNavigate();
+  const [stores, setStores] = useState<Store[]>([]);
+  const { toast } = useToast();
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
-  const selectedStoreId = watch("store_id");
-
-  // Fetch stores on component mount
   useEffect(() => {
     const loadStores = async () => {
       await fetchStores();
-      // If there's only one store, preselect it
-      if (stores.length === 1) {
-        setValue('store_id', stores[0]._id);
-      }
     };
-    
     loadStores();
   }, []);
 
   const fetchStores = async () => {
     try {
       console.log("Fetching stores...");
-      const response = await fetch("/api/auth/stores");
+      const response = await apiClient.get("/auth/stores");
       
       console.log("Response status:", response.status);
       console.log("Response headers:", Object.fromEntries(response.headers.entries()));
@@ -117,13 +107,7 @@ export function Login() {
         store_id: data.store_id  // Always include store_id as it's now required
       };
 
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await apiClient.post("/auth/login", payload);
 
       let result: any = null;
       let isJson = false;

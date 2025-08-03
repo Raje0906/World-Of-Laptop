@@ -11,10 +11,17 @@ export default defineConfig(({ mode }) => {
   console.log('VITE_API_URL:', env.VITE_API_URL);
   console.log('All env vars:', Object.keys(env).filter(key => key.startsWith('VITE_')));
   
-  // Use production URL for builds, localhost for development
-  const apiUrl = mode === 'production' 
-    ? (env.VITE_API_URL || 'https://world-of-laptop.onrender.com')
-    : 'http://localhost:3002';
+  // Determine API URL based on environment
+  let apiUrl: string;
+  
+  if (mode === 'production') {
+    // Production: Use Render backend
+    apiUrl = env.VITE_API_URL || 'https://world-of-laptop.onrender.com';
+  } else {
+    // Development: Use localhost with fallback to production
+    apiUrl = env.VITE_API_URL || 'http://localhost:3002';
+  }
+  
   console.log('Using API URL:', apiUrl);
   
   return {
@@ -29,7 +36,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       open: true,
       cors: false,
-      proxy: {
+      proxy: mode === 'development' ? {
         '/api': {
           target: apiUrl,
           changeOrigin: true,
@@ -70,7 +77,7 @@ export default defineConfig(({ mode }) => {
             });
           }
         }
-      }
+      } : undefined
     },
     plugins: [react()],
     resolve: {
@@ -87,6 +94,11 @@ export default defineConfig(({ mode }) => {
           main: path.resolve(__dirname, 'index.html'),
         },
       },
+    },
+    define: {
+      // Define environment variables for the client
+      __API_URL__: JSON.stringify(apiUrl),
+      __IS_DEVELOPMENT__: JSON.stringify(mode === 'development'),
     },
   };
 });

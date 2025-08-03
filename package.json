@@ -13,8 +13,9 @@
     "seed": "node backend/scripts/seedDatabase.js",
     "seed:auth": "node backend/scripts/seedAuthData.js",
     "reset": "node backend/scripts/resetDatabase.js",
-    "start": "npm run build && node backend/server.js",
-    "start:prod": "npm run build && node backend/server.js"
+    "start": "node backend/server.js",
+    "start:prod": "npm run build && node backend/server.js",
+    "vercel-build": "npm run build"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
