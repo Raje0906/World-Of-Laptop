@@ -259,9 +259,9 @@ if (process.env.NODE_ENV === "production") {
   const __dirname = path.dirname(__filename);
   
   const distPath = path.join(__dirname, "..", "dist");
-  console.log('Serving static files from:', distPath);
+  console.log('Checking for static files at:', distPath);
   
-  // Check if dist directory exists
+  // Check if dist directory exists (optional - for cases where frontend is built separately)
   try {
     const fs = await import('fs');
     const distExists = fs.existsSync(distPath);
@@ -273,65 +273,73 @@ if (process.env.NODE_ENV === "production") {
       
       // Check if index.html exists
       const indexPath = path.join(distPath, 'index.html');
-      if (!fs.existsSync(indexPath)) {
-        console.error('index.html not found in dist directory!');
-        console.error('Available files:', files);
-        throw new Error('Build incomplete - index.html missing');
+      if (fs.existsSync(indexPath)) {
+        console.log('Serving static files from dist directory');
+        
+        // Serve static files from the React app (dist is in project root, not backend)
+        app.use(express.static(distPath, {
+          setHeaders: (res, filePath) => {
+            console.log('Serving static file:', filePath);
+            // Set proper MIME types for JavaScript modules
+            if (filePath.endsWith('.js')) {
+              res.setHeader('Content-Type', 'application/javascript');
+              console.log('Set MIME type for JS file:', filePath);
+            } else if (filePath.endsWith('.mjs')) {
+              res.setHeader('Content-Type', 'application/javascript');
+              console.log('Set MIME type for MJS file:', filePath);
+            } else if (filePath.endsWith('.css')) {
+              res.setHeader('Content-Type', 'text/css');
+              console.log('Set MIME type for CSS file:', filePath);
+            }
+          }
+        }));
+
+        // Handle React routing, return all requests to React app
+        app.get("*", (req, res) => {
+          console.log('Catch-all route hit for:', req.url);
+          res.sendFile(path.join(distPath, "index.html"));
+        });
+      } else {
+        console.log('No index.html found in dist directory - serving API only');
+        // Serve API-only response for root path
+        app.get("/", (req, res) => {
+          res.json({
+            message: "Laptop Store CRM API",
+            status: "running",
+            environment: process.env.NODE_ENV,
+            timestamp: new Date().toISOString(),
+            api_docs: "/api",
+            note: "Frontend is deployed separately"
+          });
+        });
       }
     } else {
-      console.error('Dist directory does not exist! Build may have failed.');
-      console.error('Current directory:', __dirname);
-      console.error('Expected dist path:', distPath);
-      
-      // Try to run build if dist doesn't exist
-      console.log('Attempting to run build...');
-      const { execSync } = await import('child_process');
-      try {
-        execSync('npm run build', { stdio: 'inherit' });
-        console.log('Build completed successfully');
-      } catch (buildError) {
-        console.error('Build failed:', buildError.message);
-        throw new Error('Failed to build frontend');
-      }
+      console.log('No dist directory found - serving API only');
+      // Serve API-only response for root path
+      app.get("/", (req, res) => {
+        res.json({
+          message: "Laptop Store CRM API",
+          status: "running",
+          environment: process.env.NODE_ENV,
+          timestamp: new Date().toISOString(),
+          api_docs: "/api",
+          note: "Frontend is deployed separately"
+        });
+      });
     }
   } catch (error) {
     console.error('Error checking dist directory:', error);
     
-    // Send a helpful error response instead of crashing
-    app.get("*", (req, res) => {
-      res.status(500).json({
-        error: 'Build Error',
-        message: 'Frontend build files are missing. Please check the build process.',
-        details: error.message,
-        timestamp: new Date().toISOString()
+    // Serve API-only response for root path
+    app.get("/", (req, res) => {
+      res.json({
+        message: "Laptop Store CRM API",
+        status: "running",
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString(),
+        api_docs: "/api",
+        note: "Frontend is deployed separately"
       });
-    });
-  }
-  
-  // Only serve static files if we didn't encounter an error
-  if (fs && fs.existsSync(distPath)) {
-    // Serve static files from the React app (dist is in project root, not backend)
-    app.use(express.static(distPath, {
-      setHeaders: (res, filePath) => {
-        console.log('Serving static file:', filePath);
-        // Set proper MIME types for JavaScript modules
-        if (filePath.endsWith('.js')) {
-          res.setHeader('Content-Type', 'application/javascript');
-          console.log('Set MIME type for JS file:', filePath);
-        } else if (filePath.endsWith('.mjs')) {
-          res.setHeader('Content-Type', 'application/javascript');
-          console.log('Set MIME type for MJS file:', filePath);
-        } else if (filePath.endsWith('.css')) {
-          res.setHeader('Content-Type', 'text/css');
-          console.log('Set MIME type for CSS file:', filePath);
-        }
-      }
-    }));
-
-    // Handle React routing, return all requests to React app
-    app.get("*", (req, res) => {
-      console.log('Catch-all route hit for:', req.url);
-      res.sendFile(path.join(distPath, "index.html"));
     });
   }
 } else {

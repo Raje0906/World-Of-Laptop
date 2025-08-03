@@ -57,10 +57,12 @@ VITE_WHATSAPP_ACCESS_TOKEN=your_whatsapp_access_token
 1. Connect your GitHub repository to Render
 2. Create a new Web Service
 3. Set the following:
-   - **Build Command:** `npm install && npm run build`
+   - **Build Command:** `npm install`
    - **Start Command:** `node backend/server.js`
 4. Add environment variables as listed above
 5. Deploy
+
+**Note:** The backend only serves the API and doesn't build the frontend. The frontend is deployed separately on Vercel.
 
 ### 2. Frontend Deployment (Vercel)
 
@@ -97,6 +99,13 @@ The application automatically detects the environment:
 
 - **Development:** Uses proxy to `http://localhost:3002`
 - **Production:** Uses direct API calls to `https://world-of-laptop.onrender.com`
+
+## Architecture
+
+- **Backend (Render):** Pure API server, no frontend build
+- **Frontend (Vercel):** React application, communicates with backend API
+- **Database:** MongoDB (hosted separately)
+- **Communication:** Frontend makes API calls to backend
 
 ## Troubleshooting
 

@@ -14,7 +14,7 @@
     "seed:auth": "node backend/scripts/seedAuthData.js",
     "reset": "node backend/scripts/resetDatabase.js",
     "start": "node backend/server.js",
-    "start:prod": "npm run build && node backend/server.js",
+    "start:prod": "node backend/server.js",
     "vercel-build": "npm run build"
   },
   "dependencies": {
