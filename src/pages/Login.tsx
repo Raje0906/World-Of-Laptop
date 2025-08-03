@@ -64,15 +64,35 @@ export function Login() {
     try {
       console.log("Fetching stores...");
       const response = await fetch("/api/auth/stores");
-      const data = await response.json();
       
-      console.log("Stores response:", data);
+      console.log("Response status:", response.status);
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
       
-      if (data.success) {
-        setStores(data.data.stores);
-        console.log("Stores loaded:", data.data.stores);
+      const contentType = response.headers.get("content-type");
+      console.log("Content-Type:", contentType);
+      
+      if (!response.ok) {
+        console.error("Response not ok:", response.status, response.statusText);
+        const errorText = await response.text();
+        console.error("Error response body:", errorText);
+        toast({ title: "Error", description: `Failed to fetch stores: ${response.status}` });
+        return;
+      }
+      
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        console.log("Stores response:", data);
+        
+        if (data.success) {
+          setStores(data.data.stores);
+          console.log("Stores loaded:", data.data.stores);
+        } else {
+          toast({ title: "Error", description: "Failed to fetch stores" });
+        }
       } else {
-        toast({ title: "Error", description: "Failed to fetch stores" });
+        const textResponse = await response.text();
+        console.error("Non-JSON response:", textResponse);
+        toast({ title: "Error", description: "Server returned non-JSON response" });
       }
     } catch (error) {
       console.error("Error fetching stores:", error);

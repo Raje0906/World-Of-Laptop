@@ -6,6 +6,15 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
+  // Debug logging
+  console.log('Mode:', mode);
+  console.log('VITE_API_URL:', env.VITE_API_URL);
+  console.log('All env vars:', Object.keys(env).filter(key => key.startsWith('VITE_')));
+  
+  // Use local development server for now since production seems to have issues
+  const apiUrl = 'http://localhost:3002';
+  console.log('Using API URL:', apiUrl);
+  
   return {
     root: __dirname,
     publicDir: 'public',
@@ -17,28 +26,37 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       strictPort: true,
       open: true,
+      cors: false,
       proxy: {
         '/api': {
-          target: env.VITE_API_URL || 'http://localhost:3002',
+          target: apiUrl,
           changeOrigin: true,
           secure: false,
-          ws: true,
-          // Configure proxy headers and logging
-          configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              console.log('Proxy error:', err);
+          timeout: 10000, // 10 second timeout
+          configure: (proxy, options) => {
+            console.log('Proxy configured for:', options.target);
+            
+            proxy.on('proxyReq', (proxyReq, req, res) => {
+              console.log('Proxying request:', req.method, req.url, '->', options.target + req.url);
             });
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              console.log('Proxying request:', req.method, req.url);
-              console.log('Proxying to:', proxyReq.path);
+            
+            proxy.on('proxyRes', (proxyRes, req, res) => {
+              console.log('Proxy response:', proxyRes.statusCode, req.url);
             });
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              console.log('Received response:', proxyRes.statusCode, req.url);
+            
+            proxy.on('error', (err, req, res) => {
+              console.error('Proxy error:', err.message);
+              if (!res.headersSent) {
+                res.writeHead(500, {
+                  'Content-Type': 'application/json',
+                });
+                res.end(JSON.stringify({ 
+                  error: 'Proxy error', 
+                  message: err.message,
+                  target: options.target 
+                }));
+              }
             });
-          },
-          // Don't rewrite the path - keep /api prefix
-          pathRewrite: {
-            '^/api': '/api' // Keep the /api prefix
           }
         }
       }
@@ -48,10 +66,6 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, './src'),
       },
-    },
-    define: {
-      'process.env': {},
-      'import.meta.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL || '/api')
     },
     build: {
       outDir: 'dist',
