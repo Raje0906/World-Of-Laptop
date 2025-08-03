@@ -11,8 +11,10 @@ export default defineConfig(({ mode }) => {
   console.log('VITE_API_URL:', env.VITE_API_URL);
   console.log('All env vars:', Object.keys(env).filter(key => key.startsWith('VITE_')));
   
-  // Use local development server for now since production seems to have issues
-  const apiUrl = 'http://localhost:3002';
+  // Use production URL for builds, localhost for development
+  const apiUrl = mode === 'production' 
+    ? (env.VITE_API_URL || 'https://world-of-laptop.onrender.com')
+    : 'http://localhost:3002';
   console.log('Using API URL:', apiUrl);
   
   return {

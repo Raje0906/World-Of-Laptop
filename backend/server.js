@@ -140,13 +140,16 @@ const corsOptions = {
     */
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['*'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   credentials: true,
   optionsSuccessStatus: 204,
-  exposedHeaders: ['*']
+  exposedHeaders: ['Content-Length', 'X-Requested-With', 'Authorization']
 };
 
 app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
 
 app.use(compression());
 
@@ -222,12 +225,12 @@ if (process.env.NODE_ENV === "production") {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   
-  // Serve static files from the React app
-  app.use(express.static(path.join(__dirname, "dist")));
+  // Serve static files from the React app (dist is in project root, not backend)
+  app.use(express.static(path.join(__dirname, "..", "dist")));
 
   // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "dist", "index.html"));
+    res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
   });
 } else {
   // Simple response in development
