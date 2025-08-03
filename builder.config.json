@@ -1,0 +1,16 @@
+{
+  "command": "npm run dev",
+  "serverUrl": "http://localhost:3000",
+  "commitMode": "draft-prs",
+  "allowedCommands": [
+    "npm *",
+    "yarn *",
+    "pnpm *",
+    "git diff *",
+    "git log *",
+    "git status *",
+    "echo *",
+    "cd *",
+    "ls *"
+  ]
+}
