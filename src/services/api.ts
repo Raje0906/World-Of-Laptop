@@ -1,5 +1,5 @@
 // API client for backend communication
-const API_BASE_URL = "/api";
+const API_BASE_URL = "https://world-of-laptop.onrender.com";
 
 export interface ApiResponse<T> {
   success: boolean;
