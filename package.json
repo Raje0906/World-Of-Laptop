@@ -7,15 +7,11 @@
     "server": "nodemon backend/server.js",
     "client": "vite",
     "build": "vite build",
-    "build:check": "node build.js",
-    "build:server": "npm run build && npm run start",
     "preview": "vite preview",
     "seed": "node backend/scripts/seedDatabase.js",
     "seed:auth": "node backend/scripts/seedAuthData.js",
     "reset": "node backend/scripts/resetDatabase.js",
-    "start": "node backend/server.js",
-    "start:prod": "node backend/server.js",
-    "vercel-build": "npm run build"
+    "start": "node backend/server.js"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -52,7 +48,6 @@
     "@tanstack/react-table": "^8.10.7",
     "@types/react-toastify": "^4.0.2",
     "@vitejs/plugin-react-swc": "^3.10.2",
-    "autoprefixer": "^10.4.16",
     "axios": "^1.9.0",
     "bcryptjs": "^3.0.2",
     "better-sqlite3": "^11.10.0",
@@ -80,13 +75,11 @@
     "next-themes": "^0.2.1",
     "node-fetch": "^2.7.0",
     "nodemailer": "^6.10.1",
-    "postcss": "^8.4.31",
     "react": "^18.2.0",
     "react-day-picker": "^8.9.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.48.2",
     "react-icons": "^5.5.0",
-    "react-is": "^19.1.1",
     "react-qr-barcode-scanner": "^2.1.8",
     "react-resizable-panels": "^0.0.55",
     "react-router-dom": "^6.20.1",
@@ -95,13 +88,10 @@
     "recharts": "^3.1.0",
     "sonner": "^1.2.4",
     "tailwind-merge": "^2.0.0",
-    "tailwindcss": "^3.3.5",
     "tailwindcss-animate": "^1.0.7",
     "twilio": "^4.19.0",
-    "typescript": "^5.2.2",
     "uuid": "^11.1.0",
     "vaul": "^0.7.9",
-    "vite": "^4.5.0",
     "xlsx": "^0.18.5",
     "zod": "^3.22.4"
   },
@@ -110,7 +100,12 @@
     "@types/node": "^20.9.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
-    "@vitejs/plugin-react": "^4.7.0",
-    "nodemon": "^3.0.1"
+    "@vitejs/plugin-react": "^4.1.1",
+    "autoprefixer": "^10.4.16",
+    "nodemon": "^3.0.1",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0"
   }
 }

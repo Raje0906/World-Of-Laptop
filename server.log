@@ -5427,3 +5427,5 @@
 [2025-08-03T15:53:33.349Z] [LOG] ✅ MongoDB Connected
 [2025-08-03T15:53:33.352Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
 [2025-08-03T15:53:33.352Z] [LOG] MongoDB connection state: 1
+[2025-08-03T15:54:22.833Z] [LOG] [2025-08-03T15:54:22.833Z] GET /api/health
+[2025-08-03T15:54:22.836Z] [LOG] Incoming request from origin: http://localhost:8080
