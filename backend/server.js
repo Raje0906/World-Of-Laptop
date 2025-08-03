@@ -140,16 +140,34 @@ const corsOptions = {
     */
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cache-Control', 'X-File-Name'],
   credentials: true,
   optionsSuccessStatus: 204,
-  exposedHeaders: ['Content-Length', 'X-Requested-With', 'Authorization']
+  exposedHeaders: ['Content-Length', 'X-Requested-With', 'Authorization'],
+  preflightContinue: false,
+  maxAge: 86400 // Cache preflight response for 24 hours
 };
 
 app.use(cors(corsOptions));
 
-// Handle preflight requests explicitly
+// Handle preflight requests explicitly for all routes
 app.options('*', cors(corsOptions));
+
+// Add additional CORS headers for all responses
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
+  
+  next();
+});
 
 app.use(compression());
 
@@ -237,36 +255,70 @@ if (process.env.NODE_ENV === "production") {
     if (distExists) {
       const files = fs.readdirSync(distPath);
       console.log('Files in dist directory:', files);
+      
+      // Check if index.html exists
+      const indexPath = path.join(distPath, 'index.html');
+      if (!fs.existsSync(indexPath)) {
+        console.error('index.html not found in dist directory!');
+        console.error('Available files:', files);
+        throw new Error('Build incomplete - index.html missing');
+      }
     } else {
       console.error('Dist directory does not exist! Build may have failed.');
+      console.error('Current directory:', __dirname);
+      console.error('Expected dist path:', distPath);
+      
+      // Try to run build if dist doesn't exist
+      console.log('Attempting to run build...');
+      const { execSync } = await import('child_process');
+      try {
+        execSync('npm run build', { stdio: 'inherit' });
+        console.log('Build completed successfully');
+      } catch (buildError) {
+        console.error('Build failed:', buildError.message);
+        throw new Error('Failed to build frontend');
+      }
     }
   } catch (error) {
     console.error('Error checking dist directory:', error);
+    
+    // Send a helpful error response instead of crashing
+    app.get("*", (req, res) => {
+      res.status(500).json({
+        error: 'Build Error',
+        message: 'Frontend build files are missing. Please check the build process.',
+        details: error.message,
+        timestamp: new Date().toISOString()
+      });
+    });
   }
   
-  // Serve static files from the React app (dist is in project root, not backend)
-  app.use(express.static(distPath, {
-    setHeaders: (res, filePath) => {
-      console.log('Serving static file:', filePath);
-      // Set proper MIME types for JavaScript modules
-      if (filePath.endsWith('.js')) {
-        res.setHeader('Content-Type', 'application/javascript');
-        console.log('Set MIME type for JS file:', filePath);
-      } else if (filePath.endsWith('.mjs')) {
-        res.setHeader('Content-Type', 'application/javascript');
-        console.log('Set MIME type for MJS file:', filePath);
-      } else if (filePath.endsWith('.css')) {
-        res.setHeader('Content-Type', 'text/css');
-        console.log('Set MIME type for CSS file:', filePath);
+  // Only serve static files if we didn't encounter an error
+  if (fs && fs.existsSync(distPath)) {
+    // Serve static files from the React app (dist is in project root, not backend)
+    app.use(express.static(distPath, {
+      setHeaders: (res, filePath) => {
+        console.log('Serving static file:', filePath);
+        // Set proper MIME types for JavaScript modules
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+          console.log('Set MIME type for JS file:', filePath);
+        } else if (filePath.endsWith('.mjs')) {
+          res.setHeader('Content-Type', 'application/javascript');
+          console.log('Set MIME type for MJS file:', filePath);
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+          console.log('Set MIME type for CSS file:', filePath);
+        }
       }
-    }
-  }));
+    }));
 
-  // Handle React routing, return all requests to React app
-  app.get("*", (req, res) => {
-    console.log('Catch-all route hit for:', req.url);
-    res.sendFile(path.join(distPath, "index.html"));
-  });
+    // Handle React routing, return all requests to React app
+    app.get("*", (req, res) => {
+      console.log('Catch-all route hit for:', req.url);
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+  }
 } else {
   // Simple response in development
   app.get("/", (req, res) => {

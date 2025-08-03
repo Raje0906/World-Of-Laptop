@@ -40,6 +40,45 @@ const generateToken = (user) => {
   );
 };
 
+// @route   GET /api/auth/debug
+// @desc    Debug endpoint to check system status
+// @access  Public
+router.get("/debug", async (req, res) => {
+  try {
+    const debugInfo = {
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      database: {
+        connected: mongoose.connection.readyState === 1,
+        state: mongoose.connection.readyState,
+        host: mongoose.connection.host,
+        name: mongoose.connection.name
+      },
+      environment_variables: {
+        JWT_SECRET: process.env.JWT_SECRET ? 'SET' : 'NOT SET',
+        MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT SET',
+        NODE_ENV: process.env.NODE_ENV || 'NOT SET'
+      },
+      models: {
+        User: typeof User !== 'undefined',
+        Store: typeof Store !== 'undefined'
+      }
+    };
+    
+    res.json({
+      success: true,
+      data: debugInfo
+    });
+  } catch (error) {
+    console.error("Debug endpoint error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Debug endpoint error",
+      error: error.message
+    });
+  }
+});
+
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public
@@ -178,9 +217,42 @@ router.post(
       });
     } catch (error) {
       console.error("Login error:", error);
+      console.error("Error stack:", error.stack);
+      console.error("Error details:", {
+        message: error.message,
+        name: error.name,
+        code: error.code
+      });
+      
+      // Check for specific error types
+      if (error.name === 'ValidationError') {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          details: error.message
+        });
+      }
+      
+      if (error.name === 'CastError') {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid data format",
+          details: error.message
+        });
+      }
+      
+      if (error.code === 11000) {
+        return res.status(400).json({
+          success: false,
+          message: "Duplicate field error",
+          details: error.message
+        });
+      }
+      
       res.status(500).json({
         success: false,
         message: "Server error during login",
+        details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
       });
     }
   }

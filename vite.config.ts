@@ -48,14 +48,23 @@ export default defineConfig(({ mode }) => {
             
             proxy.on('error', (err, req, res) => {
               console.error('Proxy error:', err.message);
+              console.error('Error code:', err.code);
+              console.error('Error details:', {
+                message: err.message,
+                code: err.code,
+                target: options.target
+              });
+              
               if (!res.headersSent) {
-                res.writeHead(500, {
+                res.writeHead(503, {
                   'Content-Type': 'application/json',
                 });
                 res.end(JSON.stringify({ 
-                  error: 'Proxy error', 
-                  message: err.message,
-                  target: options.target 
+                  error: 'Backend Server Unavailable', 
+                  message: 'The backend server is not running or not accessible',
+                  details: err.message,
+                  target: options.target,
+                  suggestion: 'Make sure to run "npm run server" or "npm run dev" to start the backend server'
                 }));
               }
             });
