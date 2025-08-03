@@ -1462,3 +1462,60 @@
 [2025-08-03T13:03:04.104Z] [LOG] [2025-08-03T13:03:04.104Z] GET /api/repairs?status=in_progress&limit=5
 [2025-08-03T13:03:04.111Z] [LOG] [2025-08-03T13:03:04.111Z] OPTIONS /api/repairs?status=received
 [2025-08-03T13:03:04.435Z] [LOG] [2025-08-03T13:03:04.435Z] GET /api/repairs?status=received
+[2025-08-03T13:12:36.289Z] [LOG] [2025-08-03T13:12:36.289Z] GET /api/health
+[2025-08-03T13:12:36.711Z] [LOG] [2025-08-03T13:12:36.711Z] GET /api/auth/me
+[2025-08-03T13:12:37.613Z] [LOG] [2025-08-03T13:12:37.613Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-03T13:12:37.637Z] [LOG] [2025-08-03T13:12:37.637Z] OPTIONS /api/repairs?status=received
+[2025-08-03T13:12:37.954Z] [LOG] [2025-08-03T13:12:37.954Z] GET /api/repairs?status=received
+[2025-08-03T13:13:09.925Z] [LOG] 🔗 Using MongoDB URI: mongodb://localhost:27017/laptop-store
+[2025-08-03T13:13:09.927Z] [LOG] MongoDB Connected to: undefined
+[2025-08-03T13:13:09.928Z] [LOG] MongoDB connection state: 2
+[2025-08-03T13:13:09.943Z] [LOG] Registering route: /api/auth
+[2025-08-03T13:13:09.943Z] [LOG] Registering route: /api/customers
+[2025-08-03T13:13:09.943Z] [LOG] Registering route: /api/products
+[2025-08-03T13:13:09.943Z] [LOG] Registering route: /api/sales
+[2025-08-03T13:13:09.943Z] [LOG] Registering route: /api/repairs
+[2025-08-03T13:13:09.943Z] [LOG] Registering route: /api/notifications
+[2025-08-03T13:13:09.944Z] [LOG] Registering route: /api/stores
+[2025-08-03T13:13:09.944Z] [LOG] Registering route: /api/reports
+[2025-08-03T13:13:09.944Z] [LOG] Registering route: /api/users
+[2025-08-03T13:13:09.950Z] [LOG] Registering route: /api
+[2025-08-03T13:13:09.950Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-03T13:13:09.952Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-03T13:13:09.960Z] [LOG] 
+🚀 Server running at:
+[2025-08-03T13:13:09.960Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-03T13:13:09.960Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-03T13:13:09.960Z] [LOG] 
+🌐 Environment: development
+[2025-08-03T13:13:09.960Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-03T13:13:09.960Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-03T13:13:09.960Z] [LOG]    - /api/auth
+[2025-08-03T13:13:09.960Z] [LOG]    - /api/customers
+[2025-08-03T13:13:09.960Z] [LOG]    - /api/products
+[2025-08-03T13:13:09.961Z] [LOG]    - /api/sales
+[2025-08-03T13:13:09.961Z] [LOG]    - /api/repairs
+[2025-08-03T13:13:09.961Z] [LOG]    - /api/notifications
+[2025-08-03T13:13:09.961Z] [LOG]    - /api/stores
+[2025-08-03T13:13:09.961Z] [LOG]    - /api/reports
+[2025-08-03T13:13:09.961Z] [LOG]    - /api/users
+[2025-08-03T13:13:09.961Z] [LOG]    - /api
+[2025-08-03T13:13:09.961Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-03T13:13:09.961Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-03T13:13:09.961Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-03T13:13:10.064Z] [LOG] ✅ MongoDB Connected
+[2025-08-03T13:13:10.064Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-03T13:13:10.065Z] [LOG] 🏷️  Connection State: 1
+[2025-08-03T13:13:10.065Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-03T13:13:10.065Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-03T13:13:10.065Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-03T13:13:10.065Z] [LOG] 🏷️  Connection State: 1
+[2025-08-03T13:13:10.065Z] [LOG] ✅ MongoDB Connected to: localhost
+[2025-08-03T13:13:10.065Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-03T13:13:10.065Z] [LOG] 🏷️  Connection State: 1
+[2025-08-03T13:13:10.065Z] [LOG] ✅ MongoDB Connected
+[2025-08-03T13:13:10.069Z] [LOG] MongoDB Connected to: localhost
+[2025-08-03T13:13:10.069Z] [LOG] MongoDB connection state: 1
