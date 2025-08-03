@@ -104,7 +104,13 @@ app.use(
 // Allowed origins
 const allowedOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',')
-  : ['http://localhost:3000', 'http://localhost:8080'];
+  : [
+      'http://localhost:3000', 
+      'http://localhost:8080',
+      'https://world-of-laptop.onrender.com',
+      'https://world-of-laptop.netlify.app',  // Your Netlify URL
+      'https://*.netlify.app'  // Wildcard for all Netlify previews
+    ];
 
 const corsOptions = {
   origin: (origin, callback) => {
