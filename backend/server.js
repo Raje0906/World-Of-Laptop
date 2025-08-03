@@ -225,12 +225,47 @@ if (process.env.NODE_ENV === "production") {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   
+  const distPath = path.join(__dirname, "..", "dist");
+  console.log('Serving static files from:', distPath);
+  
+  // Check if dist directory exists
+  try {
+    const fs = await import('fs');
+    const distExists = fs.existsSync(distPath);
+    console.log('Dist directory exists:', distExists);
+    
+    if (distExists) {
+      const files = fs.readdirSync(distPath);
+      console.log('Files in dist directory:', files);
+    } else {
+      console.error('Dist directory does not exist! Build may have failed.');
+    }
+  } catch (error) {
+    console.error('Error checking dist directory:', error);
+  }
+  
   // Serve static files from the React app (dist is in project root, not backend)
-  app.use(express.static(path.join(__dirname, "..", "dist")));
+  app.use(express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      console.log('Serving static file:', filePath);
+      // Set proper MIME types for JavaScript modules
+      if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+        console.log('Set MIME type for JS file:', filePath);
+      } else if (filePath.endsWith('.mjs')) {
+        res.setHeader('Content-Type', 'application/javascript');
+        console.log('Set MIME type for MJS file:', filePath);
+      } else if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+        console.log('Set MIME type for CSS file:', filePath);
+      }
+    }
+  }));
 
   // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
+    console.log('Catch-all route hit for:', req.url);
+    res.sendFile(path.join(distPath, "index.html"));
   });
 } else {
   // Simple response in development
