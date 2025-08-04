@@ -7,8 +7,12 @@ class ApiClient {
     // Determine the base URL based on environment
     this.isDevelopment = import.meta.env.DEV || __IS_DEVELOPMENT__;
     
-    if (this.isDevelopment) {
-      // In development, use proxy to localhost
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1';
+    
+    if (this.isDevelopment || isLocalhost) {
+      // In development or localhost, use proxy to localhost
       this.baseUrl = '/api';
     } else {
       // In production, use the production backend URL
@@ -18,14 +22,16 @@ class ApiClient {
     console.log('API Client initialized:', {
       baseUrl: this.baseUrl,
       isDevelopment: this.isDevelopment,
+      isLocalhost,
+      hostname: window.location.hostname,
+      port: window.location.port,
       env: import.meta.env.MODE
     });
   }
 
   private async makeRequest(endpoint: string, options: RequestInit = {}): Promise<Response> {
-    const url = this.isDevelopment 
-      ? `${this.baseUrl}${endpoint}` 
-      : `${this.baseUrl}${endpoint}`;
+    // Always use the baseUrl that was determined in constructor
+    const url = `${this.baseUrl}${endpoint}`;
 
     const config: RequestInit = {
       ...options,
@@ -48,7 +54,7 @@ class ApiClient {
       const response = await fetch(url, config);
       
       // Log request details in development
-      if (this.isDevelopment) {
+      if (this.isDevelopment || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         console.log('API Request:', {
           method: options.method || 'GET',
           url,
@@ -110,6 +116,9 @@ class ApiClient {
     return {
       baseUrl: this.baseUrl,
       isDevelopment: this.isDevelopment,
+      isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+      hostname: window.location.hostname,
+      port: window.location.port,
       env: import.meta.env.MODE
     };
   }

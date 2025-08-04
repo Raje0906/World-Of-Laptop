@@ -1,5 +1,22 @@
 // API client for backend communication
-const API_BASE_URL = "https://world-of-laptop.onrender.com";
+// Determine API base URL based on environment
+const getApiBaseUrl = () => {
+  // Check if we're running on localhost (development or preview)
+  const isLocalhost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1'
+  );
+  
+  if (isLocalhost) {
+    // In localhost, use proxy to local backend
+    return '/api';
+  } else {
+    // In production, use the production backend URL
+    return import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com';
+  }
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -27,6 +44,16 @@ class ApiClient {
   constructor(baseURL: string = API_BASE_URL) {
     this.baseURL = baseURL;
     this.token = localStorage.getItem("token");
+    
+    console.log('Legacy API Client initialized:', {
+      baseURL: this.baseURL,
+      isLocalhost: typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1'
+      ),
+      hostname: typeof window !== 'undefined' ? window.location.hostname : 'server',
+      port: typeof window !== 'undefined' ? window.location.port : 'unknown'
+    });
   }
 
   setToken(token: string) {
@@ -195,8 +222,6 @@ class ApiClient {
       body: JSON.stringify(productData),
     });
   }
-
-
 
   // Sales
   async getSales(params?: {

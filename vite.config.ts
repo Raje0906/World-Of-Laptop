@@ -45,6 +45,22 @@ export default defineConfig(({ mode }) => {
         }
       } : undefined
     },
+    preview: {
+      port: 4173,
+      host: '0.0.0.0',
+      strictPort: true,
+      open: true,
+      cors: false,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3002',
+          changeOrigin: true,
+          secure: false,
+          timeout: 10000,
+          rewrite: (path) => path.replace(/^\/api/, '/api')
+        }
+      }
+    },
     plugins: [react()],
     resolve: {
       alias: {
