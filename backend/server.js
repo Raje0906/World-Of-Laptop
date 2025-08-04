@@ -101,9 +101,6 @@ app.use(
   })
 );
 
-// Apply CORS with the configured options
-app.use(cors(corsOptions));
-
 // CORS configuration for production and development
 const corsOptions = {
   origin: function (origin, callback) {
@@ -135,6 +132,7 @@ const corsOptions = {
   maxAge: 86400 // Cache preflight response for 24 hours
 };
 
+// Apply CORS with the configured options
 app.use(cors(corsOptions));
 
 // Handle preflight requests explicitly for all routes
