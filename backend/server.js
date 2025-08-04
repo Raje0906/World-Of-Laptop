@@ -170,10 +170,8 @@ app.options('*', cors(corsOptions));
 
 // Add additional CORS headers for all responses
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  // Don't set Access-Control-Allow-Origin here - let the cors middleware handle it
+  // res.header('Access-Control-Allow-Origin', '*'); // REMOVED - conflicts with credentials
   
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
@@ -294,8 +292,8 @@ if (process.env.NODE_ENV === "production") {
           }
         }));
 
-        // Handle React routing, return all requests to React app
-        app.get("*", (req, res) => {
+  // Handle React routing, return all requests to React app
+  app.get("*", (req, res) => {
           console.log('Catch-all route hit for:', req.url);
           res.sendFile(path.join(distPath, "index.html"));
         });

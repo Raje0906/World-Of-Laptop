@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient } from "@/lib/apiClient";
@@ -27,6 +29,7 @@ interface Store {
 }
 
 export function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [stores, setStores] = useState<Store[]>([]);
@@ -38,10 +41,13 @@ export function Login() {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  const selectedStoreId = watch("store_id");
 
   useEffect(() => {
     const loadStores = async () => {
