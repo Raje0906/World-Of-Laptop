@@ -175,7 +175,24 @@ export const initializeData = () => {
 
 // Customer operations
 export const getCustomers = async (status: 'active' | 'inactive' | 'all' = 'active'): Promise<Customer[]> => {
-  const apiUrl = 'http://localhost:3002/api'; // Use full backend URL
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+  
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
+  
   try {
     const response = await fetch(`${apiUrl}/customers${status !== 'all' ? `?status=${status}` : ''}`);
     if (!response.ok) {
@@ -219,7 +236,24 @@ export const getCustomer = async (id: string): Promise<Customer | null> => {
 export const addCustomer = async (
   customer: Omit<Customer, "id" | "dateAdded" | "totalPurchases">,
 ): Promise<Customer> => {
-  const apiUrl = 'http://localhost:3002/api'; // Use full backend URL
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+  
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
+  
   try {
     // Ensure required address fields are present with defaults
     const { line1, city, state, pincode, ...restAddress } = customer.address || {};
@@ -431,8 +465,25 @@ const parseRepair = (data: any): Repair => ({
 
 export const getRepairs = async (): Promise<Repair[]> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const response = await fetch(`${baseUrl}/api/repairs`, {
+    // Check if VITE_API_URL is explicitly set (production environment)
+    const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+    
+    let apiUrl: string;
+    
+    if (hasExplicitApiUrl) {
+      // Use the explicitly set API URL (production)
+      apiUrl = import.meta.env.VITE_API_URL + '/api';
+    } else {
+      // Check if we're running on localhost (development or preview)
+      const isLocalhost = typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1'
+      );
+      
+      apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+    }
+    
+    const response = await fetch(`${apiUrl}/repairs`, {
       credentials: 'include'
     });
     
@@ -616,7 +667,13 @@ export const generateMonthlySalesReport = async (year: number, month: number): P
   }
   
   try {
-    const response = await fetch(`${apiUrl}/reports/sales/monthly?year=${year}&month=${month}`);
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${apiUrl}/reports/sales/monthly?year=${year}&month=${month}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
     if (!response.ok) {
       throw new Error('Failed to generate monthly sales report');
     }
@@ -648,7 +705,13 @@ export const generateMonthlyRepairReport = async (year: number, month: number): 
   }
   
   try {
-    const response = await fetch(`${apiUrl}/reports/monthly?year=${year}&month=${month}`);
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${apiUrl}/reports/monthly?year=${year}&month=${month}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
     if (!response.ok) {
       throw new Error('Failed to generate monthly repair report');
     }
@@ -680,7 +743,13 @@ export const generateMonthlyStoreReport = async (year: number, month: number): P
   }
   
   try {
-    const response = await fetch(`${apiUrl}/reports/store/monthly?year=${year}&month=${month}`);
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${apiUrl}/reports/store/monthly?year=${year}&month=${month}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
     if (!response.ok) {
       throw new Error('Failed to generate monthly store report');
     }
@@ -712,8 +781,12 @@ export const generateQuarterlyReport = async (year: number, quarter: number): Pr
   }
   
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${apiUrl}/reports/quarterly?year=${year}&quarter=${quarter}`, {
-      credentials: 'include'
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     });
     
     if (!response.ok) {
@@ -748,8 +821,12 @@ export const generateAnnualReport = async (year: number): Promise<Report> => {
   }
   
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${apiUrl}/reports/annual?year=${year}`, {
-      credentials: 'include'
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     });
     
     if (!response.ok) {
@@ -767,7 +844,23 @@ export const generateAnnualReport = async (year: number): Promise<Report> => {
 // Add repair function
 export const addRepair = async (repairData: any): Promise<Repair> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    // Check if VITE_API_URL is explicitly set (production environment)
+    const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+    
+    let apiUrl: string;
+    
+    if (hasExplicitApiUrl) {
+      // Use the explicitly set API URL (production)
+      apiUrl = import.meta.env.VITE_API_URL + '/api';
+    } else {
+      // Check if we're running on localhost (development or preview)
+      const isLocalhost = typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1'
+      );
+      
+      apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+    }
     
     // Ensure required fields are present
     if (!repairData.customer) {
@@ -809,10 +902,10 @@ export const addRepair = async (repairData: any): Promise<Repair> => {
     };
     
     console.log('=== SENDING REPAIR DATA ===');
-    console.log('URL:', `${baseUrl}/api/repairs`);
+    console.log('URL:', `${apiUrl}/repairs`);
     console.log('Data:', JSON.stringify(sanitizedData, null, 2));
     
-    const response = await fetch(`${baseUrl}/api/repairs`, {
+    const response = await fetch(`${apiUrl}/repairs`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

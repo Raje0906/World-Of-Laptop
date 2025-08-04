@@ -9430,3 +9430,67 @@
 [2025-08-04T16:53:47.948Z] [LOG] Incoming request from origin: No origin (non-browser request)
 [2025-08-04T16:53:47.948Z] [LOG] No origin provided, allowing request
 [2025-08-04T16:53:47.948Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T17:15:10.868Z] [LOG] [2025-08-04T17:15:10.868Z] OPTIONS /api/users?role=engineer
+[2025-08-04T17:15:10.868Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:10.869Z] [LOG] ✅ Allowing origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:10.910Z] [LOG] [2025-08-04T17:15:10.910Z] GET /api/users?role=engineer
+[2025-08-04T17:15:10.911Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:10.911Z] [LOG] ✅ Allowing origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:10.912Z] [LOG] [CORS] Request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:10.912Z] [LOG] [CORS] Set Access-Control-Allow-Origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:13.360Z] [LOG] [2025-08-04T17:15:13.360Z] OPTIONS /api/customers?search=sage&limit=10
+[2025-08-04T17:15:13.360Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:13.361Z] [LOG] ✅ Allowing origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:13.704Z] [LOG] [2025-08-04T17:15:13.704Z] GET /api/customers?search=sage&limit=10
+[2025-08-04T17:15:13.705Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:13.705Z] [LOG] ✅ Allowing origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:13.705Z] [LOG] [CORS] Request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:13.705Z] [LOG] [CORS] Set Access-Control-Allow-Origin: https://world-of-laptop.vercel.app
+[2025-08-04T17:15:13.710Z] [LOG] 🔍 Searching customers with query: sage
+[2025-08-04T17:15:13.710Z] [LOG] Generated MongoDB query: {
+  "$or": [
+    {
+      "name": {
+        "$regex": "sage",
+        "$options": "i"
+      }
+    },
+    {
+      "email": {
+        "$regex": "sage",
+        "$options": "i"
+      }
+    },
+    {
+      "phone": {
+        "$regex": "sage",
+        "$options": "i"
+      }
+    },
+    {
+      "address.line1": {
+        "$regex": "sage",
+        "$options": "i"
+      }
+    },
+    {
+      "address.city": {
+        "$regex": "sage",
+        "$options": "i"
+      }
+    },
+    {
+      "address.state": {
+        "$regex": "sage",
+        "$options": "i"
+      }
+    },
+    {
+      "address.pincode": {
+        "$regex": "sage",
+        "$options": "i"
+      }
+    }
+  ]
+}
+[2025-08-04T17:15:13.710Z] [LOG] Executing find with: {"query":{"$or":[{"name":{"$regex":"sage","$options":"i"}},{"email":{"$regex":"sage","$options":"i"}},{"phone":{"$regex":"sage","$options":"i"}},{"address.line1":{"$regex":"sage","$options":"i"}},{"address.city":{"$regex":"sage","$options":"i"}},{"address.state":{"$regex":"sage","$options":"i"}},{"address.pincode":{"$regex":"sage","$options":"i"}}]},"skip":0,"limit":10,"sort":{"createdAt":-1}}

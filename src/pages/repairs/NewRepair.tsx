@@ -122,7 +122,25 @@ export function NewRepair() {
 
   useEffect(() => {
     // Fetch engineer users from backend
-    fetch('http://localhost:3002/api/users?role=engineer')
+    // Check if VITE_API_URL is explicitly set (production environment)
+    const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+    
+    let apiUrl: string;
+    
+    if (hasExplicitApiUrl) {
+      // Use the explicitly set API URL (production)
+      apiUrl = import.meta.env.VITE_API_URL + '/api';
+    } else {
+      // Check if we're running on localhost (development or preview)
+      const isLocalhost = typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1'
+      );
+      
+      apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+    }
+    
+    fetch(`${apiUrl}/users?role=engineer`)
       .then(res => res.json())
       .then(data => {
         if (data.success && Array.isArray(data.data)) {
