@@ -11,8 +11,8 @@ const getApiBaseUrl = () => {
     // In localhost, use proxy to local backend
     return '/api';
   } else {
-    // In production, use the production backend URL
-    return import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com';
+    // In production, use the production backend URL with /api prefix
+    return (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
   }
 };
 

@@ -15,8 +15,8 @@ class ApiClient {
       // In development or localhost, use proxy to localhost
       this.baseUrl = '/api';
     } else {
-      // In production, use the production backend URL
-      this.baseUrl = import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com';
+      // In production, use the production backend URL with /api prefix
+      this.baseUrl = (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
     }
     
     console.log('API Client initialized:', {

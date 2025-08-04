@@ -603,7 +603,7 @@ export const generateMonthlySalesReport = async (year: number, month: number): P
     window.location.hostname === '127.0.0.1'
   );
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com');
+  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
   
   try {
     const response = await fetch(`${apiUrl}/reports/sales/monthly?year=${year}&month=${month}`);
@@ -625,7 +625,7 @@ export const generateMonthlyRepairReport = async (year: number, month: number): 
     window.location.hostname === '127.0.0.1'
   );
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com');
+  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
   
   try {
     const response = await fetch(`${apiUrl}/reports/monthly?year=${year}&month=${month}`);
@@ -647,7 +647,7 @@ export const generateMonthlyStoreReport = async (year: number, month: number): P
     window.location.hostname === '127.0.0.1'
   );
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com');
+  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
   
   try {
     const response = await fetch(`${apiUrl}/reports/store/monthly?year=${year}&month=${month}`);
@@ -978,7 +978,7 @@ export const getStores = async (): Promise<any[]> => {
     window.location.hostname === '127.0.0.1'
   );
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com');
+  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
   
   try {
     const response = await fetch(`${apiUrl}/stores`);
