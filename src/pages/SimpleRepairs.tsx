@@ -79,17 +79,7 @@ export default function SimpleRepairs() {
 
       {/* Quick Actions */}
       <div className="mb-6">
-        <div className="flex gap-4">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            New Repair
-          </button>
-          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-            Filter Repairs
-          </button>
-          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-            Export Data
-          </button>
-        </div>
+        {/* Buttons removed as requested */}
       </div>
 
       {/* Repairs Table */}

@@ -135,8 +135,25 @@ export function TrackRepair() {
   const fetchRemainingRepairs = async () => {
     try {
       setIsLoadingRemaining(true);
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-      const response = await axios.get(`${baseUrl}/api/repairs?status=in_progress&limit=5`);
+      // Check if VITE_API_URL is explicitly set (production environment)
+      const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+      
+      let apiUrl: string;
+      
+      if (hasExplicitApiUrl) {
+        // Use the explicitly set API URL (production)
+        apiUrl = import.meta.env.VITE_API_URL + '/api';
+      } else {
+        // Check if we're running on localhost (development or preview)
+        const isLocalhost = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1'
+        );
+        
+        apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+      }
+      
+      const response = await axios.get(`${apiUrl}/repairs?status=in_progress&limit=5`);
       if (response.data.success) {
         setRemainingRepairs(response.data.data || []);
       }
@@ -162,8 +179,25 @@ export function TrackRepair() {
   const fetchReceivedRepairs = async () => {
     try {
       setIsLoadingReceived(true);
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-      const response = await axios.get(`${baseUrl}/api/repairs?status=received`, {
+      // Check if VITE_API_URL is explicitly set (production environment)
+      const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+      
+      let apiUrl: string;
+      
+      if (hasExplicitApiUrl) {
+        // Use the explicitly set API URL (production)
+        apiUrl = import.meta.env.VITE_API_URL + '/api';
+      } else {
+        // Check if we're running on localhost (development or preview)
+        const isLocalhost = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1'
+        );
+        
+        apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+      }
+      
+      const response = await axios.get(`${apiUrl}/repairs?status=received`, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -223,11 +257,27 @@ export function TrackRepair() {
       setIsCompleting(prev => ({ ...prev, [ticketNumber]: true }));
       console.log('Starting repair completion process for ticket:', ticketNumber);
       
-      // Fetch the full repair object by ticketNumber to get the _id
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+      // Check if VITE_API_URL is explicitly set (production environment)
+      const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+      
+      let apiUrl: string;
+      
+      if (hasExplicitApiUrl) {
+        // Use the explicitly set API URL (production)
+        apiUrl = import.meta.env.VITE_API_URL + '/api';
+      } else {
+        // Check if we're running on localhost (development or preview)
+        const isLocalhost = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1'
+        );
+        
+        apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+      }
+      
       console.log('Fetching repair details for ticket:', ticketNumber);
       
-      const repairResp = await axios.get(`${baseUrl}/api/repairs/track/status?ticket=${ticketNumber}`, {
+      const repairResp = await axios.get(`${apiUrl}/repairs/track/status?ticket=${ticketNumber}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
           'Accept': 'application/json'
@@ -268,7 +318,7 @@ export function TrackRepair() {
 
       console.log('Marking repair as completed in the system...');
       const response = await axios.post(
-        `${baseUrl}/api/repairs/${repairId}/complete`,
+        `${apiUrl}/repairs/${repairId}/complete`,
         {},
         {
           headers: {
@@ -384,19 +434,36 @@ export function TrackRepair() {
         params.append("email", trimmedQuery.toLowerCase());
       }
 
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-      const apiUrl = `${baseUrl}/api/repairs/track/status?${params.toString()}`;
-      console.log('Constructed API URL:', apiUrl);
+      // Check if VITE_API_URL is explicitly set (production environment)
+      const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+      
+      let apiUrl: string;
+      
+      if (hasExplicitApiUrl) {
+        // Use the explicitly set API URL (production)
+        apiUrl = import.meta.env.VITE_API_URL + '/api';
+      } else {
+        // Check if we're running on localhost (development or preview)
+        const isLocalhost = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1'
+        );
+        
+        apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+      }
+      
+      const fullApiUrl = `${apiUrl}/repairs/track/status?${params.toString()}`;
+      console.log('Constructed API URL:', fullApiUrl);
 
       try {
-        console.log('Sending request to:', apiUrl);
+        console.log('Sending request to:', fullApiUrl);
         console.log('Request headers:', {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'withCredentials': true
         });
         
-        const response = await axios.get(apiUrl, {
+        const response = await axios.get(fullApiUrl, {
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
@@ -573,8 +640,25 @@ export function TrackRepair() {
     try {
       setIsSendingUpdate(prev => ({ ...prev, [repair._id]: true }));
       
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-      const response = await fetch(`${baseUrl}/api/repairs/${repair._id}/send-update`, {
+      // Check if VITE_API_URL is explicitly set (production environment)
+      const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+      
+      let apiUrl: string;
+      
+      if (hasExplicitApiUrl) {
+        // Use the explicitly set API URL (production)
+        apiUrl = import.meta.env.VITE_API_URL + '/api';
+      } else {
+        // Check if we're running on localhost (development or preview)
+        const isLocalhost = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' || 
+          window.location.hostname === '127.0.0.1'
+        );
+        
+        apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+      }
+      
+      const response = await fetch(`${apiUrl}/repairs/${repair._id}/send-update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

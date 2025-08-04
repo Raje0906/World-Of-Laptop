@@ -591,14 +591,31 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
   }
 
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+    // Check if VITE_API_URL is explicitly set (production environment)
+    const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+    
+    let apiUrl: string;
+    
+    if (hasExplicitApiUrl) {
+      // Use the explicitly set API URL (production)
+      apiUrl = import.meta.env.VITE_API_URL + '/api';
+    } else {
+      // Check if we're running on localhost (development or preview)
+      const isLocalhost = typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1'
+      );
+      
+      apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+    }
+    
     const searchParams = new URLSearchParams({
       search: query,
       limit: '10' // Limit results to 10 for better performance
     });
     
     // Use the main customers endpoint with search parameter
-    const response = await fetch(`${baseUrl}/api/customers?${searchParams}`, {
+    const response = await fetch(`${apiUrl}/customers?${searchParams}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
