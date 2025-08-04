@@ -74,6 +74,9 @@ export default defineConfig(({ mode }) => {
       },
       // Ensure proper chunking
       chunkSizeWarningLimit: 1000,
+      // Ensure proper module format
+      target: 'esnext',
+      modulePreload: false,
     },
     define: {
       // Define environment variables for the client
