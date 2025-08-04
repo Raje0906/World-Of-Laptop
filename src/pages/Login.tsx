@@ -9,18 +9,35 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Shield, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient } from "@/lib/apiClient";
 
-const loginSchema = z.object({
-  identifier: z.string().min(1, "Email or phone number is required"),
-  password: z.string().min(1, "Password is required"),
-  store_id: z.string().min(1, "Please select a store"),
-});
+// Dynamic schema based on user role
+const createLoginSchema = (isAdmin: boolean) => {
+  const baseSchema = {
+    identifier: z.string().min(1, "Email or phone number is required"),
+    password: z.string().min(1, "Password is required"),
+  };
 
-type LoginFormData = z.infer<typeof loginSchema>;
+  if (isAdmin) {
+    // Admin users don't need store selection during login
+    return z.object(baseSchema);
+  } else {
+    // Staff users must select a store
+    return z.object({
+      ...baseSchema,
+      store_id: z.string().min(1, "Please select your assigned store"),
+    });
+  }
+};
+
+type LoginFormData = {
+  identifier: string;
+  password: string;
+  store_id?: string;
+};
 
 interface Store {
   _id: string;
@@ -33,9 +50,15 @@ export function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [stores, setStores] = useState<Store[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<string>("");
+  const [isCheckingRole, setIsCheckingRole] = useState(false);
   const { toast } = useToast();
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Create dynamic schema based on user role
+  const loginSchema = createLoginSchema(isAdmin);
 
   const {
     register,
@@ -43,6 +66,7 @@ export function Login() {
     setValue,
     watch,
     formState: { errors },
+    reset,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
@@ -96,21 +120,70 @@ export function Login() {
     }
   };
 
+  // Check if user is admin based on identifier (email/phone)
+  const checkUserRole = async (identifier: string) => {
+    if (identifier.length < 3) return null;
+    
+    setIsCheckingRole(true);
+    try {
+      const response = await apiClient.post("/auth/check-role", { identifier });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          const role = data.data.role;
+          setUserRole(role);
+          setIsAdmin(role === 'admin');
+          return role;
+        }
+      }
+    } catch (error) {
+      console.error("Error checking user role:", error);
+    } finally {
+      setIsCheckingRole(false);
+    }
+    return null;
+  };
+
+  const handleIdentifierChange = (identifier: string) => {
+    setValue("identifier", identifier);
+    if (identifier.length > 3) {
+      checkUserRole(identifier);
+    }
+  };
+
+  const handleIdentifierBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const identifier = e.target.value;
+    if (identifier.length > 3) {
+      checkUserRole(identifier);
+    }
+  };
+
+  const handleRegisterClick = () => {
+    setIsRegistering(true);
+  };
+
+  const handleBackToLogin = () => {
+    setIsRegistering(false);
+  };
+
   const onSubmit = async (data: LoginFormData) => {
+    // Always check role before submit
+    await checkUserRole(data.identifier);
     setIsLoading(true);
     
     try {
-      if (!data.store_id) {
-        toast({ title: "Error", description: "Please select a store to log into" });
+      // For staff users, store selection is required
+      if (!isAdmin && !data.store_id) {
+        toast({ title: "Error", description: "Please select your assigned store to log in" });
         setIsLoading(false);
         return;
       }
-      
-      // Send identifier, password, and selected store_id
+
+      // Prepare login payload
       const payload = {
         identifier: data.identifier,
         password: data.password,
-        store_id: data.store_id  // Always include store_id as it's now required
+        ...(data.store_id && { store_id: data.store_id })
       };
 
       const response = await apiClient.post("/auth/login", payload);
@@ -150,14 +223,6 @@ export function Login() {
     }
   };
 
-  const handleRegisterClick = () => {
-    setIsRegistering(true);
-  };
-
-  const handleBackToLogin = () => {
-    setIsRegistering(false);
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -186,6 +251,8 @@ export function Login() {
                   placeholder="Enter your email or phone number"
                   {...register("identifier")}
                   className={errors.identifier ? "border-red-500" : ""}
+                  onChange={(e) => handleIdentifierChange(e.target.value)}
+                  onBlur={handleIdentifierBlur}
                 />
                 {errors.identifier && (
                   <p className="text-sm text-red-500 mt-1">
@@ -225,39 +292,71 @@ export function Login() {
                 )}
               </div>
 
-              <div>
-                <Label htmlFor="store">Select Store (Optional for Admin)</Label>
-                <Select
-                  value={selectedStoreId}
-                  onValueChange={(value) => setValue("store_id", value)}
-                >
-                  <SelectTrigger className={errors.store_id ? "border-red-500" : ""}>
-                    <SelectValue placeholder="Choose your store (optional for admin)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stores.map((store) => (
-                      <SelectItem key={store._id} value={store._id}>
-                        {store.name} - {typeof store.address === 'object' && store.address !== null
-                          ? [store.address.street, store.address.city, store.address.state, store.address.zipCode, store.address.country].filter(Boolean).join(', ')
-                          : store.address}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.store_id && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {errors.store_id.message}
+              {/* Show store selection only for staff users */}
+              {!isAdmin && (
+                <div>
+                  <Label htmlFor="store">Select Your Store</Label>
+                  <Select
+                    value={selectedStoreId}
+                    onValueChange={(value) => setValue("store_id", value)}
+                  >
+                    <SelectTrigger className={errors.store_id ? "border-red-500" : ""}>
+                      <SelectValue placeholder="Choose your assigned store" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {stores.map((store) => (
+                        <SelectItem key={store._id} value={store._id}>
+                          {store.name} - {typeof store.address === 'object' && store.address !== null
+                            ? [store.address.street, store.address.city, store.address.state, store.address.zipCode, store.address.country].filter(Boolean).join(', ')
+                            : store.address}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.store_id && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.store_id.message}
+                    </p>
+                  )}
+                  <p className="text-sm text-gray-500 mt-1">
+                    You must select your assigned store to log in.
                   </p>
-                )}
-                <p className="text-sm text-gray-500 mt-1">
-                  Admin users can access any store. Non-admin users must select their assigned store.
-                </p>
-              </div>
+                </div>
+              )}
+
+              {/* Show role indicator */}
+              {userRole && (
+                <Alert>
+                  <AlertDescription className="flex items-center gap-2">
+                    {isAdmin ? (
+                      <>
+                        <Shield className="h-4 w-4" />
+                        Logging in as: <strong>{userRole}</strong> (Store selection not required)
+                      </>
+                    ) : (
+                      <>
+                        <User className="h-4 w-4" />
+                        Logging in as: <strong>{userRole}</strong> (Store selection required)
+                      </>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Show loading indicator while checking role */}
+              {isCheckingRole && (
+                <Alert>
+                  <AlertDescription className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Checking user role...
+                  </AlertDescription>
+                </Alert>
+              )}
 
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading}
+                disabled={isLoading || isCheckingRole || !userRole}
               >
                 {isLoading ? (
                   <>

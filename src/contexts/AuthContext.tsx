@@ -7,7 +7,9 @@ interface User {
   email: string;
   phone: string;
   role: string;
-  store_id: string;
+  store_id?: string;
+  isAdmin?: boolean;
+  isStaff?: boolean;
   store?: {
     _id: string;
     name: string;
@@ -151,12 +153,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const login = (newToken: string, userData: User) => {
+    // Ensure role-based flags are set
+    const userWithFlags = {
+      ...userData,
+      isAdmin: userData.role === 'admin',
+      isStaff: userData.role !== 'admin'
+    };
+
     localStorage.setItem("token", newToken);
-    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userWithFlags));
     setToken(newToken);
     setLastActivity(Date.now()); // Reset activity timer on login
-    setUser(userData);
-    toast.success(`Welcome back, ${userData.name}!`);
+    setUser(userWithFlags);
+    
+    // Show role-specific welcome message
+    if (userWithFlags.isAdmin) {
+      toast.success(`Welcome back, ${userData.name}! (Admin)`);
+    } else {
+      toast.success(`Welcome back, ${userData.name}! (${userData.store?.name || 'Staff'})`);
+    }
   };
 
   const logout = () => {

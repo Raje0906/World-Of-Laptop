@@ -8796,3 +8796,637 @@
 [2025-08-04T13:33:40.260Z] [LOG] [2025-08-04T13:33:40.260Z] GET /api/health
 [2025-08-04T13:33:40.261Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
 [2025-08-04T13:34:00.984Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-04T16:11:35.511Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:11:35.514Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:11:35.514Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:11:35.525Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:11:35.526Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:11:35.526Z] [LOG] Registering route: /api/products
+[2025-08-04T16:11:35.526Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:11:35.526Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:11:35.526Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:11:35.527Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:11:35.527Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:11:35.527Z] [LOG] Registering route: /api/users
+[2025-08-04T16:11:35.527Z] [LOG] Registering route: /api
+[2025-08-04T16:11:35.527Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:11:35.530Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:11:35.612Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:11:35.612Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:11:35.632Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:11:35.637Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:11:35.639Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:11:35.639Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:11:35.640Z] [LOG]    - /api/auth
+[2025-08-04T16:11:35.640Z] [LOG]    - /api/customers
+[2025-08-04T16:11:35.642Z] [LOG]    - /api/products
+[2025-08-04T16:11:35.643Z] [LOG]    - /api/sales
+[2025-08-04T16:11:35.643Z] [LOG]    - /api/repairs
+[2025-08-04T16:11:35.643Z] [LOG]    - /api/notifications
+[2025-08-04T16:11:35.643Z] [LOG]    - /api/stores
+[2025-08-04T16:11:35.643Z] [LOG]    - /api/reports
+[2025-08-04T16:11:35.643Z] [LOG]    - /api/users
+[2025-08-04T16:11:35.643Z] [LOG]    - /api
+[2025-08-04T16:11:35.643Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:11:35.643Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:11:35.643Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:11:39.492Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:11:39.492Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:11:39.492Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:11:39.493Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:11:39.493Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:11:39.493Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:11:39.493Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:11:39.493Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:11:39.493Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:11:39.493Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:11:39.493Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:11:39.496Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:11:39.497Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:11:41.959Z] [LOG] [2025-08-04T16:11:41.959Z] GET /api/api/health
+[2025-08-04T16:11:41.964Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:11:41.964Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:11:41.966Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:11:42.191Z] [LOG] [2025-08-04T16:11:42.191Z] GET /api/api/health
+[2025-08-04T16:11:42.191Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:11:42.191Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:11:42.192Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:11:43.441Z] [LOG] [2025-08-04T16:11:43.441Z] GET /api/api/health
+[2025-08-04T16:11:43.442Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:11:43.442Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:11:43.442Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:11:43.740Z] [LOG] [2025-08-04T16:11:43.740Z] GET /api/api/auth/stores
+[2025-08-04T16:11:43.740Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:11:43.740Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:11:43.740Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:11:49.317Z] [LOG] [2025-08-04T16:11:49.317Z] POST /api/api/auth/check-role
+[2025-08-04T16:11:49.317Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-04T16:11:49.317Z] [LOG] ✅ Allowing origin: http://localhost:8080
+[2025-08-04T16:11:49.317Z] [LOG] [CORS] Request from origin: http://localhost:8080
+[2025-08-04T16:11:49.317Z] [LOG] [CORS] Set Access-Control-Allow-Origin: http://localhost:8080
+[2025-08-04T16:11:55.467Z] [LOG] [2025-08-04T16:11:55.467Z] GET /api/api/health
+[2025-08-04T16:11:55.467Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:11:55.467Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:11:55.467Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:11:55.607Z] [LOG] [2025-08-04T16:11:55.607Z] GET /api/api/auth/stores
+[2025-08-04T16:11:55.607Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:11:55.607Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:11:55.608Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:12:08.398Z] [LOG] [2025-08-04T16:12:08.398Z] GET /api/api/health
+[2025-08-04T16:12:08.398Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:12:08.398Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:12:08.398Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:12:08.590Z] [LOG] [2025-08-04T16:12:08.590Z] GET /api/api/auth/stores
+[2025-08-04T16:12:08.591Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:12:08.591Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:12:08.591Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:14:08.675Z] [LOG] [2025-08-04T16:14:08.675Z] POST /api/api/auth/check-role
+[2025-08-04T16:14:08.676Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-04T16:14:08.676Z] [LOG] ✅ Allowing origin: http://localhost:8080
+[2025-08-04T16:14:08.676Z] [LOG] [CORS] Request from origin: http://localhost:8080
+[2025-08-04T16:14:08.676Z] [LOG] [CORS] Set Access-Control-Allow-Origin: http://localhost:8080
+[2025-08-04T16:14:44.980Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:14:44.993Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:14:44.995Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:14:45.021Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:14:45.025Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:14:45.028Z] [LOG] Registering route: /api/products
+[2025-08-04T16:14:45.030Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:14:45.030Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:14:45.030Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:14:45.032Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:14:45.032Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:14:45.033Z] [LOG] Registering route: /api/users
+[2025-08-04T16:14:45.033Z] [LOG] Registering route: /api
+[2025-08-04T16:14:45.034Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:14:45.043Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:14:45.248Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:14:45.249Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:14:45.249Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:14:45.249Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:14:45.250Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:14:45.251Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:14:45.252Z] [LOG]    - /api/auth
+[2025-08-04T16:14:45.252Z] [LOG]    - /api/customers
+[2025-08-04T16:14:45.252Z] [LOG]    - /api/products
+[2025-08-04T16:14:45.252Z] [LOG]    - /api/sales
+[2025-08-04T16:14:45.252Z] [LOG]    - /api/repairs
+[2025-08-04T16:14:45.252Z] [LOG]    - /api/notifications
+[2025-08-04T16:14:45.252Z] [LOG]    - /api/stores
+[2025-08-04T16:14:45.253Z] [LOG]    - /api/reports
+[2025-08-04T16:14:45.256Z] [LOG]    - /api/users
+[2025-08-04T16:14:45.257Z] [LOG]    - /api
+[2025-08-04T16:14:45.263Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:14:45.264Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:14:45.265Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:14:59.107Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:14:59.119Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:14:59.120Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:14:59.175Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:14:59.176Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:14:59.185Z] [LOG] Registering route: /api/products
+[2025-08-04T16:14:59.185Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:14:59.185Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:14:59.185Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:14:59.186Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:14:59.187Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:14:59.187Z] [LOG] Registering route: /api/users
+[2025-08-04T16:14:59.188Z] [LOG] Registering route: /api
+[2025-08-04T16:14:59.188Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:14:59.193Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:14:59.220Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:14:59.221Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:14:59.222Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:14:59.223Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:14:59.224Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:14:59.225Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:14:59.225Z] [LOG]    - /api/auth
+[2025-08-04T16:14:59.226Z] [LOG]    - /api/customers
+[2025-08-04T16:14:59.226Z] [LOG]    - /api/products
+[2025-08-04T16:14:59.236Z] [LOG]    - /api/sales
+[2025-08-04T16:14:59.237Z] [LOG]    - /api/repairs
+[2025-08-04T16:14:59.237Z] [LOG]    - /api/notifications
+[2025-08-04T16:14:59.237Z] [LOG]    - /api/stores
+[2025-08-04T16:14:59.238Z] [LOG]    - /api/reports
+[2025-08-04T16:14:59.238Z] [LOG]    - /api/users
+[2025-08-04T16:14:59.238Z] [LOG]    - /api
+[2025-08-04T16:14:59.238Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:14:59.238Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:14:59.322Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:15:00.386Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:15:00.387Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:15:00.387Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:15:00.387Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:15:00.388Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:15:00.388Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:15:00.388Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:15:00.388Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:15:00.388Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:15:00.388Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:15:00.388Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:15:00.396Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:15:00.396Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:36:53.194Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:36:53.197Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:36:53.198Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:36:53.213Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:36:53.213Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:36:53.214Z] [LOG] Registering route: /api/products
+[2025-08-04T16:36:53.214Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:36:53.214Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:36:53.214Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:36:53.214Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:36:53.214Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:36:53.214Z] [LOG] Registering route: /api/users
+[2025-08-04T16:36:53.215Z] [LOG] Registering route: /api
+[2025-08-04T16:36:53.215Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:36:53.218Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:36:53.293Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:36:53.293Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:36:53.293Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:36:53.293Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:36:53.293Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:36:53.293Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:36:53.293Z] [LOG]    - /api/auth
+[2025-08-04T16:36:53.293Z] [LOG]    - /api/customers
+[2025-08-04T16:36:53.293Z] [LOG]    - /api/products
+[2025-08-04T16:36:53.293Z] [LOG]    - /api/sales
+[2025-08-04T16:36:53.293Z] [LOG]    - /api/repairs
+[2025-08-04T16:36:53.294Z] [LOG]    - /api/notifications
+[2025-08-04T16:36:53.294Z] [LOG]    - /api/stores
+[2025-08-04T16:36:53.294Z] [LOG]    - /api/reports
+[2025-08-04T16:36:53.294Z] [LOG]    - /api/users
+[2025-08-04T16:36:53.294Z] [LOG]    - /api
+[2025-08-04T16:36:53.294Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:36:53.294Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:36:53.294Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:36:54.128Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:36:54.128Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:36:54.128Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:36:54.129Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:36:54.129Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:36:54.129Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:36:54.129Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:36:54.129Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:36:54.129Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:36:54.129Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:36:54.130Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:36:54.133Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:36:54.133Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:37:46.796Z] [LOG] [2025-08-04T16:37:46.796Z] GET /api/auth/stores
+[2025-08-04T16:37:46.798Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:37:46.799Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:37:46.800Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:37:46.802Z] [LOG] Fetching stores...
+[2025-08-04T16:37:46.818Z] [LOG] [2025-08-04T16:37:46.818Z] GET /api/auth/admin/users
+[2025-08-04T16:37:46.819Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:37:46.819Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:37:46.819Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:37:46.855Z] [LOG] Found stores: [{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"},{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"}]
+[2025-08-04T16:37:47.033Z] [LOG] [2025-08-04T16:37:47.033Z] GET /api/customers/stats
+[2025-08-04T16:37:47.033Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:37:47.033Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:37:47.034Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:37:47.344Z] [LOG] [2025-08-04T16:37:47.344Z] GET /api/customers
+[2025-08-04T16:37:47.344Z] [LOG] Incoming request from origin: http://localhost:4173
+[2025-08-04T16:37:47.344Z] [LOG] ✅ Allowing origin: http://localhost:4173
+[2025-08-04T16:37:47.345Z] [LOG] [CORS] Request from origin: http://localhost:4173
+[2025-08-04T16:37:47.345Z] [LOG] [CORS] Set Access-Control-Allow-Origin: http://localhost:4173
+[2025-08-04T16:42:32.113Z] [LOG] [2025-08-04T16:42:32.113Z] GET /api/auth/me
+[2025-08-04T16:42:32.113Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:42:32.113Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:42:32.114Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:42:54.849Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-04T16:43:12.402Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:43:12.409Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:43:12.409Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:43:12.447Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:43:12.447Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:43:12.448Z] [LOG] Registering route: /api/products
+[2025-08-04T16:43:12.448Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:43:12.448Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:43:12.448Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:43:12.448Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:43:12.448Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:43:12.448Z] [LOG] Registering route: /api/users
+[2025-08-04T16:43:12.449Z] [LOG] Registering route: /api
+[2025-08-04T16:43:12.449Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:43:12.455Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:43:12.474Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:43:12.475Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:43:12.475Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:43:12.475Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:43:12.475Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:43:12.475Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/auth
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/customers
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/products
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/sales
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/repairs
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/notifications
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/stores
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/reports
+[2025-08-04T16:43:12.475Z] [LOG]    - /api/users
+[2025-08-04T16:43:12.475Z] [LOG]    - /api
+[2025-08-04T16:43:12.475Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:43:12.475Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:43:12.475Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:43:13.146Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:43:13.147Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:43:13.147Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:43:13.148Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:43:13.148Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-04T16:43:13.148Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:43:13.148Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:43:13.148Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-04T16:43:13.148Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:43:13.148Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:43:13.148Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:43:13.154Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-04T16:43:13.154Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:44:24.073Z] [LOG] [2025-08-04T16:44:24.073Z] GET /api/auth/admin/users
+[2025-08-04T16:44:24.076Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:44:24.076Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:44:24.077Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:44:24.107Z] [LOG] [2025-08-04T16:44:24.107Z] GET /api/auth/stores
+[2025-08-04T16:44:24.107Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:44:24.107Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:44:24.108Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:44:24.109Z] [LOG] Fetching stores...
+[2025-08-04T16:44:24.140Z] [LOG] Found stores: [{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"},{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"}]
+[2025-08-04T16:46:11.691Z] [LOG] [2025-08-04T16:46:11.691Z] GET /api/auth/me
+[2025-08-04T16:46:11.691Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:46:11.691Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:46:11.691Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:46:12.500Z] [LOG] [2025-08-04T16:46:12.500Z] GET /api/auth/admin/users
+[2025-08-04T16:46:12.500Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:46:12.500Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:46:12.501Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:46:12.506Z] [LOG] [2025-08-04T16:46:12.505Z] GET /api/auth/stores
+[2025-08-04T16:46:12.506Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:46:12.506Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:46:12.506Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:46:12.506Z] [LOG] Fetching stores...
+[2025-08-04T16:46:12.573Z] [LOG] Found stores: [{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"},{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"}]
+[2025-08-04T16:47:17.309Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:47:17.315Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:47:17.316Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:47:17.343Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:47:17.357Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:47:17.357Z] [LOG] Registering route: /api/products
+[2025-08-04T16:47:17.360Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:47:17.360Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:47:17.360Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:47:17.361Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:47:17.361Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:47:17.361Z] [LOG] Registering route: /api/users
+[2025-08-04T16:47:17.361Z] [LOG] Registering route: /api
+[2025-08-04T16:47:17.362Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:47:17.368Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:47:17.386Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:47:17.386Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:47:17.386Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:47:17.386Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:47:17.386Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:47:17.386Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:47:17.387Z] [LOG]    - /api/auth
+[2025-08-04T16:47:17.387Z] [LOG]    - /api/customers
+[2025-08-04T16:47:17.387Z] [LOG]    - /api/products
+[2025-08-04T16:47:17.387Z] [LOG]    - /api/sales
+[2025-08-04T16:47:17.387Z] [LOG]    - /api/repairs
+[2025-08-04T16:47:17.387Z] [LOG]    - /api/notifications
+[2025-08-04T16:47:17.387Z] [LOG]    - /api/stores
+[2025-08-04T16:47:17.389Z] [LOG]    - /api/reports
+[2025-08-04T16:47:17.390Z] [LOG]    - /api/users
+[2025-08-04T16:47:17.391Z] [LOG]    - /api
+[2025-08-04T16:47:17.391Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:47:17.391Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:47:17.392Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:47:18.099Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:47:18.099Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:47:18.100Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:47:18.100Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:47:18.100Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-04T16:47:18.100Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:47:18.100Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:47:18.100Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-04T16:47:18.100Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:47:18.100Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:47:18.101Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:47:18.104Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-04T16:47:18.105Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:50:50.713Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:50:50.716Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:50:50.716Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:50:50.735Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:50:50.735Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:50:50.735Z] [LOG] Registering route: /api/products
+[2025-08-04T16:50:50.735Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:50:50.735Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:50:50.735Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:50:50.736Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:50:50.736Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:50:50.736Z] [LOG] Registering route: /api/users
+[2025-08-04T16:50:50.736Z] [LOG] Registering route: /api
+[2025-08-04T16:50:50.796Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:50:50.801Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:50:50.832Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:50:50.833Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:50:50.833Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:50:50.833Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:50:50.833Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:50:50.833Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/auth
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/customers
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/products
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/sales
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/repairs
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/notifications
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/stores
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/reports
+[2025-08-04T16:50:50.833Z] [LOG]    - /api/users
+[2025-08-04T16:50:50.833Z] [LOG]    - /api
+[2025-08-04T16:50:50.834Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:50:50.834Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:50:50.834Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:50:51.743Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:50:51.743Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:50:51.744Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:50:51.744Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:50:51.744Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:50:51.744Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:50:51.744Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:50:51.744Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:50:51.745Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:50:51.745Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:50:51.745Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:50:51.748Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:50:51.748Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:51:58.383Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:51:58.387Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:51:58.388Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:51:58.402Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:51:58.403Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:51:58.403Z] [LOG] Registering route: /api/products
+[2025-08-04T16:51:58.403Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:51:58.403Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:51:58.403Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:51:58.403Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:51:58.404Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:51:58.404Z] [LOG] Registering route: /api/users
+[2025-08-04T16:51:58.404Z] [LOG] Registering route: /api
+[2025-08-04T16:51:58.404Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:51:58.422Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:51:58.456Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:51:58.457Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:51:58.457Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:51:58.457Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:51:58.457Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:51:58.457Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:51:58.461Z] [LOG]    - /api/auth
+[2025-08-04T16:51:58.461Z] [LOG]    - /api/customers
+[2025-08-04T16:51:58.462Z] [LOG]    - /api/products
+[2025-08-04T16:51:58.462Z] [LOG]    - /api/sales
+[2025-08-04T16:51:58.462Z] [LOG]    - /api/repairs
+[2025-08-04T16:51:58.462Z] [LOG]    - /api/notifications
+[2025-08-04T16:51:58.462Z] [LOG]    - /api/stores
+[2025-08-04T16:51:58.462Z] [LOG]    - /api/reports
+[2025-08-04T16:51:58.462Z] [LOG]    - /api/users
+[2025-08-04T16:51:58.462Z] [LOG]    - /api
+[2025-08-04T16:51:58.462Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:51:58.462Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:51:58.462Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:51:59.328Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:51:59.329Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:51:59.329Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:51:59.330Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:51:59.330Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-04T16:51:59.330Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:51:59.330Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:51:59.330Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-04T16:51:59.330Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:51:59.330Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:51:59.330Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:51:59.334Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-04T16:51:59.334Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:52:05.602Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:52:05.605Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:52:05.606Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:52:05.630Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:52:05.630Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:52:05.630Z] [LOG] Registering route: /api/products
+[2025-08-04T16:52:05.630Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:52:05.631Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:52:05.633Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:52:05.633Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:52:05.633Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:52:05.633Z] [LOG] Registering route: /api/users
+[2025-08-04T16:52:05.633Z] [LOG] Registering route: /api
+[2025-08-04T16:52:05.636Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:52:05.648Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:52:05.776Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:52:05.776Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:52:05.776Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:52:05.776Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:52:05.777Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:52:05.777Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/auth
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/customers
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/products
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/sales
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/repairs
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/notifications
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/stores
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/reports
+[2025-08-04T16:52:05.777Z] [LOG]    - /api/users
+[2025-08-04T16:52:05.777Z] [LOG]    - /api
+[2025-08-04T16:52:05.777Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:52:05.777Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:52:05.777Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:52:06.443Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:52:06.444Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:52:06.445Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:52:06.445Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:52:06.447Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-04T16:52:06.447Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:52:06.447Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:52:06.448Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-04T16:52:06.448Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:52:06.448Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:52:06.448Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:52:06.451Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-04T16:52:06.452Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:52:20.807Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-04T16:52:20.812Z] [LOG] MongoDB Connected to: undefined
+[2025-08-04T16:52:20.813Z] [LOG] MongoDB connection state: 2
+[2025-08-04T16:52:20.841Z] [LOG] Registering route: /api/auth
+[2025-08-04T16:52:20.842Z] [LOG] Registering route: /api/customers
+[2025-08-04T16:52:20.842Z] [LOG] Registering route: /api/products
+[2025-08-04T16:52:20.842Z] [LOG] Registering route: /api/sales
+[2025-08-04T16:52:20.842Z] [LOG] Registering route: /api/repairs
+[2025-08-04T16:52:20.842Z] [LOG] Registering route: /api/notifications
+[2025-08-04T16:52:20.842Z] [LOG] Registering route: /api/stores
+[2025-08-04T16:52:20.842Z] [LOG] Registering route: /api/reports
+[2025-08-04T16:52:20.843Z] [LOG] Registering route: /api/users
+[2025-08-04T16:52:20.843Z] [LOG] Registering route: /api
+[2025-08-04T16:52:20.843Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-04T16:52:20.847Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-04T16:52:20.912Z] [LOG] 
+🚀 Server running at:
+[2025-08-04T16:52:20.912Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-04T16:52:20.912Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-04T16:52:20.912Z] [LOG] 
+🌐 Environment: development
+[2025-08-04T16:52:20.912Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-04T16:52:20.912Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-04T16:52:20.912Z] [LOG]    - /api/auth
+[2025-08-04T16:52:20.912Z] [LOG]    - /api/customers
+[2025-08-04T16:52:20.912Z] [LOG]    - /api/products
+[2025-08-04T16:52:20.912Z] [LOG]    - /api/sales
+[2025-08-04T16:52:20.912Z] [LOG]    - /api/repairs
+[2025-08-04T16:52:20.912Z] [LOG]    - /api/notifications
+[2025-08-04T16:52:20.912Z] [LOG]    - /api/stores
+[2025-08-04T16:52:20.913Z] [LOG]    - /api/reports
+[2025-08-04T16:52:20.913Z] [LOG]    - /api/users
+[2025-08-04T16:52:20.913Z] [LOG]    - /api
+[2025-08-04T16:52:20.913Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-04T16:52:20.913Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-04T16:52:20.913Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-04T16:52:21.738Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:52:21.738Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:52:21.738Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:52:21.739Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-04T16:52:21.739Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:52:21.739Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:52:21.739Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:52:21.739Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:52:21.739Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-04T16:52:21.739Z] [LOG] 🏷️  Connection State: 1
+[2025-08-04T16:52:21.740Z] [LOG] ✅ MongoDB Connected
+[2025-08-04T16:52:21.744Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-04T16:52:21.744Z] [LOG] MongoDB connection state: 1
+[2025-08-04T16:52:24.341Z] [LOG] [2025-08-04T16:52:24.341Z] GET /api/auth/admin/users
+[2025-08-04T16:52:24.343Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:52:24.343Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:52:24.345Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:52:24.442Z] [LOG] [2025-08-04T16:52:24.442Z] GET /api/auth/stores
+[2025-08-04T16:52:24.442Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:52:24.442Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:52:24.442Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:52:24.444Z] [LOG] Fetching stores...
+[2025-08-04T16:52:24.545Z] [LOG] Found stores: [{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"},{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"}]
+[2025-08-04T16:52:30.610Z] [LOG] [2025-08-04T16:52:30.610Z] GET /api/auth/me
+[2025-08-04T16:52:30.612Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:52:30.612Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:52:30.612Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:52:39.973Z] [LOG] [2025-08-04T16:52:39.973Z] GET /api/auth/me
+[2025-08-04T16:52:40.016Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:52:40.016Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:52:40.016Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:53:05.449Z] [LOG] [2025-08-04T16:53:05.449Z] GET /api/auth/admin/users
+[2025-08-04T16:53:05.450Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:53:05.450Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:53:05.450Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:53:05.455Z] [LOG] [2025-08-04T16:53:05.455Z] GET /api/auth/stores
+[2025-08-04T16:53:05.456Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:53:05.456Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:53:05.456Z] [LOG] [CORS] Request from origin: undefined
+[2025-08-04T16:53:05.456Z] [LOG] Fetching stores...
+[2025-08-04T16:53:05.476Z] [LOG] Found stores: [{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"},{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"}]
+[2025-08-04T16:53:47.510Z] [LOG] [2025-08-04T16:53:47.510Z] POST /api/auth/register
+[2025-08-04T16:53:47.510Z] [LOG] Incoming request from origin: http://localhost:4173
+[2025-08-04T16:53:47.510Z] [LOG] ✅ Allowing origin: http://localhost:4173
+[2025-08-04T16:53:47.510Z] [LOG] [CORS] Request from origin: http://localhost:4173
+[2025-08-04T16:53:47.511Z] [LOG] [CORS] Set Access-Control-Allow-Origin: http://localhost:4173
+[2025-08-04T16:53:47.948Z] [LOG] [2025-08-04T16:53:47.948Z] GET /api/auth/admin/users
+[2025-08-04T16:53:47.948Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-04T16:53:47.948Z] [LOG] No origin provided, allowing request
+[2025-08-04T16:53:47.948Z] [LOG] [CORS] Request from origin: undefined

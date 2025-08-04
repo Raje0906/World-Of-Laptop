@@ -18,8 +18,9 @@ import {
   addRepair,
   sendWhatsAppNotification,
 } from "@/lib/dataUtils";
-import { stores } from "@/lib/mockData";
 import { CustomerSearch } from "@/components/customers/CustomerSearch";
+import { StoreSelector } from "@/components/StoreSelector";
+import { useStore } from "@/contexts/StoreContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { emailService } from '@/services/emailService';
 
@@ -71,7 +72,7 @@ interface RepairFormData {
   issue: string;
   diagnosis: string;
   estimatedCost: number;
-  priority: "low" | "medium" | "high" | "urgent";
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   storeId: string;
   technicianId: string;
   estimatedDays: number;
@@ -86,30 +87,9 @@ export function NewRepair() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { currentStore } = useStore();
   const [engineers, setEngineers] = useState<any[]>([]);
 
-  // Get user's store information
-  const getUserStore = () => {
-    if (!user) return null;
-    
-    // If user has a populated store object
-    if (user.store && user.store._id) {
-      return {
-        id: user.store._id,
-        name: user.store.name,
-        address: user.store.address
-      };
-    }
-    
-    // If user has a store_id string, find the store
-    if (user.store_id) {
-      return stores.find(store => store.id === user.store_id) || null;
-    }
-    
-    return null;
-  };
-
-  const userStore = getUserStore();
   const isAdmin = user?.role === 'admin';
 
   const [formData, setFormData] = useState<RepairFormData>({
@@ -121,7 +101,7 @@ export function NewRepair() {
     diagnosis: "",
     estimatedCost: 0,
     priority: "medium",
-    storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
+    storeId: "",
     technicianId: "",
     estimatedDays: 3,
     whatsappNumber: "",
@@ -131,13 +111,14 @@ export function NewRepair() {
 
   // Update store when user changes
   useEffect(() => {
-    if (user && userStore) {
+    if (user) {
+      const storeId = isAdmin ? currentStore?._id : user.store_id;
       setFormData(prev => ({
         ...prev,
-        storeId: isAdmin ? prev.storeId : (userStore.id || "")
+        storeId: storeId || ""
       }));
     }
-  }, [user, userStore, isAdmin]);
+  }, [user, currentStore, isAdmin]);
 
   useEffect(() => {
     // Fetch engineer users from backend
@@ -155,56 +136,54 @@ export function NewRepair() {
 
   // Handle form input changes
   const handleInputChange = (field: keyof RepairFormData, value: string | number | boolean) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [field]: value,
+      [field]: value
     }));
   };
 
-  // Calculate estimated completion date based on estimated days
-  const calculateEstimatedCompletion = (): Date => {
+  const calculateEstimatedCompletion = () => {
     const today = new Date();
     const completionDate = new Date(today);
-    completionDate.setDate(today.getDate() + (formData.estimatedDays || 0));
+    completionDate.setDate(today.getDate() + formData.estimatedDays);
     return completionDate;
   };
 
-  // Strict validation: check if all required fields are filled
-  const isFormValid = useMemo(() => {
-    return (
-      !!selectedCustomer &&
-      !!formData.deviceBrand.trim() &&
-      !!formData.deviceModel.trim() &&
-      !!formData.issue.trim() &&
-      !!formData.technicianId
-    );
-  }, [selectedCustomer, formData.deviceBrand, formData.deviceModel, formData.issue, formData.technicianId]);
-
   const submitRepair = async () => {
     // Validate customer selection
-    if (!selectedCustomer || !(selectedCustomer._id || selectedCustomer.id)) {
+    if (!selectedCustomer) {
       toast({
         title: "Customer Required",
-        description: "Please select a valid customer from the database.",
+        description: "Please select a customer for this repair",
         variant: "destructive",
       });
       return;
     }
 
-    // Validate required form fields (must not be empty or whitespace)
-    const requiredFields = [
-      { field: formData.deviceBrand, label: "Device Brand" },
-      { field: formData.deviceModel, label: "Device Model" },
-      { field: formData.issue, label: "Issue Description" },
-      { field: formData.technicianId, label: "Assigned Technician" },
-    ];
-    const missingFields = requiredFields
-      .filter(({ field }) => !field || !field.toString().trim())
-      .map(({ label }) => label);
-    if (missingFields.length > 0) {
+    // Validate store selection for admin users
+    if (isAdmin && !currentStore) {
       toast({
-        title: "Required Fields Missing",
-        description: `Please fill in: ${missingFields.join(', ')}`,
+        title: "Store Selection Required",
+        description: "Please select a store to create the repair ticket",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.deviceBrand.trim() || !formData.deviceModel.trim()) {
+      toast({
+        title: "Device Information Required",
+        description: "Please provide device brand and model",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.issue.trim()) {
+      toast({
+        title: "Issue Description Required",
+        description: "Please describe the issue with the device",
         variant: "destructive",
       });
       return;
@@ -215,9 +194,8 @@ export function NewRepair() {
     try {
       const estimatedCompletion = calculateEstimatedCompletion();
       
-      // Get the correct store based on form data
-      const selectedStore = stores.find(store => store.id === formData.storeId) || userStore;
-      const store = selectedStore || stores[0]; // Fallback to first store if needed
+      // Determine store ID based on user role
+      const storeId = isAdmin ? currentStore?._id : user?.store_id;
       
       const technician = engineers.find((e) => e._id === formData.technicianId)?.name || '';
       
@@ -242,8 +220,9 @@ export function NewRepair() {
           `Estimated cost: ₹${formData.estimatedCost}`,
           `WhatsApp contact: ${formData.whatsappNumber || 'Not provided'}`,
           `Email contact: ${formData.notificationEmail || 'Not provided'}`,
-          `Store: ${store?.name || 'Not specified'}`
+          `Store: ${currentStore?.name || user?.store?.name || 'Not specified'}`
         ].join('\n'),
+        storeId: storeId,
       };
       console.log('[DEBUG] Submitting repairData:', repairData);
       
@@ -251,6 +230,8 @@ export function NewRepair() {
       const newRepair = await addRepair(repairData);
       
       // Reset form after successful submission
+      setSelectedCustomer(null);
+      setShowCustomerSearch(true);
       setFormData({
         deviceBrand: "",
         deviceModel: "",
@@ -260,7 +241,7 @@ export function NewRepair() {
         diagnosis: "",
         estimatedCost: 0,
         priority: "medium",
-        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
+        storeId: "",
         technicianId: "",
         estimatedDays: 3,
         whatsappNumber: "",
@@ -268,277 +249,25 @@ export function NewRepair() {
         notificationConsent: false,
       });
       
-      setSelectedCustomer(null);
-      setShowCustomerSearch(true);
-      
-      // Create and send notifications
-      try {
-        await sendRepairNotifications(newRepair, formData, selectedCustomer, store);
-      } catch (notificationError) {
-        console.error('Error sending notifications:', notificationError);
-        // Don't fail the whole operation if notifications fail
-      }
-      
       toast({
-        title: "✅ Repair Created Successfully!",
-        description: `Repair Ticket #${newRepair.ticketNumber || 'N/A'} has been created.`,
-        duration: 5000,
+        title: "✅ Success",
+        description: "Repair ticket created successfully!",
       });
-      
-    } catch (error) {
-      console.error("Error creating repair:", error);
-      toast({
-        title: "❌ Error",
-        description: "Failed to create repair. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-  
-  // Helper function to send repair notifications
-  interface RepairNotificationData {
-    _id?: string;
-    id?: string;
-    [key: string]: any;
-  }
-
-  const sendRepairNotifications = async (
-    newRepair: RepairNotificationData, 
-    formData: RepairFormData, 
-    customer: Customer | null, 
-    store: any
-  ) => {
-    try {
-      // If we don't have a valid repair ID, we can't send notifications
-      const repairId = newRepair?.ticketNumber || 'N/A';
-      if (!repairId) {
-        console.warn('Cannot send notifications: Missing repair ID');
-        return;
-      }
-      
-      if (!formData?.notificationConsent || !customer) return;
-      
-      const completionDate = new Date();
-      completionDate.setDate(completionDate.getDate() + (formData.estimatedDays || 3));
-      
-      const formattedCost = formData.estimatedCost?.toLocaleString('en-IN') || '0';
-      const completionDateStr = completionDate.toLocaleDateString();
-      
-      const message = `📱 Your ${formData.deviceBrand || ''} ${formData.deviceModel || ''} repair is confirmed!
-
-🆔 Repair Ticket: ${repairId}
-🔧 Issue: ${formData.issue || 'Not specified'}
-💰 Estimated Cost: ₹${formattedCost}
-📅 Expected Completion: ${completionDateStr}
-
-We'll keep you updated on the progress.
-
-📞 Questions? Call ${store?.phone || 'us'}
-📍 ${store?.name || 'Our Store'}`;
-      
-      // Send WhatsApp notification if number is provided
-      try {
-        if (formData.whatsappNumber) {
-          await sendWhatsAppNotification(formData.whatsappNumber, message);
-        }
-      } catch (whatsappError) {
-        console.error('Failed to send WhatsApp notification:', whatsappError);
-        // Continue with email even if WhatsApp fails
-      }
-      
-      // Send email notification if email is provided
-      try {
-        if (formData.notificationEmail) {
-          const emailSubject = `Repair Confirmation - ${formData.deviceBrand || 'Device'} ${formData.deviceModel || ''}`.trim();
-          const emailBody = `
-Dear ${customer?.name || 'Valued Customer'},
-
-Thank you for choosing our repair service. Here are your repair details:
-
-` +
-            `- Device: ${formData.deviceBrand || 'N/A'} ${formData.deviceModel || ''}\n` +
-            `- Issue: ${formData.issue || 'Not specified'}\n` +
-            `- Repair ID: ${repairId}\n` +
-            `- Estimated Completion: ${completionDate.toLocaleDateString()}\n\n` +
-            `We'll notify you once your repair is complete.\n\nBest regards,\n${store?.name || 'Repair Team'}`;
-
-          const templateParams = {
-            user_name: customer.name,
-            device_name: formData.deviceBrand + ' ' + formData.deviceModel,
-            issue_description: formData.issue,
-            repair_id: repairId,
-            estimated_date: completionDate.toLocaleDateString(),
-            to_email: customer.email,
-          };
-
-          await emailService.sendEmail(templateParams);
-        }
-      } catch (emailError) {
-        console.error('Failed to send email notification:', emailError);
-        // Don't fail the whole operation if email fails
-      }
-    } catch (error) {
-      console.error('Error sending notifications:', error);
-      // Don't fail the whole operation if notifications fail
-    }
-
-    if (!formData.whatsappNumber || !formData.notificationEmail) {
-      toast({
-        title: "Contact Information Required",
-        description: "Please provide WhatsApp number and email for notifications",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!formData.notificationConsent) {
-      toast({
-        title: "Customer Consent Required",
-        description: "Customer must consent to receive repair notifications",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const estimatedCompletion = calculateEstimatedCompletion();
-      const technician = engineers.find(e => e._id === formData.technicianId)?.name || '';
-      const estimatedCost = formData.estimatedCost || 0;
-
-      // Format data for the API
-      const repairData: Omit<Repair, '_id' | 'createdAt' | 'updatedAt'> = {
-        id: '', // Will be set by the server
-        customer: selectedCustomer.id || '',
-        customerId: selectedCustomer.id || '',
-        deviceType: 'Laptop',
-        deviceInfo: {
-          brand: formData.deviceBrand,
-          model: formData.deviceModel,
-          serialNumber: formData.serialNumber || '',
-          imei: formData.imei || ''
-        },
-        issue: formData.issue,
-        issueDescription: formData.issue,
-        diagnosis: formData.diagnosis || "Initial assessment pending",
-        estimatedCost,
-        actualCost: estimatedCost, // Initially same as estimated
-        repairCost: estimatedCost,
-        partsCost: 0,
-        laborCost: 0,
-        priority: (formData.priority === 'urgent' ? 'high' : formData.priority) || 'medium',
-        estimatedCompletion: calculateEstimatedCompletion().toISOString(),
-        storeId: formData.storeId,
-        technicianId: formData.technicianId,
-        technician,
-        notes: JSON.stringify({
-          customerNotes: [
-            `Issue reported: ${formData.issue}`,
-            `Estimated cost: ₹${estimatedCost}`,
-            `WhatsApp contact: ${formData.whatsappNumber}`,
-            `Email contact: ${formData.notificationEmail}`,
-            "Customer consented to notifications",
-          ],
-          internalNotes: []
-        }),
-        contactInfo: {
-          whatsappNumber: formData.whatsappNumber,
-          notificationEmail: formData.notificationEmail,
-          consentGiven: formData.notificationConsent,
-          consentDate: new Date().toISOString()
-        },
-        status: 'received',
-        warrantyPeriod: 30,
-        estimatedDays: formData.estimatedDays
-      };
-
-      const newRepair = await addRepair(repairData);
-
-      // Calculate completion date
-      const estimatedCompletionDate = new Date();
-      estimatedCompletionDate.setDate(estimatedCompletionDate.getDate() + formData.estimatedDays);
-      const completionDate = estimatedCompletionDate.toLocaleDateString();
-      const formattedCost = formData.estimatedCost.toLocaleString('en-IN');
-      
-      // Get store info for notifications
-      const store = stores.find(s => s.id === formData.storeId);
-      
-      // Create confirmation message
-      const confirmationMessage = `Hi ${selectedCustomer?.name || 'Customer'},
-
-📱 Your ${formData.deviceBrand} ${formData.deviceModel} has been received for repair!
-
-🆔 Repair Ticket: ${newRepair.ticketNumber || newRepair._id || 'N/A'}
-🔧 Issue: ${formData.issue}
-💰 Estimated Cost: ₹${formattedCost}
-📅 Expected Completion: ${completionDate}
-
-We'll keep you updated on the progress.
-
-📞 Questions? Call ${store?.phone || 'us'}
-📍 ${store?.name || 'Laptop Store'}`;
-
-      // Reset form after successful submission
-      setFormData({
-        deviceBrand: "",
-        deviceModel: "",
-        serialNumber: "",
-        imei: "",
-        issue: "",
-        diagnosis: "",
-        estimatedCost: 0,
-        priority: "medium",
-        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-        technicianId: "",
-        estimatedDays: 3,
-        whatsappNumber: "",
-        notificationEmail: "",
-        notificationConsent: false,
-      });
-      setSelectedCustomer(null);
-      setShowCustomerSearch(true);
 
       // Send notifications if consent was given
       if (formData.notificationConsent) {
-        try {
-          if (formData.whatsappNumber) {
-            await sendWhatsAppNotification(
-              formData.whatsappNumber,
-              confirmationMessage
-            );
-          }
-          
-          if (formData.notificationEmail) {
-            await emailService.sendEmail(
-              formData.notificationEmail,
-              `Repair Confirmation - ${formData.deviceBrand} ${formData.deviceModel}`,
-              `Dear ${selectedCustomer?.name || 'Valued Customer'}, we've received your device for repair. Repair ID: ${newRepair.ticketNumber || newRepair._id || 'N/A'}. We'll keep you updated!`
-            );
-          }
-          
-          toast({
-            title: '✅ Repair Created & Customer Notified!',
-            description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} | Customer notified via ${formData.whatsappNumber ? 'WhatsApp' : ''}${formData.whatsappNumber && formData.notificationEmail ? ' & ' : ''}${formData.notificationEmail ? 'Email' : ''}`,
-            duration: 5000,
-          });
-        } catch (error) {
-          console.error('Error sending notifications:', error);
-          // Still show success even if notifications fail
-          toast({
-            title: '✅ Repair Created!',
-            description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} created successfully, but there was an issue sending notifications.`,
-            duration: 5000,
-          });
-        }
-      } else {
-        toast({
-          title: '✅ Repair Created!',
-          description: `Repair Ticket: ${newRepair.ticketNumber || 'N/A'} has been created successfully!`,
-          duration: 5000,
+        await sendRepairNotifications({
+          repairId: newRepair._id || newRepair.id,
+          customerName: selectedCustomer.name,
+          deviceInfo: `${formData.deviceBrand} ${formData.deviceModel}`,
+          issue: formData.issue,
+          estimatedCost: formData.estimatedCost,
+          estimatedDays: formData.estimatedDays,
+          whatsappNumber: formData.whatsappNumber,
+          notificationEmail: formData.notificationEmail,
         });
       }
+
     } catch (error) {
       console.error("Error creating repair:", error);
       toast({
@@ -548,26 +277,35 @@ We'll keep you updated on the progress.
       });
     } finally {
       setIsSubmitting(false);
-      
-      // Reset form
-      setSelectedCustomer(null);
-      setShowCustomerSearch(true);
-      setFormData({
-        deviceBrand: "",
-        deviceModel: "",
-        serialNumber: "",
-        imei: "",
-        issue: "",
-        diagnosis: "",
-        estimatedCost: 0,
-        priority: "medium",
-        storeId: isAdmin ? (stores[0]?.id || "") : (userStore?.id || ""),
-        technicianId: "",
-        estimatedDays: 3,
-        whatsappNumber: "",
-        notificationEmail: "",
-        notificationConsent: false,
-      });
+    }
+  };
+
+  const sendRepairNotifications = async (
+    newRepair: RepairNotificationData
+  ) => {
+    try {
+      // Send WhatsApp notification
+      if (newRepair.whatsappNumber) {
+            await sendWhatsAppNotification(
+          newRepair.whatsappNumber,
+          `🔧 Repair Ticket Created\n\nCustomer: ${newRepair.customerName}\nDevice: ${newRepair.deviceInfo}\nIssue: ${newRepair.issue}\nEstimated Cost: ₹${newRepair.estimatedCost}\nEstimated Days: ${newRepair.estimatedDays}\n\nWe'll keep you updated on the repair progress.`
+        );
+      }
+
+      // Send email notification
+      if (newRepair.notificationEmail) {
+        await emailService.sendRepairNotification({
+          to: newRepair.notificationEmail,
+          customerName: newRepair.customerName,
+          deviceInfo: newRepair.deviceInfo,
+          issue: newRepair.issue,
+          estimatedCost: newRepair.estimatedCost,
+          estimatedDays: newRepair.estimatedDays,
+        });
+      }
+    } catch (error) {
+      console.error("Error sending notifications:", error);
+      // Don't show error to user as the repair was created successfully
     }
   };
 
@@ -601,320 +339,139 @@ We'll keep you updated on the progress.
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">New Repair</h1>
-          <p className="text-gray-600 mt-2">Create a new repair ticket</p>
+          <p className="text-gray-600 mt-2">
+            Customer: <span className="font-semibold">{selectedCustomer?.name}</span>
+          </p>
         </div>
-        <Button variant="outline" onClick={() => setShowCustomerSearch(true)}>
-          <User className="w-4 h-4 mr-2" />
+        <Button
+          variant="outline"
+          onClick={() => setShowCustomerSearch(true)}
+        >
           Change Customer
         </Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left Column - Main Form */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Customer Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                Customer Information & Contact Details
-              </CardTitle>
-              <CardDescription>
-                Verify customer contact information for repair notifications
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {selectedCustomer && (
-                <div className="space-y-4">
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="font-semibold text-lg mb-3">
-                      {selectedCustomer.name}
-                    </h3>
-                    <div className="grid gap-3 md:grid-cols-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-blue-600" />
-                        <span className="font-medium">Email:</span>{" "}
-                        {selectedCustomer.email}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-green-600" />
-                        <span className="font-medium">Phone:</span>{" "}
-                        {selectedCustomer.phone}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-gray-600" />
-                        <span className="font-medium">Address:</span>{" "}
-                        {selectedCustomer.address ? (
-                          typeof selectedCustomer.address === 'string' ? (
-                            selectedCustomer.address
-                          ) : (
-                            `${selectedCustomer.address.line1 || ''}${selectedCustomer.address.line2 ? `, ${selectedCustomer.address.line2}` : ''}${selectedCustomer.address.city ? `, ${selectedCustomer.address.city}` : ''}${selectedCustomer.address.state ? `, ${selectedCustomer.address.state}` : ''}${selectedCustomer.address.pincode ? ` - ${selectedCustomer.address.pincode}` : ''}`
-                          )
-                        ) : selectedCustomer.city ? (
-                          selectedCustomer.city
-                        ) : (
-                          'N/A'
-                        )}
-                      </div>
-                    </div>
-                  </div>
+      {/* Store Selection */}
+      <StoreSelector 
+        required={isAdmin} 
+        label="Repair Store"
+        className="max-w-md"
+      />
 
-                  {/* Contact Verification Section */}
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5" />
-                      Notification Contacts
-                    </h4>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <Label htmlFor="whatsapp-number">
-                          WhatsApp Number *
-                        </Label>
-                        <Input
-                          id="whatsapp-number"
-                          value={
-                            formData.whatsappNumber || selectedCustomer.phone
-                          }
-                          onChange={(e) =>
-                            handleInputChange("whatsappNumber", e.target.value)
-                          }
-                          placeholder="+91 XXXXX XXXXX"
-                          className="mt-1"
-                        />
-                        <p className="text-xs text-blue-700 mt-1">
-                          📱 We'll send repair updates via WhatsApp
-                        </p>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="notification-email">
-                          Email for Updates *
-                        </Label>
-                        <Input
-                          id="notification-email"
-                          type="email"
-                          value={
-                            formData.notificationEmail || selectedCustomer.email
-                          }
-                          onChange={(e) =>
-                            handleInputChange(
-                              "notificationEmail",
-                              e.target.value,
-                            )
-                          }
-                          placeholder="customer@email.com"
-                          className="mt-1"
-                        />
-                        <p className="text-xs text-blue-700 mt-1">
-                          📧 Detailed repair updates and completion notices
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 p-3 bg-white rounded border">
-                      <div className="flex items-start gap-2">
-                        <input
-                          type="checkbox"
-                          id="consent-notifications"
-                          checked={formData.notificationConsent || false}
-                          onChange={(e) =>
-                            handleInputChange(
-                              "notificationConsent",
-                              e.target.checked,
-                            )
-                          }
-                          className="mt-1"
-                        />
-                        <label
-                          htmlFor="consent-notifications"
-                          className="text-sm text-gray-700"
-                        >
-                          <strong>
-                            Customer consents to receive repair updates via
-                            WhatsApp and Email
-                          </strong>
-                          <br />
-                          <span className="text-xs text-gray-500">
-                            ✅ Status updates • 🔧 Repair progress • 📱
-                            Completion alerts • 📍 Pickup notifications
-                          </span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
+      {/* Repair Form */}
+      <div className="grid gap-6 lg:grid-cols-2">
           {/* Device Information */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Laptop className="w-5 h-5" />
+              <Laptop className="h-5 w-5" />
                 Device Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="deviceBrand">Device Brand *</Label>
+                <Label htmlFor="deviceBrand">Brand *</Label>
                   <Input
                     id="deviceBrand"
                     value={formData.deviceBrand}
-                    onChange={(e) =>
-                      handleInputChange("deviceBrand", e.target.value)
-                    }
-                    placeholder="e.g. Dell, HP, Apple"
-                    required
+                  onChange={(e) => handleInputChange("deviceBrand", e.target.value)}
+                  placeholder="e.g., Dell, HP, Lenovo"
                   />
                 </div>
-
                 <div>
-                  <Label htmlFor="deviceModel">Device Model *</Label>
+                <Label htmlFor="deviceModel">Model *</Label>
                   <Input
                     id="deviceModel"
                     value={formData.deviceModel}
-                    onChange={(e) =>
-                      handleInputChange("deviceModel", e.target.value)
-                    }
-                    placeholder="e.g. XPS 13, MacBook Pro"
-                    required
+                  onChange={(e) => handleInputChange("deviceModel", e.target.value)}
+                  placeholder="e.g., Inspiron 15, ThinkPad X1"
                   />
                 </div>
-
+            </div>
+            <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="serialNumber">Serial Number</Label>
                   <Input
                     id="serialNumber"
                     value={formData.serialNumber}
-                    onChange={(e) =>
-                      handleInputChange("serialNumber", e.target.value)
-                    }
-                    placeholder="Device serial number"
+                  onChange={(e) => handleInputChange("serialNumber", e.target.value)}
+                  placeholder="Optional"
                   />
                 </div>
-
                 <div>
-                  <Label htmlFor="imei">IMEI (for mobile devices)</Label>
+                <Label htmlFor="imei">IMEI</Label>
                   <Input
                     id="imei"
                     value={formData.imei}
                     onChange={(e) => handleInputChange("imei", e.target.value)}
-                    placeholder="IMEI number"
+                  placeholder="Optional"
                   />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Issue Description */}
+        {/* Issue Details */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ClipboardList className="w-5 h-5" />
-                Issue Description
+              <AlertTriangle className="h-5 w-5" />
+              Issue Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="issue">Issue Reported by Customer *</Label>
+              <Label htmlFor="issue">Issue Description *</Label>
                 <Textarea
                   id="issue"
                   value={formData.issue}
                   onChange={(e) => handleInputChange("issue", e.target.value)}
-                  placeholder="Describe the issue..."
+                placeholder="Describe the problem with the device..."
                   rows={3}
-                  required
                 />
               </div>
-
               <div>
                 <Label htmlFor="diagnosis">Initial Diagnosis</Label>
                 <Textarea
                   id="diagnosis"
                   value={formData.diagnosis}
-                  onChange={(e) =>
-                    handleInputChange("diagnosis", e.target.value)
-                  }
-                  placeholder="Initial assessment of the issue (can be updated later)..."
-                  rows={3}
+                onChange={(e) => handleInputChange("diagnosis", e.target.value)}
+                placeholder="Initial assessment of the issue..."
+                rows={2}
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Assignment & Priority */}
+        {/* Repair Details */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5" />
-                Assignment & Priority
+              <Calculator className="h-5 w-5" />
+              Repair Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Store Location</Label>
-                  {isAdmin ? (
-                    <Select
-                      value={formData.storeId}
-                      onValueChange={(value) => handleInputChange("storeId", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {stores.map((store) => (
-                          <SelectItem key={store.id} value={store.id}>
-                            {store.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="flex items-center h-10 px-3 py-2 text-sm border rounded-md bg-gray-50">
-                      {userStore?.name || "Store not assigned"}
-                    </div>
-                  )}
-                  {!isAdmin && userStore && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Your assigned store: {userStore.name}
-                    </p>
-                  )}
+                <Label htmlFor="estimatedCost">Estimated Cost (₹)</Label>
+                <Input
+                  id="estimatedCost"
+                  type="number"
+                  value={formData.estimatedCost}
+                  onChange={(e) => handleInputChange("estimatedCost", parseFloat(e.target.value) || 0)}
+                  placeholder="0"
+                />
                 </div>
-
                 <div>
-                  <Label htmlFor="technician">Assigned Technician</Label>
-                  <Select
-                    id="technician"
-                    value={formData.technicianId}
-                    onValueChange={(value) => handleInputChange("technicianId", value)}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select technician" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {engineers.map((eng) => (
-                        <SelectItem key={eng._id || eng.id} value={eng._id || eng.id}>
-                          {eng.name} ({eng.email})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label>Priority Level</Label>
+                <Label htmlFor="priority">Priority</Label>
                   <Select
                     value={formData.priority}
-                    onValueChange={(value: any) =>
-                      handleInputChange("priority", value)
-                    }
+                  onValueChange={(value: any) => handleInputChange("priority", value)}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -928,132 +485,114 @@ We'll keep you updated on the progress.
                   </Select>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column - Cost & Timeline */}
-        <div className="space-y-6">
-          {/* Cost Estimation */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calculator className="w-5 h-5" />
-                Cost Estimation
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="estimatedCost">Estimated Cost (₹)</Label>
-                <Input
-                  id="estimatedCost"
-                  type="number"
-                  value={formData.estimatedCost}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "estimatedCost",
-                      parseFloat(e.target.value) || 0,
-                    )
-                  }
-                  placeholder="0"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Initial estimate - can be updated during diagnosis
-                </p>
-              </div>
-
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2">
-                  Common Repair Costs
-                </h4>
-                <div className="text-xs text-blue-700 space-y-1">
-                  <div>Screen replacement: ₹3,000 - ₹15,000</div>
-                  <div>Battery replacement: ₹2,000 - ₹8,000</div>
-                  <div>Keyboard repair: ₹1,500 - ₹5,000</div>
-                  <div>Motherboard repair: ₹5,000 - ₹25,000</div>
-                  <div>Data recovery: ₹2,000 - ₹10,000</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Timeline
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="estimatedDays">
-                  Estimated Completion (Days)
-                </Label>
+                <Label htmlFor="estimatedDays">Estimated Days</Label>
                 <Input
                   id="estimatedDays"
                   type="number"
                   min="1"
-                  max="30"
                   value={formData.estimatedDays}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "estimatedDays",
-                      parseInt(e.target.value) || 3,
-                    )
-                  }
+                  onChange={(e) => handleInputChange("estimatedDays", parseInt(e.target.value) || 1)}
                 />
               </div>
-
-              <div className="space-y-2">
-                <div className="text-sm">
-                  <strong>Estimated Completion:</strong>
-                  <br />
-                  {new Date(calculateEstimatedCompletion()).toLocaleDateString(
-                    "en-IN",
-                    {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    },
-                  )}
-                </div>
+              <div>
+                <Label htmlFor="technicianId">Assign Technician</Label>
+                <Select
+                  value={formData.technicianId}
+                  onValueChange={(value) => handleInputChange("technicianId", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select technician" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {engineers.map((engineer) => (
+                      <SelectItem key={engineer._id} value={engineer._id}>
+                        {engineer.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-
-              <div className="p-3 bg-yellow-50 rounded-lg">
-                <h4 className="font-medium text-yellow-900 mb-2">
-                  Typical Repair Times
-                </h4>
-                <div className="text-xs text-yellow-700 space-y-1">
-                  <div>Software issues: 1-2 days</div>
-                  <div>Hardware replacement: 2-5 days</div>
-                  <div>Complex repairs: 5-10 days</div>
-                  <div>Part ordering required: 7-14 days</div>
-                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Submit */}
+        {/* Contact Information */}
           <Card>
-            <CardContent className="pt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              Contact Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+              <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+                <Input
+                id="whatsappNumber"
+                value={formData.whatsappNumber}
+                onChange={(e) => handleInputChange("whatsappNumber", e.target.value)}
+                placeholder="+91 98765 43210"
+                />
+              </div>
+            <div>
+              <Label htmlFor="notificationEmail">Notification Email</Label>
+              <Input
+                id="notificationEmail"
+                type="email"
+                value={formData.notificationEmail}
+                onChange={(e) => handleInputChange("notificationEmail", e.target.value)}
+                placeholder="customer@example.com"
+              />
+                </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="notificationConsent"
+                checked={formData.notificationConsent}
+                onChange={(e) => handleInputChange("notificationConsent", e.target.checked)}
+                className="rounded"
+              />
+              <Label htmlFor="notificationConsent">
+                Send notifications about repair progress
+              </Label>
+              </div>
+            </CardContent>
+          </Card>
+      </div>
+
+      {/* Submit Button */}
+      <div className="flex justify-end">
               <Button
                 onClick={submitRepair}
                 disabled={isSubmitting}
-                className="w-full"
-                size="lg"
-              >
-                {isSubmitting ? "Creating Repair..." : "Create Repair Ticket"}
+          className="px-8"
+        >
+          {isSubmitting ? (
+            <>
+              <Clock className="mr-2 h-4 w-4 animate-spin" />
+              Creating Repair...
+            </>
+          ) : (
+            <>
+              <ClipboardList className="mr-2 h-4 w-4" />
+              Create Repair Ticket
+            </>
+          )}
               </Button>
-
-              <p className="text-xs text-gray-500 text-center mt-2">
-                Customer will be notified once repair is accepted
-              </p>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );
+}
+
+interface RepairNotificationData {
+  repairId: string;
+  customerName: string;
+  deviceInfo: string;
+  issue: string;
+  estimatedCost: number;
+  estimatedDays: number;
+  whatsappNumber: string;
+  notificationEmail: string;
 }

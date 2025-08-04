@@ -100,7 +100,9 @@ export function Header() {
             )}
             <Badge
               variant={isOnline ? "default" : "destructive"}
-              className="text-xs"
+              className={
+                "text-xs " + (isOnline ? "bg-green-500 text-white" : "")
+              }
             >
               {isOnline ? "Online" : "Offline"}
             </Badge>

@@ -79,8 +79,54 @@ router.get("/debug", async (req, res) => {
   }
 });
 
+// @route   POST /api/auth/check-role
+// @desc    Check user role based on identifier
+// @access  Public
+router.post(
+  "/check-role",
+  [
+    body("identifier")
+      .notEmpty()
+      .withMessage("Email or phone number is required"),
+  ],
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { identifier } = req.body;
+
+      console.log('Checking role for identifier:', identifier);
+
+      // Find user by email or phone
+      const user = await User.findByEmailOrPhone(identifier);
+      
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      // Return user role without sensitive information
+      res.status(200).json({
+        success: true,
+        message: "Role check successful",
+        data: {
+          role: user.role,
+          isAdmin: user.role === 'admin'
+        },
+      });
+    } catch (error) {
+      console.error("Role check error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  }
+);
+
 // @route   POST /api/auth/login
-// @desc    Login user
+// @desc    Login user with role-based store selection
 // @access  Public
 router.post(
   "/login",
@@ -92,7 +138,7 @@ router.post(
     body("store_id")
       .optional()
       .notEmpty()
-      .withMessage("Store selection is required for non-admin users"),
+      .withMessage("Store selection is required for staff users"),
   ],
   handleValidationErrors,
   async (req, res) => {
@@ -144,36 +190,46 @@ router.post(
         });
       }
 
-      // For all users, verify the selected store exists and is active
-      if (!store_id) {
-        return res.status(400).json({
-          success: false,
-          message: "Store selection is required",
-        });
-      }
+      // Handle store selection based on user role
+      if (user.role === 'admin') {
+        // Admin users can login without store selection
+        // They will select store when performing actions
+        console.log('Admin login - no store selection required');
+        // Clear any existing store assignment for admin users
+        user.store_id = null;
+      } else {
+        // Staff users (store manager, sales, engineer) must provide store_id
+        if (!store_id) {
+          return res.status(400).json({
+            success: false,
+            message: "Store selection is required for staff users",
+          });
+        }
 
-      // Verify store exists and is active
-      const store = await Store.findById(store_id);
-      if (!store || store.status !== 'active') {
-        console.log('Store status check failed:', { 
-          storeExists: !!store, 
-          storeStatus: store?.status,
-          storeId: store_id 
-        });
-        return res.status(400).json({
-          success: false,
-          message: "The selected store is not available",
-        });
+        // Verify store exists and is active
+        const store = await Store.findById(store_id);
+        if (!store || store.status !== 'active') {
+          console.log('Store status check failed:', { 
+            storeExists: !!store, 
+            storeStatus: store?.status,
+            storeId: store_id 
+          });
+          return res.status(400).json({
+            success: false,
+            message: "The selected store is not available",
+          });
+        }
+        
+        // Lock the store assignment for staff users - they cannot change it without logging out
+        user.store_id = store_id;
+        console.log('Staff user store locked:', store_id);
       }
-      
-      // Update user's store assignment to the selected store
-      user.store_id = store_id;
 
       // Update last login timestamp
       user.lastLogin = new Date();
       await user.save();
 
-      // Generate JWT token
+      // Generate JWT token with role and store information
       const token = generateToken(user);
 
       // Prepare user data for response
@@ -186,6 +242,8 @@ router.post(
         isActive: user.isActive,
         lastLogin: user.lastLogin,
         store_id: user.store_id,
+        isAdmin: user.role === 'admin',
+        isStaff: user.role !== 'admin',
       };
 
       // If store_id exists, populate store details
@@ -204,7 +262,8 @@ router.post(
       console.log('Login successful:', { 
         userId: user._id, 
         role: user.role,
-        store: user.store_id || 'N/A'
+        store: user.store_id || 'N/A',
+        isAdmin: user.role === 'admin'
       });
 
       res.status(200).json({
@@ -248,11 +307,10 @@ router.post(
           details: error.message
         });
       }
-      
+
       res.status(500).json({
         success: false,
-        message: "Server error during login",
-        details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+        message: "Internal server error",
       });
     }
   }
