@@ -2,7 +2,6 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
-
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   
@@ -66,9 +65,15 @@ export default defineConfig(({ mode }) => {
             vendor: ['react', 'react-dom'],
             charts: ['recharts'],
             ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select']
-          }
+          },
+          // Ensure consistent file naming
+          entryFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash].[ext]'
         }
       },
+      // Ensure proper chunking
+      chunkSizeWarningLimit: 1000,
     },
     define: {
       // Define environment variables for the client
