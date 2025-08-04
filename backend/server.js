@@ -107,7 +107,19 @@ const corsOptions = {
     // Log the incoming origin for debugging
     console.log('Incoming request from origin:', origin || 'No origin (non-browser request)');
     
-    // Define allowed origins
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      console.log('No origin provided, allowing request');
+      return callback(null, true);
+    }
+    
+    // Temporarily allow all vercel.app and onrender.com domains for debugging
+    if (origin.includes('vercel.app') || origin.includes('onrender.com') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      console.log(`✅ Allowing origin: ${origin}`);
+      return callback(null, true);
+    }
+    
+    // Define allowed origins for stricter control
     const allowedOrigins = [
       // Development origins
       'http://localhost:3000',
@@ -132,27 +144,28 @@ const corsOptions = {
       /^https?:\/\/world-of-laptop(-\w+)?\.onrender\.com$/,
     ];
 
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      return callback(null, true);
-    }
-    
     // Check if origin is allowed
     const isAllowed = allowedOrigins.some(allowedOrigin => {
       if (typeof allowedOrigin === 'string') {
-        return origin === allowedOrigin;
+        const match = origin === allowedOrigin;
+        if (match) console.log(`Origin ${origin} matches string ${allowedOrigin}`);
+        return match;
       }
       if (allowedOrigin instanceof RegExp) {
-        return allowedOrigin.test(origin);
+        const match = allowedOrigin.test(origin);
+        if (match) console.log(`Origin ${origin} matches regex ${allowedOrigin}`);
+        return match;
       }
       return false;
     });
 
     if (isAllowed) {
+      console.log(`✅ Origin ${origin} is allowed`);
       return callback(null, true);
     } else {
-      const msg = `The CORS policy for this site does not allow access from ${origin}`;
+      const msg = `❌ The CORS policy for this site does not allow access from ${origin}`;
       console.warn(msg);
+      console.log('Allowed origins:', allowedOrigins);
       return callback(new Error(msg), false);
     }
   },
@@ -170,10 +183,48 @@ app.use(cors(corsOptions));
 // Handle preflight requests explicitly for all routes
 app.options('*', cors(corsOptions));
 
-// Add additional CORS headers for all responses
+// Add additional CORS headers for all responses as a fallback
 app.use((req, res, next) => {
-  // Don't set Access-Control-Allow-Origin here - let the cors middleware handle it
-  // res.header('Access-Control-Allow-Origin', '*'); // REMOVED - conflicts with credentials
+  // Log the request origin for debugging
+  const origin = req.headers.origin;
+  console.log(`[CORS] Request from origin: ${origin}`);
+  
+  // Set CORS headers explicitly as fallback
+  if (origin) {
+    // Temporarily allow all vercel.app and onrender.com domains for debugging
+    if (origin.includes('vercel.app') || origin.includes('onrender.com') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      res.header('Access-Control-Allow-Origin', origin);
+      console.log(`[CORS] Set Access-Control-Allow-Origin: ${origin}`);
+    } else {
+      // Check if origin is in our allowed list
+      const allowedOrigins = [
+        'http://localhost:3000', 'http://localhost:8080', 'http://localhost:5173', 'http://localhost:4173',
+        'http://127.0.0.1:3000', 'http://127.0.0.1:8080', 'http://127.0.0.1:5173', 'http://127.0.0.1:4173',
+        'https://world-of-laptop.vercel.app', 'https://world-of-laptop.onrender.com', 'https://world-of-laptop.netlify.app',
+        /^https?:\/\/world-of-laptop(-\w+)?\.vercel\.app$/, /^https?:\/\/world-of-laptop(-\w+)?\.netlify\.app$/,
+        /^https?:\/\/world-of-laptop(-\w+)?\.onrender\.com$/,
+      ];
+      
+      const isAllowed = allowedOrigins.some(allowedOrigin => {
+        if (typeof allowedOrigin === 'string') return origin === allowedOrigin;
+        if (allowedOrigin instanceof RegExp) return allowedOrigin.test(origin);
+        return false;
+      });
+      
+      if (isAllowed) {
+        res.header('Access-Control-Allow-Origin', origin);
+        console.log(`[CORS] Set Access-Control-Allow-Origin: ${origin}`);
+      } else {
+        console.log(`[CORS] Origin ${origin} not in allowed list`);
+      }
+    }
+  }
+  
+  // Set other CORS headers
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name');
+  res.header('Access-Control-Expose-Headers', 'Content-Length, X-Requested-With, Authorization');
   
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
@@ -210,8 +261,21 @@ const notificationLimiter = rateLimit({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Health check
-app.get("/api/health", (req, res) => {
+// Test endpoint for CORS debugging
+app.get('/api/test-cors', (req, res) => {
+  console.log('Test CORS endpoint hit');
+  console.log('Origin header:', req.headers.origin);
+  console.log('All headers:', req.headers);
+  
+  res.json({
+    message: 'CORS test successful',
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
   res.json({
     status: "OK",
     timestamp: new Date().toISOString(),
