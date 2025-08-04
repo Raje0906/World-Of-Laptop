@@ -1,8 +1,0 @@
-# API routes - proxy to backend
-/api/* https://world-of-laptop.onrender.com/api/:splat 200
-
-# Static assets - serve directly
-/assets/* /assets/:splat 200
-
-# All other routes - serve index.html for SPA routing
-/* /index.html 200 
