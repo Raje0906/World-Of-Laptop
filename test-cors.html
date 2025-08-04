@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+</head>
+<body>
+    <h1>CORS Test for Backend</h1>
+    <button onclick="testHealth()">Test Health Endpoint</button>
+    <button onclick="testCors()">Test CORS Endpoint</button>
+    <button onclick="testStores()">Test Stores Endpoint</button>
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'https://world-of-laptop.onrender.com/api';
+        
+        async function testHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                document.getElementById('results').innerHTML += `
+                    <div style="color: green;">
+                        ✅ Health endpoint: ${JSON.stringify(data)}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML += `
+                    <div style="color: red;">
+                        ❌ Health endpoint error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testCors() {
+            try {
+                const response = await fetch(`${API_BASE}/test-cors`);
+                const data = await response.json();
+                document.getElementById('results').innerHTML += `
+                    <div style="color: green;">
+                        ✅ CORS test: ${JSON.stringify(data)}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML += `
+                    <div style="color: red;">
+                        ❌ CORS test error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testStores() {
+            try {
+                const response = await fetch(`${API_BASE}/stores`);
+                const data = await response.json();
+                document.getElementById('results').innerHTML += `
+                    <div style="color: green;">
+                        ✅ Stores endpoint: ${JSON.stringify(data)}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML += `
+                    <div style="color: red;">
+                        ❌ Stores endpoint error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 
