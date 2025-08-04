@@ -1,6 +1,30 @@
 // Safe API client that gracefully handles backend unavailability
-// Note: This should match the backend server port in server.js (3002)
-const API_BASE_URL = "http://localhost:3002/api";
+// Determine API base URL based on environment
+const getApiBaseUrl = () => {
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    return import.meta.env.VITE_API_URL + '/api';
+  }
+  
+  // Check if we're running on localhost (development or preview)
+  const isLocalhost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1'
+  );
+  
+  if (isLocalhost) {
+    // In localhost, use local backend
+    return 'http://localhost:3002/api';
+  } else {
+    // In production without explicit URL, use the default production backend URL
+    return 'https://world-of-laptop.onrender.com/api';
+  }
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 class SafeApiClient {
   private isBackendAvailable: boolean = false;
@@ -8,6 +32,7 @@ class SafeApiClient {
   private checkInterval: number = 30000; // Check every 30 seconds
 
   constructor() {
+    console.log('SafeApiClient initialized with API_BASE_URL:', API_BASE_URL);
     this.checkBackendAvailability();
   }
 
@@ -25,6 +50,7 @@ class SafeApiClient {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
 
+      console.log('Checking backend availability at:', `${API_BASE_URL}/health`);
       const response = await fetch(`${API_BASE_URL}/health`, {
         signal: controller.signal,
         method: "GET",
@@ -34,13 +60,13 @@ class SafeApiClient {
       this.isBackendAvailable = response.ok;
 
       if (this.isBackendAvailable) {
-        console.log("✅ Backend server is available");
+        console.log("✅ Backend server is available at", API_BASE_URL);
       }
     } catch (error) {
       this.isBackendAvailable = false;
       // Only log once per check interval to avoid spam
       console.warn(
-        "⚠️ Backend server unavailable (this is normal if not running locally)",
+        `⚠️ Backend server unavailable at ${API_BASE_URL} (this is normal if not running locally)`,
       );
     }
   }

@@ -597,13 +597,23 @@ export const searchBySerialNumber = async (serialNumber: string): Promise<Produc
 
 // Report generation
 export const generateMonthlySalesReport = async (year: number, month: number): Promise<Report> => {
-  // Check if we're running on localhost (development or preview)
-  const isLocalhost = typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' || 
-    window.location.hostname === '127.0.0.1'
-  );
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
   
   try {
     const response = await fetch(`${apiUrl}/reports/sales/monthly?year=${year}&month=${month}`);
@@ -619,13 +629,23 @@ export const generateMonthlySalesReport = async (year: number, month: number): P
 };
 
 export const generateMonthlyRepairReport = async (year: number, month: number): Promise<Report> => {
-  // Check if we're running on localhost (development or preview)
-  const isLocalhost = typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' || 
-    window.location.hostname === '127.0.0.1'
-  );
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
   
   try {
     const response = await fetch(`${apiUrl}/reports/monthly?year=${year}&month=${month}`);
@@ -641,13 +661,23 @@ export const generateMonthlyRepairReport = async (year: number, month: number): 
 };
 
 export const generateMonthlyStoreReport = async (year: number, month: number): Promise<Report> => {
-  // Check if we're running on localhost (development or preview)
-  const isLocalhost = typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' || 
-    window.location.hostname === '127.0.0.1'
-  );
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
   
   try {
     const response = await fetch(`${apiUrl}/reports/store/monthly?year=${year}&month=${month}`);
@@ -663,9 +693,26 @@ export const generateMonthlyStoreReport = async (year: number, month: number): P
 };
 
 export const generateQuarterlyReport = async (year: number, quarter: number): Promise<Report> => {
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+  
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
+  
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const response = await fetch(`${baseUrl}/api/reports/quarterly?year=${year}&quarter=${quarter}`, {
+    const response = await fetch(`${apiUrl}/reports/quarterly?year=${year}&quarter=${quarter}`, {
       credentials: 'include'
     });
     
@@ -682,9 +729,26 @@ export const generateQuarterlyReport = async (year: number, quarter: number): Pr
 };
 
 export const generateAnnualReport = async (year: number): Promise<Report> => {
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+  
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
+  
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const response = await fetch(`${baseUrl}/api/reports/annual?year=${year}`, {
+    const response = await fetch(`${apiUrl}/reports/annual?year=${year}`, {
       credentials: 'include'
     });
     
@@ -972,13 +1036,23 @@ export const sendEmailNotification = async (
 };
 
 export const getStores = async (): Promise<any[]> => {
-  // Check if we're running on localhost (development or preview)
-  const isLocalhost = typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' || 
-    window.location.hostname === '127.0.0.1'
-  );
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
   
-  const apiUrl = isLocalhost ? '/api' : (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
+  let apiUrl: string;
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  } else {
+    // Check if we're running on localhost (development or preview)
+    const isLocalhost = typeof window !== 'undefined' && (
+      window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1'
+    );
+    
+    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+  }
   
   try {
     const response = await fetch(`${apiUrl}/stores`);

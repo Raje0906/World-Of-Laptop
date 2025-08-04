@@ -11,18 +11,26 @@ class ApiClient {
     const isLocalhost = window.location.hostname === 'localhost' || 
                        window.location.hostname === '127.0.0.1';
     
-    if (this.isDevelopment || isLocalhost) {
+    // Check if VITE_API_URL is explicitly set (production environment)
+    const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+    
+    if (hasExplicitApiUrl) {
+      // Use the explicitly set API URL (production)
+      this.baseUrl = import.meta.env.VITE_API_URL + '/api';
+    } else if (this.isDevelopment || isLocalhost) {
       // In development or localhost, use proxy to localhost
       this.baseUrl = '/api';
     } else {
-      // In production, use the production backend URL with /api prefix
-      this.baseUrl = (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
+      // In production without explicit URL, use the default production backend URL
+      this.baseUrl = 'https://world-of-laptop.onrender.com/api';
     }
     
     console.log('API Client initialized:', {
       baseUrl: this.baseUrl,
       isDevelopment: this.isDevelopment,
       isLocalhost,
+      hasExplicitApiUrl,
+      VITE_API_URL: import.meta.env.VITE_API_URL,
       hostname: window.location.hostname,
       port: window.location.port,
       env: import.meta.env.MODE

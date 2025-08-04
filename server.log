@@ -8677,3 +8677,122 @@
 [2025-08-04T13:14:13.745Z] [LOG] ✅ MongoDB Connected
 [2025-08-04T13:14:13.753Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
 [2025-08-04T13:14:13.753Z] [LOG] MongoDB connection state: 1
+[2025-08-04T13:25:01.542Z] [LOG] [2025-08-04T13:25:01.542Z] OPTIONS /api/health
+[2025-08-04T13:25:01.545Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:01.567Z] [LOG] [2025-08-04T13:25:01.567Z] GET /api/health
+[2025-08-04T13:25:01.568Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:02.631Z] [LOG] [2025-08-04T13:25:02.631Z] GET /api/health
+[2025-08-04T13:25:02.632Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:26.726Z] [LOG] [2025-08-04T13:25:26.726Z] OPTIONS /api/reports/summary
+[2025-08-04T13:25:26.727Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:26.738Z] [LOG] [2025-08-04T13:25:26.738Z] GET /api/reports/summary
+[2025-08-04T13:25:26.738Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:26.994Z] [LOG] [2025-08-04T13:25:26.994Z] GET /api/health
+[2025-08-04T13:25:26.994Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.214Z] [LOG] [2025-08-04T13:25:30.214Z] OPTIONS /api/sales/stats
+[2025-08-04T13:25:30.215Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.244Z] [LOG] [2025-08-04T13:25:30.244Z] OPTIONS /api/sales?limit=5
+[2025-08-04T13:25:30.245Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.249Z] [LOG] [2025-08-04T13:25:30.249Z] OPTIONS /api/sales/stats?startDate=2025-08-04T00:00:00.000Z&endDate=2025-08-04T23:59:59.999Z
+[2025-08-04T13:25:30.249Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.253Z] [LOG] [2025-08-04T13:25:30.253Z] OPTIONS /api/sales?status=pending&limit=1
+[2025-08-04T13:25:30.253Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.255Z] [LOG] [2025-08-04T13:25:30.255Z] GET /api/sales/stats
+[2025-08-04T13:25:30.256Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.538Z] [LOG] [2025-08-04T13:25:30.538Z] GET /api/sales?limit=5
+[2025-08-04T13:25:30.538Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.556Z] [LOG] [2025-08-04T13:25:30.556Z] GET /api/sales/stats?startDate=2025-08-04T00:00:00.000Z&endDate=2025-08-04T23:59:59.999Z
+[2025-08-04T13:25:30.556Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:30.560Z] [LOG] [2025-08-04T13:25:30.560Z] GET /api/sales?status=pending&limit=1
+[2025-08-04T13:25:30.561Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:32.424Z] [LOG] [2025-08-04T13:25:32.424Z] OPTIONS /api/repairs
+[2025-08-04T13:25:32.424Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:32.432Z] [LOG] [2025-08-04T13:25:32.432Z] GET /api/repairs
+[2025-08-04T13:25:32.432Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:33.169Z] [LOG] [2025-08-04T13:25:33.169Z] OPTIONS /api/users?role=engineer
+[2025-08-04T13:25:33.169Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:33.174Z] [LOG] [2025-08-04T13:25:33.174Z] GET /api/users?role=engineer
+[2025-08-04T13:25:33.175Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:33.946Z] [LOG] [2025-08-04T13:25:33.946Z] OPTIONS /api/repairs?status=received
+[2025-08-04T13:25:33.949Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:33.953Z] [LOG] [2025-08-04T13:25:33.953Z] OPTIONS /api/repairs?status=in_progress&limit=5
+[2025-08-04T13:25:33.954Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:33.961Z] [LOG] [2025-08-04T13:25:33.961Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-04T13:25:33.961Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:34.262Z] [LOG] [2025-08-04T13:25:34.262Z] GET /api/repairs?status=received
+[2025-08-04T13:25:34.263Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:39.912Z] [LOG] [2025-08-04T13:25:39.912Z] OPTIONS /api/customers
+[2025-08-04T13:25:39.913Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:39.916Z] [LOG] [2025-08-04T13:25:39.916Z] GET /api/customers
+[2025-08-04T13:25:39.916Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:43.838Z] [LOG] [2025-08-04T13:25:43.838Z] GET /api/reports/summary
+[2025-08-04T13:25:43.838Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:25:43.912Z] [LOG] [2025-08-04T13:25:43.912Z] GET /api/health
+[2025-08-04T13:25:43.913Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:31.094Z] [LOG] [2025-08-04T13:26:31.094Z] OPTIONS /api/health
+[2025-08-04T13:26:31.094Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:31.098Z] [LOG] [2025-08-04T13:26:31.098Z] GET /api/health
+[2025-08-04T13:26:31.098Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:31.780Z] [LOG] [2025-08-04T13:26:31.780Z] GET /api/reports/summary
+[2025-08-04T13:26:31.780Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:31.890Z] [LOG] [2025-08-04T13:26:31.890Z] GET /api/health
+[2025-08-04T13:26:31.891Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:37.961Z] [LOG] [2025-08-04T13:26:37.961Z] GET /api/health
+[2025-08-04T13:26:37.962Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:42.905Z] [LOG] [2025-08-04T13:26:42.905Z] GET /api/health
+[2025-08-04T13:26:42.905Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:52.735Z] [LOG] [2025-08-04T13:26:52.735Z] OPTIONS /api/health
+[2025-08-04T13:26:52.736Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:52.819Z] [LOG] [2025-08-04T13:26:52.819Z] GET /api/health
+[2025-08-04T13:26:52.821Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:26:54.374Z] [LOG] [2025-08-04T13:26:54.374Z] GET /api/health
+[2025-08-04T13:26:54.374Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:11.650Z] [LOG] [2025-08-04T13:27:11.650Z] GET /api/reports/summary
+[2025-08-04T13:27:11.651Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:12.265Z] [LOG] [2025-08-04T13:27:12.265Z] GET /api/health
+[2025-08-04T13:27:12.265Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:14.029Z] [LOG] [2025-08-04T13:27:14.029Z] GET /api/sales/stats
+[2025-08-04T13:27:14.029Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:14.032Z] [LOG] [2025-08-04T13:27:14.032Z] GET /api/sales?limit=5
+[2025-08-04T13:27:14.032Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:14.044Z] [LOG] [2025-08-04T13:27:14.044Z] GET /api/sales/stats?startDate=2025-08-04T00:00:00.000Z&endDate=2025-08-04T23:59:59.999Z
+[2025-08-04T13:27:14.044Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:14.066Z] [LOG] [2025-08-04T13:27:14.066Z] GET /api/sales?status=pending&limit=1
+[2025-08-04T13:27:14.066Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:15.991Z] [LOG] [2025-08-04T13:27:15.991Z] GET /api/repairs
+[2025-08-04T13:27:15.991Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:16.780Z] [LOG] [2025-08-04T13:27:16.780Z] GET /api/users?role=engineer
+[2025-08-04T13:27:16.781Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:17.230Z] [LOG] [2025-08-04T13:27:17.230Z] GET /api/repairs?status=in_progress&limit=5
+[2025-08-04T13:27:17.230Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:27:17.533Z] [LOG] [2025-08-04T13:27:17.532Z] GET /api/repairs?status=received
+[2025-08-04T13:27:17.533Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:18.464Z] [LOG] [2025-08-04T13:30:18.464Z] OPTIONS /api/health
+[2025-08-04T13:30:18.464Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:18.472Z] [LOG] [2025-08-04T13:30:18.472Z] GET /api/health
+[2025-08-04T13:30:18.472Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:19.799Z] [LOG] [2025-08-04T13:30:19.799Z] GET /api/reports/summary
+[2025-08-04T13:30:19.799Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:20.001Z] [LOG] [2025-08-04T13:30:20.001Z] GET /api/health
+[2025-08-04T13:30:20.001Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:26.006Z] [LOG] [2025-08-04T13:30:26.006Z] GET /api/sales/stats
+[2025-08-04T13:30:26.007Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:26.009Z] [LOG] [2025-08-04T13:30:26.009Z] GET /api/sales?limit=5
+[2025-08-04T13:30:26.010Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:26.030Z] [LOG] [2025-08-04T13:30:26.030Z] GET /api/sales/stats?startDate=2025-08-04T00:00:00.000Z&endDate=2025-08-04T23:59:59.999Z
+[2025-08-04T13:30:26.031Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:26.051Z] [LOG] [2025-08-04T13:30:26.051Z] GET /api/sales?status=pending&limit=1
+[2025-08-04T13:30:26.052Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:28.724Z] [LOG] [2025-08-04T13:30:28.724Z] GET /api/repairs
+[2025-08-04T13:30:28.725Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:30:36.363Z] [LOG] [2025-08-04T13:30:36.363Z] GET /api/customers
+[2025-08-04T13:30:36.363Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:32:40.130Z] [LOG] [2025-08-04T13:32:40.130Z] GET /api/health
+[2025-08-04T13:32:40.130Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:32:40.139Z] [LOG] [2025-08-04T13:32:40.139Z] GET /api/reports/summary
+[2025-08-04T13:32:40.140Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:32:40.205Z] [LOG] [2025-08-04T13:32:40.205Z] GET /api/health
+[2025-08-04T13:32:40.205Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:33:40.260Z] [LOG] [2025-08-04T13:33:40.260Z] GET /api/health
+[2025-08-04T13:33:40.261Z] [LOG] Incoming request from origin: https://world-of-laptop.vercel.app
+[2025-08-04T13:34:00.984Z] [LOG] ❌ MongoDB Disconnected

@@ -1,6 +1,14 @@
 // API client for backend communication
 // Determine API base URL based on environment
 const getApiBaseUrl = () => {
+  // Check if VITE_API_URL is explicitly set (production environment)
+  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+  
+  if (hasExplicitApiUrl) {
+    // Use the explicitly set API URL (production)
+    return import.meta.env.VITE_API_URL + '/api';
+  }
+  
   // Check if we're running on localhost (development or preview)
   const isLocalhost = typeof window !== 'undefined' && (
     window.location.hostname === 'localhost' || 
@@ -11,8 +19,8 @@ const getApiBaseUrl = () => {
     // In localhost, use proxy to local backend
     return '/api';
   } else {
-    // In production, use the production backend URL with /api prefix
-    return (import.meta.env.VITE_API_URL || 'https://world-of-laptop.onrender.com') + '/api';
+    // In production without explicit URL, use the default production backend URL
+    return 'https://world-of-laptop.onrender.com/api';
   }
 };
 
