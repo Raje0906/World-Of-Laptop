@@ -234,5 +234,35 @@ export const emailService = {
    */
   isValidEmail(email: string): boolean {
     return EMAIL_REGEX.test(email);
+  },
+
+  /**
+   * Send repair notification email
+   */
+  async sendRepairNotification(params: {
+    to: string;
+    customerName: string;
+    deviceInfo: string;
+    issue: string;
+    estimatedCost: number;
+    estimatedDays: number;
+  }) {
+    try {
+      const templateParams = {
+        user_name: params.customerName,
+        device_name: params.deviceInfo,
+        issue_description: params.issue,
+        repair_id: `REP-${Date.now()}`, // Generate a temporary ID
+        estimated_date: new Date(Date.now() + params.estimatedDays * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        to_email: params.to,
+        estimated_cost: `₹${params.estimatedCost.toLocaleString()}`,
+        estimated_days: params.estimatedDays.toString()
+      };
+
+      return await this.sendEmail(templateParams);
+    } catch (error) {
+      console.error('Error sending repair notification:', error);
+      throw error;
+    }
   }
 };

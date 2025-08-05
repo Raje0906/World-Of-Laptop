@@ -454,7 +454,7 @@ const parseRepair = (data: any): Repair => ({
   ...data,
   id: data._id || data.id,
   customer: data.customer?._id || data.customer || '',
-  dateReceived: new Date(data.dateReceived || Date.now()),
+  dateReceived: new Date(data.receivedDate || data.dateReceived || Date.now()),
   estimatedCompletion: data.estimatedCompletion ? new Date(data.estimatedCompletion) : undefined,
   createdAt: new Date(data.createdAt || Date.now()),
   updatedAt: new Date(data.updatedAt || Date.now()),
@@ -984,7 +984,7 @@ export const addRepair = async (repairData: any): Promise<Repair> => {
             `Estimated cost: ₹${parseFloat(repairData.repairCost) || 0}`,
             `Created at: ${new Date().toISOString()}`
           ].join('\n'),
-      dateReceived: repairData.dateReceived || new Date().toISOString(),
+              dateReceived: repairData.receivedDate || repairData.dateReceived || new Date().toISOString(),
       estimatedCompletion: repairData.estimatedCompletion || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     };
     
