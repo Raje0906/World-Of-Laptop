@@ -8,11 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check, Send, Download, History } from "lucide-react";
+import { Search, Phone, Mail, Calendar, Clock, CheckCircle, AlertTriangle, Loader2, Wrench, User, Check, Send, Download, History, ArrowLeft } from "lucide-react";
 import { emailService } from '@/services/emailService';
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
 
 interface PriceHistoryEntry {
   repairCost: number;
@@ -75,6 +76,7 @@ interface Repair {
 }
 
 export function TrackRepair() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchBy, setSearchBy] = useState<"ticket" | "phone" | "name">("ticket");
   const [foundRepairs, setFoundRepairs] = useState<Repair[]>([]);
@@ -245,7 +247,7 @@ export function TrackRepair() {
   
   // Function to navigate to repair details
   const navigateToRepairDetails = (ticketNumber: string) => {
-    window.location.href = `/repairs/details/${ticketNumber}`;
+    navigate(`/repairs/details/${ticketNumber}`);
   };
 
   const handleCompleteRepair = async (ticketNumber: string) => {
@@ -744,71 +746,87 @@ export function TrackRepair() {
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
-      {/* Search Card */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Track Your Repair</CardTitle>
-          <CardDescription>
-            Enter your ticket number or phone number to check the status of your repair.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={searchBy === "ticket" ? "default" : "outline"}
-                onClick={() => setSearchBy("ticket")}
-                className="flex-1 sm:flex-none"
-              >
-                <Search className="mr-2 h-4 w-4" /> Ticket
-              </Button>
-              <Button
-                variant={searchBy === "phone" ? "default" : "outline"}
-                onClick={() => setSearchBy("phone")}
-                className="flex-1 sm:flex-none"
-              >
-                <Phone className="mr-2 h-4 w-4" /> Phone
-              </Button>
+      {/* Return Back Button */}
+      <Button
+        variant="ghost"
+        onClick={() => navigate('/repairs')}
+        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-0 py-2 h-auto font-medium focus:ring-2 focus:ring-blue-200 focus:ring-offset-2"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        ← Return to Repairs
+      </Button>
 
-              <Button
-                variant={searchBy === "name" ? "default" : "outline"}
-                onClick={() => setSearchBy("name")}
-                className="flex-1 sm:flex-none"
-              >
-                <User className="mr-2 h-4 w-4" /> Name
-              </Button>
-            </div>
-            <div className="flex gap-2">
-              <Input
-                type={searchBy === "phone" ? "tel" : searchBy === "email" ? "email" : "text"}
-                placeholder={
-                  searchBy === "ticket"
-                    ? "Enter your ticket number"
-                    : searchBy === "phone"
-                    ? "Enter your phone number (with country code)"
-                    : "Enter customer name"
-                }
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && searchRepairs()}
-                className="flex-1"
-              />
-              <Button 
-                onClick={searchRepairs} 
-                disabled={isSearching}
-                className="w-24"
-              >
-                {isSearching ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Search className="h-4 w-4 mr-1" />
-                )}
-                Search
-              </Button>
-            </div>
+      {/* Track Your Repair Section */}
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Track Your Repair</h1>
+          <p className="text-muted-foreground">
+            Enter your ticket number or phone number to check the status of your repair.
+          </p>
+        </div>
+
+        {/* Search Interface */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex gap-2">
+            <Button
+              variant={searchBy === "ticket" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSearchBy("ticket")}
+              className="flex items-center gap-2"
+            >
+              <Search className="h-4 w-4" />
+              Ticket
+            </Button>
+            <Button
+              variant={searchBy === "phone" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSearchBy("phone")}
+              className="flex items-center gap-2"
+            >
+              <Phone className="h-4 w-4" />
+              Phone
+            </Button>
+            <Button
+              variant={searchBy === "name" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSearchBy("name")}
+              className="flex items-center gap-2"
+            >
+              <User className="h-4 w-4" />
+              Name
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+          
+          <div className="flex gap-2 flex-1">
+            <input
+              type="text"
+              placeholder={
+                searchBy === "ticket" 
+                  ? "Enter ticket number..." 
+                  : searchBy === "phone" 
+                  ? "Enter phone number..." 
+                  : "Enter customer name..."
+              }
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && searchRepairs()}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <Button 
+              onClick={searchRepairs}
+              disabled={isLoadingReceived || !searchQuery.trim()}
+              className="flex items-center gap-2"
+            >
+              {isLoadingReceived ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+              Search
+            </Button>
+          </div>
+        </div>
+      </div>
 
       {foundRepairs.length > 0 && (
         <div className="space-y-6">

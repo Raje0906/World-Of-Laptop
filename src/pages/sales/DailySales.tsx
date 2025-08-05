@@ -1,7 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { format, subDays, parseISO, startOfMonth, eachDayOfInterval } from "date-fns";
-import { Calendar as CalendarIcon, Download, Loader2 } from "lucide-react";
-import { DateRange } from "react-day-picker";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { format, parseISO, isValid, isToday, isYesterday, isThisWeek } from "date-fns";
+import { Calendar as CalendarIcon, Download, Loader2, RefreshCw, AlertCircle, Info } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from 'xlsx';
 import { cn } from "@/lib/utils";
@@ -15,21 +14,27 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { saleService } from "@/services/api";
 
-// Define the sale stats response type
-interface SaleStatsResponse {
+// Define the daily sales response type
+interface DailySalesResponse {
   success: boolean;
-  data: Array<{
-    _id: string;
-    count: number;
-    itemsSold: number;
+  data: {
+    date: string;
+    totalSales: number;
     totalAmount: number;
-    avgOrderValue: number;
+    totalItemsSold: number;
+    averageOrderValue: number;
     sales: Array<{
       _id: string;
       saleNumber: string;
-      customerName?: string;
+      customer?: {
+        name: string;
+        email?: string;
+        phone?: string;
+      };
       items: Array<{
         name: string;
         quantity: number;
@@ -39,8 +44,13 @@ interface SaleStatsResponse {
       paymentMethod: string;
       createdAt: string;
     }>;
-  }>;
+  };
   message?: string;
+  meta?: {
+    date: string;
+    queryTime: string;
+    resultCount: number;
+  };
 }
 
 interface SaleItem {
@@ -50,625 +60,602 @@ interface SaleItem {
 }
 
 interface Sale {
-  id: string;
+  _id: string;
   saleNumber: string;
-  customerName: string;
+  customer?: {
+    name: string;
+    email?: string;
+    phone?: string;
+  };
   items: SaleItem[];
   total: number;
   paymentMethod: string;
   createdAt: string;
 }
 
-interface DailySale {
-  date: string;
-  salesCount: number;
-  itemsSold: number;
-  totalAmount: number;
-  averageOrderValue: number;
-  sales: Sale[];
-  transactions?: number; // For backward compatibility
-}
-
 interface SummaryStats {
   totalSales: number;
   totalAmount: number;
-  totalTransactions: number;
   totalItemsSold: number;
-  avgOrderValue: number;
+  averageOrderValue: number;
+}
+
+// Error types for better error handling
+type ErrorType = 'network' | 'validation' | 'server' | 'timeout' | 'unknown';
+
+interface ErrorState {
+  type: ErrorType;
+  message: string;
+  retryable: boolean;
 }
 
 export function DailySales() {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: startOfMonth(new Date()),
-    to: new Date(),
-  });
-
-  const [dailySales, setDailySales] = useState<DailySale[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [dailyData, setDailyData] = useState<DailySalesResponse['data'] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorState | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastFetchTime, setLastFetchTime] = useState<Date | null>(null);
+  
+  // Refs for performance optimization
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Maximum retry attempts
+  const MAX_RETRY_ATTEMPTS = 3;
+  const RETRY_DELAY = 2000; // 2 seconds
 
   // Check if we have sales data
   const hasSalesData = useMemo(() => {
-    return dailySales.length > 0 && dailySales.some(day => day.salesCount > 0);
-  }, [dailySales]);
+    return dailyData && dailyData.totalSales > 0;
+  }, [dailyData]);
+
+  // Get date context for better UX
+  const getDateContext = useCallback((date: Date) => {
+    if (isToday(date)) return { label: 'Today', variant: 'default' as const };
+    if (isYesterday(date)) return { label: 'Yesterday', variant: 'secondary' as const };
+    if (isThisWeek(date)) return { label: 'This Week', variant: 'outline' as const };
+    return { label: format(date, 'MMM d, yyyy'), variant: 'outline' as const };
+  }, []);
   
-  // Format currency function
+  // Format currency function with error handling
   const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
+    try {
+      if (typeof value !== 'number' || isNaN(value)) {
+        return '$0.00';
+      }
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    } catch (error) {
+      console.error('Currency formatting error:', error);
+      return '$0.00';
+    }
   };
 
-  // Fetch sales data from API
-  const fetchSalesData = useCallback(async () => {
-    if (!date?.from || !date?.to) return;
+  // Validate date before fetching
+  const validateDate = useCallback((date: Date): boolean => {
+    if (!isValid(date)) {
+      setError({
+        type: 'validation',
+        message: 'Invalid date selected',
+        retryable: false
+      });
+      return false;
+    }
+
+    const now = new Date();
+    const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
     
+    if (date < oneYearAgo) {
+      setError({
+        type: 'validation',
+        message: 'Date cannot be more than one year in the past',
+        retryable: false
+      });
+      return false;
+    }
+
+    if (date > new Date(now.getTime() + 24 * 60 * 60 * 1000)) {
+      setError({
+        type: 'validation',
+        message: 'Date cannot be in the future',
+        retryable: false
+      });
+      return false;
+    }
+
+    return true;
+  }, []);
+
+  // Fetch daily sales data from API with comprehensive error handling
+  const fetchDailySales = useCallback(async (isRetry = false) => {
+    // Cancel any ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Clear any existing timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+
+    // Validate date before making request
+    if (!validateDate(selectedDate)) {
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
       
-      // Format dates for API
-      const fromDate = format(date.from, 'yyyy-MM-dd');
-      const toDate = format(date.to, 'yyyy-MM-dd');
+      // Create new abort controller for this request
+      abortControllerRef.current = new AbortController();
       
-      console.log('Fetching sales data from', fromDate, 'to', toDate);
+      // Format date for API (YYYY-MM-DD)
+      const dateString = format(selectedDate, 'yyyy-MM-dd');
       
-      // Fetch sales data from the backend API
-      const response = await saleService.getStats({
-        startDate: fromDate,
-        endDate: toDate,
-        groupBy: 'day'
+      console.log(`[DailySales] Fetching data for date: ${dateString}${isRetry ? ' (retry attempt)' : ''}`);
+      
+      // Set timeout for the request
+      fetchTimeoutRef.current = setTimeout(() => {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+      }, 30000); // 30 second timeout
+
+      // Fetch daily sales data from the backend API
+      const response = await saleService.getDailySales({
+        date: dateString
       });
       
-      console.log('API Response:', response);
+      // Clear timeout since request completed
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = null;
+      }
       
-      if (response.success) {
-        // Ensure response.data is an array before mapping
-        const responseData = Array.isArray(response.data) ? response.data : [response.data];
+      console.log('[DailySales] API Response received:', {
+        success: response.success,
+        salesCount: response.data?.totalSales,
+        date: response.data?.date
+      });
+      
+      if (response.success && response.data) {
+        setDailyData(response.data);
+        setLastFetchTime(new Date());
+        setRetryCount(0); // Reset retry count on success
         
-        // Transform API response to match our DailySale interface
-        const transformedData = responseData.map((dayData: any) => ({
-          date: dayData?._id || dayData?.date || new Date().toISOString().split('T')[0],
-          salesCount: dayData?.count || 0,
-          itemsSold: dayData?.itemsSold || 0,
-          totalAmount: dayData?.totalAmount || 0,
-          averageOrderValue: dayData?.avgOrderValue || 0,
-          sales: Array.isArray(dayData?.sales) ? dayData.sales : []
-        }));
-        
-        console.log('Transformed data:', transformedData);
-        setDailySales(transformedData);
+        // Show success message for retries
+        if (isRetry) {
+          toast.success('Data refreshed successfully');
+        }
       } else {
-        throw new Error(response.message || 'Failed to load sales data');
+        throw new Error(response.message || 'Failed to load daily sales data');
       }
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to load sales data';
-      setError(errorMessage);
-      toast.error(`Error: ${errorMessage}`);
-      console.error('Error fetching sales data:', err);
+      // Clear timeout
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = null;
+      }
+
+      let errorState: ErrorState;
+
+      // Determine error type and create appropriate error state
+      if (err.name === 'AbortError' || err.message.includes('timeout')) {
+        errorState = {
+          type: 'timeout',
+          message: 'Request timed out. Please try again.',
+          retryable: true
+        };
+      } else if (err.message.includes('Network error') || err.message.includes('fetch')) {
+        errorState = {
+          type: 'network',
+          message: 'Network error. Please check your connection and try again.',
+          retryable: true
+        };
+      } else if (err.message.includes('Invalid date') || err.message.includes('validation')) {
+        errorState = {
+          type: 'validation',
+          message: err.message,
+          retryable: false
+        };
+      } else if (err.response?.status >= 500) {
+        errorState = {
+          type: 'server',
+          message: 'Server error. Please try again later.',
+          retryable: true
+        };
+      } else {
+        errorState = {
+          type: 'unknown',
+          message: err.message || 'An unexpected error occurred',
+          retryable: true
+        };
+      }
+
+      setError(errorState);
+      
+      // Show error toast
+      toast.error(errorState.message);
+      
+      console.error('[DailySales] Error fetching data:', {
+        error: err.message,
+        type: errorState.type,
+        retryable: errorState.retryable,
+        date: format(selectedDate, 'yyyy-MM-dd')
+      });
+
+      setDailyData(null);
     } finally {
       setIsLoading(false);
+      abortControllerRef.current = null;
     }
-  }, [date]);
-  
-  // Fetch data when component mounts or date range changes
-  useEffect(() => {
-    fetchSalesData();
-  }, [fetchSalesData]);
+  }, [selectedDate, validateDate]);
 
-  // Calculate summary values
-  const summary: SummaryStats = useMemo(() => {
-    return dailySales.reduce<SummaryStats>((acc, day) => {
-      const daySalesCount = day.salesCount || 0;
-      const dayTotalAmount = day.totalAmount || 0;
-      const dayItemsSold = day.itemsSold || 0;
-      
-      return {
-        totalSales: acc.totalSales + daySalesCount,
-        totalAmount: acc.totalAmount + dayTotalAmount,
-        totalTransactions: acc.totalTransactions + daySalesCount,
-        totalItemsSold: acc.totalItemsSold + dayItemsSold,
-        avgOrderValue: daySalesCount > 0 
-          ? (acc.avgOrderValue + (dayTotalAmount / daySalesCount)) / 2 
-          : acc.avgOrderValue
-      };
-    }, {
-      totalSales: 0,
-      totalAmount: 0,
-      totalTransactions: 0,
-      totalItemsSold: 0,
-      avgOrderValue: 0
-    });
-  }, [dailySales]);
-  
-  // Export to Excel function
-  const handleExport = useCallback(async () => {
-    if (dailySales.length === 0) {
-      toast.warning('No data to export');
+  // Retry mechanism with exponential backoff
+  const retryFetch = useCallback(async () => {
+    if (retryCount >= MAX_RETRY_ATTEMPTS) {
+      setError({
+        type: 'unknown',
+        message: 'Maximum retry attempts reached. Please try again later.',
+        retryable: false
+      });
       return;
     }
+
+    setRetryCount(prev => prev + 1);
     
+    // Exponential backoff delay
+    const delay = RETRY_DELAY * Math.pow(2, retryCount);
+    
+    toast.info(`Retrying in ${delay / 1000} seconds...`);
+    
+    setTimeout(() => {
+      fetchDailySales(true);
+    }, delay);
+  }, [retryCount, fetchDailySales]);
+
+  // Fetch data when component mounts or selected date changes
+  useEffect(() => {
+    fetchDailySales();
+  }, [fetchDailySales]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Calculate summary values with error handling
+  const summary: SummaryStats = useMemo(() => {
+    if (!dailyData) {
+      return {
+        totalSales: 0,
+        totalAmount: 0,
+        totalItemsSold: 0,
+        averageOrderValue: 0
+      };
+    }
+
+    return {
+      totalSales: dailyData.totalSales || 0,
+      totalAmount: dailyData.totalAmount || 0,
+      totalItemsSold: dailyData.totalItemsSold || 0,
+      averageOrderValue: dailyData.averageOrderValue || 0
+    };
+  }, [dailyData]);
+
+  // Export to Excel function with error handling
+  const exportToExcel = async () => {
+    if (!dailyData || !dailyData.sales.length) {
+      toast.error('No data to export');
+      return;
+    }
+
     try {
       setIsExporting(true);
-      
-      // Prepare data for export
-      const exportData = dailySales.flatMap(day => 
-        day.sales.map(sale => ({
-          'Date': format(parseISO(day.date), 'PP'),
-          'Sale #': sale.saleNumber,
-          'Customer': sale.customerName || 'Walk-in Customer',
-          'Items': sale.items.map(item => `${item.quantity}x ${item.name}`).join(', '),
-          'Total': sale.total,
-          'Payment Method': sale.paymentMethod,
-          'Time': format(parseISO(sale.createdAt), 'p')
-        }))
-      );
-      
-      if (exportData.length === 0) {
-        // If no detailed sales, export the summary
-        const summaryData = dailySales.map(day => ({
-          'Date': format(parseISO(day.date), 'PP'),
-          'Sales Count': day.salesCount,
-          'Items Sold': day.itemsSold,
-          'Total Amount': day.totalAmount,
-          'Average Order Value': day.averageOrderValue
-        }));
-        
-        const ws = XLSX.utils.json_to_sheet(summaryData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Daily Sales Summary');
-        XLSX.writeFile(wb, `daily-sales-summary-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
-      } else {
-        // Export detailed sales data
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Daily Sales');
-        XLSX.writeFile(wb, `daily-sales-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
-      }
-      
-      toast.success('Export completed successfully');
-    } catch (err) {
-      console.error('Error exporting to Excel:', err);
-      toast.error('Failed to export data');
+
+      // Prepare data for export with validation
+      const exportData = dailyData.sales.map(sale => ({
+        'Sale Number': sale.saleNumber || 'N/A',
+        'Customer': sale.customer?.name || 'N/A',
+        'Customer Phone': sale.customer?.phone || 'N/A',
+        'Customer Email': sale.customer?.email || 'N/A',
+        'Items': sale.items.map(item => `${item.name} (${item.quantity}x)`).join(', ') || 'N/A',
+        'Total Amount': sale.total || 0,
+        'Payment Method': sale.paymentMethod || 'N/A',
+        'Date': format(parseISO(sale.createdAt), 'MMM d, yyyy HH:mm')
+      }));
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(exportData);
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, `Daily Sales - ${format(selectedDate, 'MMM d, yyyy')}`);
+
+      // Generate filename with timestamp
+      const timestamp = format(new Date(), 'yyyy-MM-dd-HHmm');
+      const fileName = `daily-sales-${format(selectedDate, 'yyyy-MM-dd')}-${timestamp}.xlsx`;
+
+      // Save file
+      XLSX.writeFile(wb, fileName);
+      toast.success('Daily sales exported successfully');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export data. Please try again.');
     } finally {
       setIsExporting(false);
     }
-  }, [dailySales]);
-  
+  };
 
+  // Handle date selection with validation
+  const handleDateSelect = useCallback((date: Date | undefined) => {
+    if (!date) return;
+    
+    setSelectedDate(date);
+    setError(null); // Clear any previous errors
+    setRetryCount(0); // Reset retry count
+  }, []);
 
-  // Skeleton loader for summary cards
-  const renderSummarySkeletons = () => (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {[1, 2, 3, 4].map((i) => (
-        <Card key={i}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-4 w-4 rounded-full" />
-          </CardHeader>
-          <CardContent>
-            <Skeleton className="h-8 w-24 mt-2" />
-            <Skeleton className="h-4 w-32 mt-2" />
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-
-  // Skeleton loader for the table
-  const renderTableSkeleton = () => (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {['Date', 'Sales', 'Items', 'Total', 'Avg. Order'].map((header) => (
-              <TableHead key={header}>
-                <Skeleton className="h-4 w-20" />
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {[1, 2, 3, 4, 5].map((row) => (
-            <TableRow key={row}>
-              {[1, 2, 3, 4, 5].map((cell) => (
-                <TableCell key={cell}>
-                  <Skeleton className="h-4 w-full" />
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
+  const dateContext = getDateContext(selectedDate);
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Daily Sales</h1>
-          <p className="text-sm text-muted-foreground">
-            Track and analyze your daily sales performance
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleExport}
-            disabled={isLoading || isExporting || !hasSalesData}
-            className="gap-2"
-          >
-            {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
-            Export to Excel
-          </Button>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full sm:w-[300px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-                disabled={isLoading}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, "LLL dd, y")} -{" "}
-                      {format(date.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date range</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="end">
-              <Calendar
-                initialFocus
-                mode="range"
-                defaultMonth={date?.from}
-                selected={date}
-                onSelect={setDate}
-                numberOfMonths={2}
-                disabled={isLoading}
-              />
-              <div className="flex flex-col sm:flex-row gap-2 p-4 border-t">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setDate({
-                      from: subDays(new Date(), 6),
-                      to: new Date(),
-                    });
-                  }}
-                  className="w-full sm:w-auto"
-                >
-                  Last 7 Days
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const today = new Date();
-                    setDate({
-                      from: startOfMonth(today),
-                      to: today,
-                    });
-                  }}
-                  className="w-full sm:w-auto"
-                >
-                  This Month
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-      </div>
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Daily Sales</h1>
-          <p className="text-muted-foreground">Track and analyze your daily sales performance</p>
+          <h1 className="text-3xl font-bold tracking-tight">Daily Sales</h1>
+          <p className="text-muted-foreground">
+            View and analyze sales for a specific date
+          </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                id="date"
                 variant="outline"
                 className={cn(
-                  "w-[300px] justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
+                  "w-[240px] justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
                 )}
+                disabled={isLoading}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, "LLL dd, y")} -{" "}
-                      {format(date.to, "LLL dd, y")}
-                    </>
-                  ) : (
-                    format(date.from, "LLL dd, y")
-                  )
-                ) : (
-                  <span>Pick a date range</span>
-                )}
+                {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="end">
               <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
                 initialFocus
-                mode="range"
-                defaultMonth={date?.from}
-                selected={date}
-                onSelect={setDate}
-                numberOfMonths={2}
+                disabled={(date) => {
+                  const now = new Date();
+                  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                  return date < oneYearAgo || date > new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                }}
               />
             </PopoverContent>
           </Popover>
-          <Button onClick={() => setDate({
-            from: new Date(new Date().setDate(new Date().getDate() - 7)),
-            to: new Date()
-          })} variant="outline">
-            Last 7 Days
+          
+          <Badge variant={dateContext.variant}>
+            {dateContext.label}
+          </Badge>
+          
+          <Button 
+            onClick={() => fetchDailySales(false)} 
+            disabled={isLoading}
+            variant="outline"
+            size="icon"
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
           </Button>
-          <Button onClick={() => setDate({
-            from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-            to: new Date()
-          })} variant="outline">
-            This Month
+          
+          <Button 
+            onClick={exportToExcel} 
+            disabled={!hasSalesData || isExporting}
+            variant="outline"
+          >
+            {isExporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            Export
           </Button>
         </div>
       </div>
 
+      {/* Last updated indicator */}
+      {lastFetchTime && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Info className="h-4 w-4" />
+          Last updated: {format(lastFetchTime, 'MMM d, yyyy HH:mm:ss')}
+        </div>
+      )}
+
+      {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <strong className="font-bold">Error: </strong>
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-
-      {isLoading ? (
-        renderSummarySkeletons()
-      ) : error ? (
-        <div className="rounded-md bg-destructive/10 p-4">
-          <div className="flex items-center gap-2 text-destructive">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <h3 className="font-medium">Error loading sales data</h3>
-          </div>
-          <p className="mt-2 text-sm text-destructive">{error}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-4"
-            onClick={fetchSalesData}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Loading...
-              </>
-            ) : (
-              'Try Again'
+        <Alert variant={error.type === 'validation' ? 'destructive' : 'default'}>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>{error.message}</span>
+            {error.retryable && retryCount < MAX_RETRY_ATTEMPTS && (
+              <Button 
+                onClick={retryFetch} 
+                variant="outline" 
+                size="sm"
+                disabled={isLoading}
+              >
+                Retry ({MAX_RETRY_ATTEMPTS - retryCount} left)
+              </Button>
             )}
-          </Button>
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {formatCurrency(summary.totalAmount)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {summary.totalSales} sale{summary.totalSales !== 1 ? 's' : ''}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Transactions</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <rect width="20" height="14" x="2" y="5" rx="2" />
-                <path d="M2 10h20" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{summary.totalTransactions}</div>
-              <p className="text-xs text-muted-foreground">
-                {summary.totalItemsSold} item{summary.totalItemsSold !== 1 ? 's' : ''} sold
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Order Value</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {formatCurrency(summary.avgOrderValue)}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                across {summary.totalTransactions} order{summary.totalTransactions !== 1 ? 's' : ''}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Items Sold</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{summary.totalItemsSold}</div>
-              <p className="text-xs text-muted-foreground">
-                {summary.totalTransactions} order{summary.totalTransactions !== 1 ? 's' : ''}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+          </AlertDescription>
+        </Alert>
       )}
 
+      {/* Summary Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{summary.totalSales}</div>
+            <p className="text-xs text-muted-foreground">
+              Sales for {format(selectedDate, 'MMM d, yyyy')}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(summary.totalAmount)}</div>
+            <p className="text-xs text-muted-foreground">
+              Revenue for {format(selectedDate, 'MMM d, yyyy')}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Items Sold</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{summary.totalItemsSold}</div>
+            <p className="text-xs text-muted-foreground">
+              Items sold on {format(selectedDate, 'MMM d, yyyy')}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Order</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{formatCurrency(summary.averageOrderValue)}</div>
+            <p className="text-xs text-muted-foreground">
+              Average order value
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Sales Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Daily Sales</CardTitle>
-          {date?.from && date?.to && (
-            <CardDescription>
-              {format(date.from, 'MMM d, yyyy')} - {format(date.to, 'MMM d, yyyy')}
-            </CardDescription>
-          )}
+          <CardTitle>Sales Details</CardTitle>
+          <CardDescription>
+            Detailed view of all sales for {format(selectedDate, 'MMM d, yyyy')}
+            {dailyData && (
+              <span className="ml-2 text-sm text-muted-foreground">
+                ({dailyData.totalSales} sales)
+              </span>
+            )}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            renderTableSkeleton()
-          ) : error ? (
-            <div className="rounded-md bg-destructive/10 p-4 text-center">
-              <p className="text-destructive">{error}</p>
+            <div className="space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[150px]" />
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-4 w-[80px]" />
+                </div>
+              ))}
             </div>
-          ) : dailySales.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 space-y-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-12 w-12 text-muted-foreground"
-              >
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-                <path d="M3 6h18" />
-                <path d="M16 10a4 4 0 0 1-8 0" />
-              </svg>
-              <div className="text-center">
-                <h3 className="text-lg font-medium">No sales data</h3>
-                <p className="text-sm text-muted-foreground">
-                  No sales were found for the selected date range.
-                </p>
+          ) : error && !error.retryable ? (
+            <div className="text-center py-8">
+              <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">{error.message}</p>
+            </div>
+          ) : !hasSalesData ? (
+            <div className="text-center py-8">
+              <div className="h-12 w-12 text-muted-foreground mx-auto mb-4 flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-12 h-12"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                </svg>
               </div>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  const today = new Date();
-                  setDate({
-                    from: startOfMonth(today),
-                    to: today,
-                  });
-                }}
-                className="mt-2"
-              >
-                View This Month
-              </Button>
+              <p className="text-muted-foreground">
+                No sales found for {format(selectedDate, 'MMM d, yyyy')}
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Try selecting a different date or check back later.
+              </p>
             </div>
           ) : (
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Sales</TableHead>
-                    <TableHead className="text-right">Items</TableHead>
+                    <TableHead>Sale #</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Items</TableHead>
                     <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="text-right">Avg. Order</TableHead>
+                    <TableHead>Payment</TableHead>
+                    <TableHead>Time</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {dailySales.map((day) => (
-                    <TableRow key={day.date}>
+                  {dailyData.sales.map((sale) => (
+                    <TableRow key={sale._id}>
                       <TableCell className="font-medium">
-                        {format(parseISO(day.date), 'MMM d, yyyy')}
+                        {sale.saleNumber}
                       </TableCell>
-                      <TableCell className="text-right">
-                        {day.salesCount}
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">
+                            {sale.customer?.name || 'N/A'}
+                          </div>
+                          {sale.customer?.phone && (
+                            <div className="text-sm text-muted-foreground">
+                              {sale.customer.phone}
+                            </div>
+                          )}
+                        </div>
                       </TableCell>
-                      <TableCell className="text-right">
-                        {day.itemsSold}
+                      <TableCell>
+                        <div className="max-w-[200px] truncate" title={sale.items.map(item => `${item.name} (${item.quantity}x)`).join(', ')}>
+                          {sale.items.map(item => `${item.name} (${item.quantity}x)`).join(', ')}
+                        </div>
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        {formatCurrency(day.totalAmount)}
+                        {formatCurrency(sale.total)}
                       </TableCell>
-                      <TableCell className="text-right text-muted-foreground">
-                        {formatCurrency(day.averageOrderValue)}
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize">
+                          {sale.paymentMethod.replace('_', ' ')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {format(parseISO(sale.createdAt), 'HH:mm')}
                       </TableCell>
                     </TableRow>
                   ))}

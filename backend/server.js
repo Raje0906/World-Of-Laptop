@@ -98,72 +98,55 @@ await connectDB();
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
-  })
+  }),
 );
 
-// CORS configuration for production and development
+// Very permissive CORS configuration for debugging
 const corsOptions = {
   origin: function (origin, callback) {
     // Log the incoming origin for debugging
     console.log('Incoming request from origin:', origin || 'No origin (non-browser request)');
     
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      console.log('No origin provided, allowing request');
-      return callback(null, true);
-    }
-    
-    // Allow all vercel.app, onrender.com, and localhost domains
-    if (origin.includes('vercel.app') || origin.includes('onrender.com') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      console.log(`✅ Allowing origin: ${origin}`);
-      return callback(null, true);
-    }
-    
-    // For any other origins, also allow them temporarily for debugging
-    console.log(`✅ Allowing unknown origin: ${origin}`);
+    // Allow all origins for now to debug the issue
+    // WARNING: This is not secure for production
     return callback(null, true);
+    
+    /* Production CORS settings (commented out for now)
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'https://world-of-laptop.vercel.app',
+      'https://world-of-laptop.onrender.com',
+      'https://world-of-laptop.netlify.app',
+      /^https?:\/\/world-of-laptop(-\w+)?\.vercel\.app$/,
+      /^https?:\/\/world-of-laptop(-\w+)?\.netlify\.app$/,
+    ];
+
+    if (!origin) return callback(null, true);
+    
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') return origin === allowedOrigin;
+      if (allowedOrigin instanceof RegExp) return allowedOrigin.test(origin);
+      return false;
+    });
+
+    if (!isAllowed) {
+      const msg = `The CORS policy for this site does not allow access from ${origin}`;
+      console.warn(msg);
+      return callback(new Error(msg), false);
+    }
+    
+    return callback(null, true);
+    */
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cache-Control', 'X-File-Name'],
+  allowedHeaders: ['*'],
   credentials: true,
   optionsSuccessStatus: 204,
-  exposedHeaders: ['Content-Length', 'X-Requested-With', 'Authorization'],
-  preflightContinue: false,
-  maxAge: 86400 // Cache preflight response for 24 hours
+  exposedHeaders: ['*']
 };
 
-// Apply CORS with the configured options
 app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly for all routes
-app.options('*', cors(corsOptions));
-
-// Add additional CORS headers for all responses as a fallback
-app.use((req, res, next) => {
-  // Log the request origin for debugging
-  const origin = req.headers.origin;
-  console.log(`[CORS] Request from origin: ${origin}`);
-  
-  // Set CORS headers explicitly as fallback - allow all origins temporarily
-  if (origin) {
-    res.header('Access-Control-Allow-Origin', origin);
-    console.log(`[CORS] Set Access-Control-Allow-Origin: ${origin}`);
-  }
-  
-  // Set other CORS headers
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name');
-  res.header('Access-Control-Expose-Headers', 'Content-Length, X-Requested-With, Authorization');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
-    return;
-  }
-  
-  next();
-});
 
 app.use(compression());
 
@@ -191,21 +174,8 @@ const notificationLimiter = rateLimit({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Test endpoint for CORS debugging
-app.get('/api/test-cors', (req, res) => {
-  console.log('Test CORS endpoint hit');
-  console.log('Origin header:', req.headers.origin);
-  console.log('All headers:', req.headers);
-  
-  res.json({
-    message: 'CORS test successful',
-    origin: req.headers.origin,
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
+// Health check
+app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
     timestamp: new Date().toISOString(),
@@ -252,90 +222,13 @@ if (process.env.NODE_ENV === "production") {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   
-  const distPath = path.join(__dirname, "..", "dist");
-  console.log('Checking for static files at:', distPath);
-  
-  // Check if dist directory exists (optional - for cases where frontend is built separately)
-  try {
-    const fs = await import('fs');
-    const distExists = fs.existsSync(distPath);
-    console.log('Dist directory exists:', distExists);
-    
-    if (distExists) {
-      const files = fs.readdirSync(distPath);
-      console.log('Files in dist directory:', files);
-      
-      // Check if index.html exists
-      const indexPath = path.join(distPath, 'index.html');
-      if (fs.existsSync(indexPath)) {
-        console.log('Serving static files from dist directory');
-        
-        // Serve static files from the React app (dist is in project root, not backend)
-        app.use(express.static(distPath, {
-          setHeaders: (res, filePath) => {
-            console.log('Serving static file:', filePath);
-            // Set proper MIME types for JavaScript modules
-            if (filePath.endsWith('.js')) {
-              res.setHeader('Content-Type', 'application/javascript');
-              console.log('Set MIME type for JS file:', filePath);
-            } else if (filePath.endsWith('.mjs')) {
-              res.setHeader('Content-Type', 'application/javascript');
-              console.log('Set MIME type for MJS file:', filePath);
-            } else if (filePath.endsWith('.css')) {
-              res.setHeader('Content-Type', 'text/css');
-              console.log('Set MIME type for CSS file:', filePath);
-            }
-          }
-        }));
+  // Serve static files from the React app
+  app.use(express.static(path.join(__dirname, "dist")));
 
   // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
-          console.log('Catch-all route hit for:', req.url);
-          res.sendFile(path.join(distPath, "index.html"));
-        });
-      } else {
-        console.log('No index.html found in dist directory - serving API only');
-        // Serve API-only response for root path
-        app.get("/", (req, res) => {
-          res.json({
-            message: "Laptop Store CRM API",
-            status: "running",
-            environment: process.env.NODE_ENV,
-            timestamp: new Date().toISOString(),
-            api_docs: "/api",
-            note: "Frontend is deployed separately"
-          });
-        });
-      }
-    } else {
-      console.log('No dist directory found - serving API only');
-      // Serve API-only response for root path
-      app.get("/", (req, res) => {
-        res.json({
-          message: "Laptop Store CRM API",
-          status: "running",
-          environment: process.env.NODE_ENV,
-          timestamp: new Date().toISOString(),
-          api_docs: "/api",
-          note: "Frontend is deployed separately"
-        });
-      });
-    }
-  } catch (error) {
-    console.error('Error checking dist directory:', error);
-    
-    // Serve API-only response for root path
-    app.get("/", (req, res) => {
-      res.json({
-        message: "Laptop Store CRM API",
-        status: "running",
-        environment: process.env.NODE_ENV,
-        timestamp: new Date().toISOString(),
-        api_docs: "/api",
-        note: "Frontend is deployed separately"
-      });
-    });
-  }
+    res.sendFile(path.join(__dirname, "dist", "index.html"));
+  });
 } else {
   // Simple response in development
   app.get("/", (req, res) => {

@@ -13,6 +13,7 @@ import SalesOverview from "@/pages/SalesOverview";
 import RepairsOverview from "@/pages/SimpleRepairs";
 import { NewRepair } from "@/pages/repairs/NewRepair";
 import { TrackRepair } from "@/pages/repairs/TrackRepair";
+import RepairDetails from "@/pages/repairs/RepairDetails";
 import ReportsOverview from "@/pages/SimpleReports";
 import { SalesReports } from "@/pages/reports/SalesReports";
 import { RepairReports } from "@/pages/reports/RepairReports";
@@ -54,6 +55,7 @@ const AppContent = () => {
         <Route path="repairs" element={<RepairsOverview />} />
         <Route path="repairs/new" element={<NewRepair />} />
         <Route path="repairs/track" element={<TrackRepair />} />
+        <Route path="repairs/details/:ticketNumber" element={<RepairDetails />} />
         <Route path="reports" element={<ReportsOverview />} />
         <Route path="reports/sales" element={<SalesReports />} />
         <Route path="reports/repairs" element={<RepairReports />} />

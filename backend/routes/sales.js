@@ -572,4 +572,180 @@ router.get(
   }
 );
 
+// GET /api/sales/daily - Get sales for a specific date
+router.get(
+  "/daily",
+  [
+    query("date")
+      .optional()
+      .isISO8601()
+      .withMessage("Date must be in ISO format (YYYY-MM-DD)")
+      .custom((value) => {
+        if (value) {
+          const date = new Date(value);
+          const now = new Date();
+          const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+          
+          // Prevent queries too far in the past or future
+          if (date < oneYearAgo || date > new Date(now.getTime() + 24 * 60 * 60 * 1000)) {
+            throw new Error("Date must be within the last year and not in the future");
+          }
+        }
+        return true;
+      }),
+    query("storeId")
+      .optional()
+      .isMongoId()
+      .withMessage("Invalid store ID format"),
+    query("limit")
+      .optional()
+      .isInt({ min: 1, max: 1000 })
+      .withMessage("Limit must be between 1 and 1000"),
+  ],
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { date, storeId, limit = 1000 } = req.query;
+      
+      // Default to today's date if no date provided
+      const targetDate = date ? new Date(date) : new Date();
+      
+      // Ensure we're working with a clean date (no time component)
+      targetDate.setHours(0, 0, 0, 0);
+      
+      // Set start and end of the target date
+      const startOfDay = new Date(targetDate);
+      const endOfDay = new Date(targetDate);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      // Log request for monitoring (sanitized)
+      console.log(`[DAILY SALES] Request: date=${targetDate.toISOString().split('T')[0]}, storeId=${storeId ? 'provided' : 'not-provided'}, limit=${limit}`);
+
+      // Build query with proper validation
+      let query = {
+        isActive: true,
+        createdAt: {
+          $gte: startOfDay,
+          $lte: endOfDay
+        }
+      };
+
+      if (storeId) {
+        query.store = storeId;
+      }
+
+      // Add index hints for better performance
+      const indexHints = storeId ? { store: 1, createdAt: -1, isActive: 1 } : { createdAt: -1, isActive: 1 };
+
+      // Get sales for the specific date with pagination and proper error handling
+      const sales = await Sale.find(query)
+        .populate("customer", "name email phone")
+        .populate("store", "name code address")
+        .populate("items.product", "name brand model sku")
+        .sort({ createdAt: -1 })
+        .limit(parseInt(limit))
+        .hint(indexHints)
+        .lean() // Use lean() for better performance when not modifying documents
+        .exec();
+
+      // Calculate daily statistics with proper error handling
+      const dailyStats = {
+        date: targetDate.toISOString().split('T')[0],
+        totalSales: sales.length,
+        totalAmount: sales.reduce((sum, sale) => {
+          const amount = parseFloat(sale.totalAmount) || 0;
+          return sum + amount;
+        }, 0),
+        totalItemsSold: sales.reduce((sum, sale) => {
+          const itemCount = Array.isArray(sale.items) ? sale.items.length : 0;
+          return sum + itemCount;
+        }, 0),
+        averageOrderValue: 0, // Will be calculated below
+        sales: sales.map(sale => ({
+          _id: sale._id,
+          saleNumber: sale.saleNumber,
+          customer: sale.customer ? {
+            name: sale.customer.name || 'Unknown',
+            email: sale.customer.email,
+            phone: sale.customer.phone
+          } : null,
+          items: Array.isArray(sale.items) ? sale.items.map(item => ({
+            name: item.product?.name || item.productName || 'Unknown Product',
+            quantity: parseInt(item.quantity) || 0,
+            price: parseFloat(item.unitPrice) || 0
+          })) : [],
+          total: parseFloat(sale.totalAmount) || 0,
+          paymentMethod: sale.paymentMethod || 'unknown',
+          createdAt: sale.createdAt
+        }))
+      };
+
+      // Calculate average order value safely
+      dailyStats.averageOrderValue = dailyStats.totalSales > 0 
+        ? dailyStats.totalAmount / dailyStats.totalSales 
+        : 0;
+
+      // Round to 2 decimal places for currency
+      dailyStats.totalAmount = Math.round(dailyStats.totalAmount * 100) / 100;
+      dailyStats.averageOrderValue = Math.round(dailyStats.averageOrderValue * 100) / 100;
+
+      // Log success metrics for monitoring
+      console.log(`[DAILY SALES] Success: date=${dailyStats.date}, sales=${dailyStats.totalSales}, revenue=${dailyStats.totalAmount}`);
+
+      // Set appropriate cache headers
+      res.set({
+        'Cache-Control': 'private, max-age=300', // Cache for 5 minutes
+        'X-Data-Source': 'database',
+        'X-Query-Date': dailyStats.date
+      });
+
+      res.json({
+        success: true,
+        data: dailyStats,
+        message: `Retrieved ${dailyStats.totalSales} sales for ${dailyStats.date}`,
+        meta: {
+          date: dailyStats.date,
+          queryTime: new Date().toISOString(),
+          resultCount: dailyStats.totalSales
+        }
+      });
+    } catch (error) {
+      // Enhanced error logging
+      console.error("[DAILY SALES ERROR]", {
+        error: error.message,
+        stack: error.stack,
+        query: req.query,
+        timestamp: new Date().toISOString()
+      });
+
+      // Return appropriate error response
+      if (error.name === 'ValidationError') {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          error: error.message,
+          code: 'VALIDATION_ERROR'
+        });
+      }
+
+      if (error.name === 'CastError') {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid data format",
+          error: "One or more fields contain invalid data",
+          code: 'CAST_ERROR'
+        });
+      }
+
+      // Generic error response
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : error.message,
+        code: 'INTERNAL_ERROR'
+      });
+    }
+  },
+);
+
 export default router;

@@ -267,6 +267,87 @@ class ApiClient {
     return this.request(`/sales/stats?${searchParams}`);
   }
 
+  async getDailySales(params?: {
+    date?: string;
+    storeId?: string;
+    limit?: number;
+  }) {
+    try {
+      const searchParams = new URLSearchParams();
+      
+      // Validate and sanitize parameters
+      if (params?.date) {
+        // Validate date format
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(params.date)) {
+          throw new Error('Invalid date format. Use YYYY-MM-DD');
+        }
+        searchParams.append('date', params.date);
+      }
+      
+      if (params?.storeId) {
+        // Basic MongoDB ObjectId validation
+        const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+        if (!objectIdRegex.test(params.storeId)) {
+          throw new Error('Invalid store ID format');
+        }
+        searchParams.append('storeId', params.storeId);
+      }
+      
+      if (params?.limit) {
+        const limit = parseInt(params.limit.toString());
+        if (isNaN(limit) || limit < 1 || limit > 1000) {
+          throw new Error('Limit must be between 1 and 1000');
+        }
+        searchParams.append('limit', limit.toString());
+      }
+
+      const response = await this.request(`/sales/daily?${searchParams}`, {
+        // Add timeout for production
+        signal: AbortSignal.timeout(30000), // 30 second timeout
+      });
+
+      // Validate response structure
+      if (!response || typeof response !== 'object') {
+        throw new Error('Invalid response format from server');
+      }
+
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to fetch daily sales');
+      }
+
+      if (!response.data || typeof response.data !== 'object') {
+        throw new Error('Invalid data format in response');
+      }
+
+      return response;
+    } catch (error: any) {
+      // Enhanced error handling
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out. Please try again.');
+      }
+      
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Network error. Please check your connection and try again.');
+      }
+
+      // Re-throw validation errors
+      if (error.message.includes('Invalid date format') || 
+          error.message.includes('Invalid store ID') ||
+          error.message.includes('Limit must be between')) {
+        throw error;
+      }
+
+      // Log error for debugging (in development)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[API] getDailySales error:', error);
+      }
+
+      // Return a structured error response
+      throw new Error(error.message || 'Failed to fetch daily sales data');
+    }
+  }
+
   async getSale(id: string) {
     return this.request(`/sales/${id}`);
   }
@@ -490,6 +571,7 @@ export const productService = {
 export const saleService = {
   getAll: (params?: any) => apiClient.getSales(params),
   getStats: (params?: any) => apiClient.getSalesStats(params),
+  getDailySales: (params?: any) => apiClient.getDailySales(params),
   getById: (id: string) => apiClient.getSale(id),
   getByNumber: (saleNumber: string) => apiClient.getSaleByNumber(saleNumber),
   create: (data: any) => apiClient.createSale(data),

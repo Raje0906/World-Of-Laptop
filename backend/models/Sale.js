@@ -106,6 +106,32 @@ saleSchema.statics.getSalesStats = function(startDate, endDate, storeId) {
   ]);
 };
 
+// Add database indexes for better query performance
+saleSchema.index({ createdAt: -1, isActive: 1 });
+saleSchema.index({ store: 1, createdAt: -1, isActive: 1 });
+saleSchema.index({ customer: 1, createdAt: -1 });
+saleSchema.index({ paymentMethod: 1, createdAt: -1 });
+saleSchema.index({ saleNumber: 1 });
+
+// Compound index for daily sales queries
+saleSchema.index({ 
+  isActive: 1, 
+  createdAt: -1 
+}, { 
+  name: 'daily_sales_query_index',
+  background: true 
+});
+
+// Compound index for store-specific daily sales
+saleSchema.index({ 
+  store: 1, 
+  isActive: 1, 
+  createdAt: -1 
+}, { 
+  name: 'store_daily_sales_index',
+  background: true 
+});
+
 const Sale = mongoose.model('Sale', saleSchema);
 
 export default Sale;
