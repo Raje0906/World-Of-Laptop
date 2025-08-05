@@ -667,9 +667,9 @@ export const notificationService = {
 
 export const reportsService = {
   getSummary: () => apiClient.getReportsSummary(),
-  getMonthly: (year: number, month: number) => apiClient.getMonthlyReport(year, month),
-  getQuarterly: (year: number, quarter: number) => apiClient.getQuarterlyReport(year, quarter),
-  getAnnual: (year: number) => apiClient.getAnnualReport(year),
+  getMonthlyReport: (year: number, month: number) => apiClient.getMonthlyReport(year, month),
+  getQuarterlyReport: (year: number, quarter: number) => apiClient.getQuarterlyReport(year, quarter),
+  getAnnualReport: (year: number) => apiClient.getAnnualReport(year),
   getRepairReport: (params?: any) => apiClient.getRepairReport(params),
   getSalesReport: (params?: any) => apiClient.getSalesReport(params),
 };
