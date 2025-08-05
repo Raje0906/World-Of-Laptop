@@ -245,6 +245,22 @@ export function TrackRepair() {
     }
   };
   
+  // Function to reset the page state
+  const resetPage = useCallback(() => {
+    setSearchQuery("");
+    setSearchBy("ticket");
+    setFoundRepairs([]);
+    setIsSearching(false);
+    setIsCompleting({});
+    setIsSendingUpdate({});
+    setSelectedRepair(null);
+    setUpdateMessage("");
+    setRemainingRepairs([]);
+    setReceivedRepairs([]);
+    setIsLoadingRemaining(false);
+    setIsLoadingReceived(false);
+  }, []);
+
   // Function to navigate to repair details
   const navigateToRepairDetails = (ticketNumber: string) => {
     navigate(`/repairs/details/${ticketNumber}`);
@@ -749,7 +765,7 @@ export function TrackRepair() {
       {/* Return Back Button */}
       <Button
         variant="ghost"
-        onClick={() => navigate('/repairs')}
+        onClick={resetPage}
         className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-0 py-2 h-auto font-medium focus:ring-2 focus:ring-blue-200 focus:ring-offset-2"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />

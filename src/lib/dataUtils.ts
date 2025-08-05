@@ -580,7 +580,60 @@ const createMinimalCustomer = async (data: any): Promise<Customer> => {
   return await addCustomer(customerData);
 };
 
-// ...
+// Health check function to test API connectivity
+export const checkApiHealth = async (): Promise<{ healthy: boolean; message: string; url: string }> => {
+  try {
+    // Check if VITE_API_URL is explicitly set (production environment)
+    const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+    
+    let apiUrl: string;
+    
+    if (hasExplicitApiUrl) {
+      // Use the explicitly set API URL (production)
+      apiUrl = import.meta.env.VITE_API_URL + '/api';
+    } else {
+      // Check if we're running on localhost (development or preview)
+      const isLocalhost = typeof window !== 'undefined' && (
+        window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1'
+      );
+      
+      apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+    }
+    
+    console.log(`🏥 Checking API health at: ${apiUrl}/health`);
+    
+    const response = await fetch(`${apiUrl}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(5000), // 5 second timeout
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return {
+        healthy: true,
+        message: 'API is healthy and responding',
+        url: apiUrl
+      };
+    } else {
+      return {
+        healthy: false,
+        message: `API responded with status: ${response.status}`,
+        url: apiUrl
+      };
+    }
+  } catch (error) {
+    console.error('API health check failed:', error);
+    return {
+      healthy: false,
+      message: error instanceof Error ? error.message : 'Unknown error occurred',
+      url: 'unknown'
+    };
+  }
+};
 
 // Search functionality
 export const searchCustomers = async (filters: SearchFilters): Promise<Customer[]> => {
@@ -614,6 +667,8 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
       limit: '10' // Limit results to 10 for better performance
     });
     
+    console.log(`🔍 Searching customers at: ${apiUrl}/customers?${searchParams}`);
+    
     // Use the main customers endpoint with search parameter
     const response = await fetch(`${apiUrl}/customers?${searchParams}`, {
       method: 'GET',
@@ -621,6 +676,8 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
         'Content-Type': 'application/json',
       },
       credentials: 'include',
+      // Add timeout to prevent hanging requests
+      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
 
     if (!response.ok) {
@@ -630,9 +687,21 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
     }
 
     const result = await response.json();
+    console.log('Search result:', result);
     return Array.isArray(result.data) ? result.data : [];
   } catch (error) {
     console.error('Error searching customers:', error);
+    
+    // If it's a network error, try to provide helpful feedback
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      console.warn('Network error detected, this might be due to:');
+      console.warn('1. Backend server not running');
+      console.warn('2. CORS issues');
+      console.warn('3. Network connectivity problems');
+      console.warn('4. API endpoint not available');
+    }
+    
+    // Return empty array instead of throwing to prevent UI crashes
     return [];
   }
 };

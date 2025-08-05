@@ -43,6 +43,7 @@ import {
   searchBySerialNumber,
   simulateBarcodeScan,
   addCustomer,
+  checkApiHealth,
 } from "@/lib/dataUtils";
 import { Customer, SearchableFields, BarcodeResult } from "@/types";
 
@@ -98,11 +99,22 @@ export function CustomerSearch({
         }
       }, 100);
     } catch (error) {
-      setNoRealCustomers(true);
+      console.error('Search error:', error);
       setSearchResults([]);
+      setNoRealCustomers(false);
+      
+      // Provide specific error messages based on error type
+      let errorMessage = "Failed to search customers. Please try again.";
+      
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        errorMessage = "Unable to connect to the server. Please check your internet connection and try again.";
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast({
-        title: "Search failed",
-        description: "Could not fetch customers from the backend.",
+        title: "Search Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -276,6 +288,35 @@ export function CustomerSearch({
     }
   };
 
+  // Debug function to test API connectivity
+  const handleDebugApi = async () => {
+    try {
+      const health = await checkApiHealth();
+      console.log('API Health Check Result:', health);
+      
+      if (health.healthy) {
+        toast({
+          title: "API Connection OK",
+          description: `Connected to: ${health.url}`,
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "API Connection Failed",
+          description: health.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Debug API error:', error);
+      toast({
+        title: "Debug Failed",
+        description: "Could not check API health",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Search Controls */}
@@ -319,6 +360,17 @@ export function CustomerSearch({
             <Button onClick={handleSearch} disabled={!searchQuery.trim()}>
               <Search className="w-4 h-4" />
             </Button>
+            
+            {/* Debug button - only show in development */}
+            {import.meta.env.DEV && (
+              <Button 
+                variant="outline" 
+                onClick={handleDebugApi}
+                title="Debug API Connection"
+              >
+                🐛 Debug
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
