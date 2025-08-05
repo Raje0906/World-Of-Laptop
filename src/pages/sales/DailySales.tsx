@@ -150,20 +150,12 @@ export function DailySales() {
 
     const now = new Date();
     const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+    const oneYearFromNow = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
     
-    if (date < oneYearAgo) {
+    if (date < oneYearAgo || date > oneYearFromNow) {
       setError({
         type: 'validation',
-        message: 'Date cannot be more than one year in the past',
-        retryable: false
-      });
-      return false;
-    }
-
-    if (date > new Date(now.getTime() + 24 * 60 * 60 * 1000)) {
-      setError({
-        type: 'validation',
-        message: 'Date cannot be in the future',
+        message: 'Date must be within a reasonable range (1 year past to 1 year future)',
         retryable: false
       });
       return false;
