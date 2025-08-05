@@ -673,7 +673,8 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
     const response = await fetch(`${apiUrl}/customers?${searchParams}`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        // Remove Content-Type header for GET requests to avoid CORS preflight issues
+        'Accept': 'application/json',
       },
       credentials: 'include',
       // Add timeout to prevent hanging requests

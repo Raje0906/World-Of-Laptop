@@ -201,7 +201,6 @@ export function TrackRepair() {
       
       const response = await axios.get(`${apiUrl}/repairs?status=received`, {
         headers: {
-          'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         },
@@ -511,7 +510,6 @@ export function TrackRepair() {
         
         const response = await axios.get(fullApiUrl, {
           headers: {
-            'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
           withCredentials: true,  // Include credentials for CORS

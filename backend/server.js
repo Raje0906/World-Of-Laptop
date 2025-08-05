@@ -88,6 +88,7 @@ const PORT = 3002; // Using port 3002 to avoid conflicts with other services
 // Add request logging
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  console.log('Request headers:', req.headers);
   next();
 });
 
@@ -140,13 +141,51 @@ const corsOptions = {
     */
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['*'],
+  allowedHeaders: [
+    'Content-Type', 
+    'content-type',
+    'Content-type',
+    'CONTENT-TYPE',
+    'Authorization', 
+    'authorization',
+    'X-Requested-With', 
+    'Accept', 
+    'accept',
+    'Origin', 
+    'origin',
+    'Cache-Control', 
+    'X-File-Name',
+    'X-API-Key',
+    'X-Client-Version',
+    'X-Request-ID',
+    'User-Agent',
+    'Referer',
+    'x-requested-with',
+    'cache-control'
+  ],
   credentials: true,
   optionsSuccessStatus: 204,
-  exposedHeaders: ['*']
+  exposedHeaders: ['*'],
+  preflightContinue: false,
+  maxAge: 86400 // Cache preflight for 24 hours
 };
 
 app.use(cors(corsOptions));
+
+// Manual CORS preflight handler for additional security
+app.options('*', (req, res) => {
+  console.log('OPTIONS request received:', req.method, req.url);
+  console.log('Request headers:', req.headers);
+  
+  // Set CORS headers manually
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, content-type, Authorization, authorization, X-Requested-With, Accept, accept, Origin, origin, Cache-Control, X-File-Name, X-API-Key, X-Client-Version, X-Request-ID, User-Agent, Referer, x-requested-with, cache-control');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Max-Age', '86400');
+  
+  res.status(204).end();
+});
 
 app.use(compression());
 

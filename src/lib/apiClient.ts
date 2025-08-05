@@ -44,10 +44,18 @@ class ApiClient {
     const config: RequestInit = {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
         ...options.headers,
       },
     };
+
+    // Only set Content-Type for requests with a body (POST, PUT, PATCH)
+    const hasBody = options.body || (options.method && ['POST', 'PUT', 'PATCH'].includes(options.method));
+    if (hasBody) {
+      config.headers = {
+        'Content-Type': 'application/json',
+        ...config.headers,
+      };
+    }
 
     // Add authorization header if token exists
     const token = localStorage.getItem('token');
