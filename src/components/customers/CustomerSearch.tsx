@@ -237,19 +237,94 @@ export function CustomerSearch({
   const handleAddCustomer = async (formData: FormData) => {
     setIsLoading(true);
     try {
-      const address: Address = {
-        line1: formData.get("address") as string,
-        city: formData.get("city") as string,
+      // Validate required fields
+      const name = formData.get("name") as string;
+      const email = formData.get("email") as string;
+      const phone = formData.get("phone") as string;
+      const address = formData.get("address") as string;
+      const city = formData.get("city") as string;
+
+      // Check if all required fields are filled
+      if (!name?.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Full Name is required",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!email?.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Email is required",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!phone?.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Phone Number is required",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!address?.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Address is required",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!city?.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "City is required",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate phone number format (exactly 10 digits)
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(phone)) {
+        toast({
+          title: "Validation Error",
+          description: "Phone number must be exactly 10 digits (numbers only)",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast({
+          title: "Validation Error",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const addressObj: Address = {
+        line1: address,
+        city: city,
         state: (formData.get("state") as string) || "",
         pincode: (formData.get("pincode") as string) || "",
       };
 
       const newCustomer = await addCustomer({
-        name: formData.get("name") as string,
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
-        address,
-        city: address.city, // For backward compatibility
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        address: addressObj,
+        city: addressObj.city, // For backward compatibility
         status: "active" as const,
         totalPurchases: 0,
         dateAdded: new Date().toISOString(),
@@ -504,6 +579,7 @@ export function CustomerSearch({
                         name="name" 
                         required 
                         defaultValue={searchField === 'name' ? searchQuery : ''}
+                        placeholder="Enter customer full name"
                       />
                     </div>
 
@@ -515,6 +591,7 @@ export function CustomerSearch({
                         type="email" 
                         required 
                         defaultValue={searchField === 'email' ? searchQuery : ''}
+                        placeholder="customer@example.com"
                       />
                     </div>
 
@@ -523,19 +600,45 @@ export function CustomerSearch({
                       <Input 
                         id="phone" 
                         name="phone" 
+                        type="tel"
                         required 
                         defaultValue={searchField === 'phone' ? searchQuery : ''}
+                        placeholder="9876543210"
+                        pattern="[0-9]{10}"
+                        maxLength={10}
+                        onKeyPress={(e) => {
+                          // Only allow numbers
+                          if (!/[0-9]/.test(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        onChange={(e) => {
+                          // Remove any non-numeric characters
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          e.target.value = value;
+                        }}
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="address">Address</Label>
-                      <Textarea id="address" name="address" rows={2} />
+                      <Label htmlFor="address">Address *</Label>
+                      <Textarea 
+                        id="address" 
+                        name="address" 
+                        rows={2} 
+                        required
+                        placeholder="Enter customer address"
+                      />
                     </div>
 
                     <div>
-                      <Label htmlFor="city">City</Label>
-                      <Input id="city" name="city" />
+                      <Label htmlFor="city">City *</Label>
+                      <Input 
+                        id="city" 
+                        name="city" 
+                        required
+                        placeholder="Enter city name"
+                      />
                     </div>
 
                     <Button

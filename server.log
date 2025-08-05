@@ -10234,3 +10234,215 @@
 [2025-08-05T12:48:23.623Z] [LOG] ✅ MongoDB Connected
 [2025-08-05T12:48:23.627Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
 [2025-08-05T12:48:23.627Z] [LOG] MongoDB connection state: 1
+[2025-08-05T12:55:00.608Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-05T12:55:00.611Z] [LOG] MongoDB Connected to: undefined
+[2025-08-05T12:55:00.612Z] [LOG] MongoDB connection state: 2
+[2025-08-05T12:55:00.628Z] [LOG] Registering route: /api/auth
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/customers
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/products
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/sales
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/repairs
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/notifications
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/stores
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/reports
+[2025-08-05T12:55:00.629Z] [LOG] Registering route: /api/users
+[2025-08-05T12:55:00.630Z] [LOG] Registering route: /api
+[2025-08-05T12:55:00.630Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-05T12:55:00.634Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-05T12:55:00.635Z] [ERROR] (node:13008) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-05T12:55:00.650Z] [LOG] 
+🚀 Server running at:
+[2025-08-05T12:55:00.650Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-05T12:55:00.650Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-05T12:55:00.650Z] [LOG] 
+🌐 Environment: development
+[2025-08-05T12:55:00.650Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-05T12:55:00.650Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/auth
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/customers
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/products
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/sales
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/repairs
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/notifications
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/stores
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/reports
+[2025-08-05T12:55:00.651Z] [LOG]    - /api/users
+[2025-08-05T12:55:00.651Z] [LOG]    - /api
+[2025-08-05T12:55:00.651Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-05T12:55:00.652Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-05T12:55:00.652Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-05T12:55:01.120Z] [LOG] ✅ MongoDB Connected
+[2025-08-05T12:55:01.121Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-05T12:55:01.121Z] [LOG] 🏷️  Connection State: 1
+[2025-08-05T12:55:01.121Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-05T12:55:01.122Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-05T12:55:01.122Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-05T12:55:01.122Z] [LOG] 🏷️  Connection State: 1
+[2025-08-05T12:55:01.122Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-05T12:55:01.122Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-05T12:55:01.122Z] [LOG] 🏷️  Connection State: 1
+[2025-08-05T12:55:01.122Z] [LOG] ✅ MongoDB Connected
+[2025-08-05T12:55:01.125Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-05T12:55:01.125Z] [LOG] MongoDB connection state: 1
+[2025-08-05T12:55:33.101Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-05T12:55:33.104Z] [LOG] MongoDB Connected to: undefined
+[2025-08-05T12:55:33.105Z] [LOG] MongoDB connection state: 2
+[2025-08-05T12:55:33.152Z] [LOG] Registering route: /api/auth
+[2025-08-05T12:55:33.152Z] [LOG] Registering route: /api/customers
+[2025-08-05T12:55:33.152Z] [LOG] Registering route: /api/products
+[2025-08-05T12:55:33.153Z] [LOG] Registering route: /api/sales
+[2025-08-05T12:55:33.153Z] [LOG] Registering route: /api/repairs
+[2025-08-05T12:55:33.153Z] [LOG] Registering route: /api/notifications
+[2025-08-05T12:55:33.153Z] [LOG] Registering route: /api/stores
+[2025-08-05T12:55:33.153Z] [LOG] Registering route: /api/reports
+[2025-08-05T12:55:33.153Z] [LOG] Registering route: /api/users
+[2025-08-05T12:55:33.153Z] [LOG] Registering route: /api
+[2025-08-05T12:55:33.155Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-05T12:55:33.160Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-05T12:55:33.160Z] [ERROR] (node:9288) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-05T12:55:33.226Z] [LOG] 
+🚀 Server running at:
+[2025-08-05T12:55:33.227Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-05T12:55:33.227Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-05T12:55:33.227Z] [LOG] 
+🌐 Environment: development
+[2025-08-05T12:55:33.227Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-05T12:55:33.227Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-05T12:55:33.227Z] [LOG]    - /api/auth
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/customers
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/products
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/sales
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/repairs
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/notifications
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/stores
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/reports
+[2025-08-05T12:55:33.228Z] [LOG]    - /api/users
+[2025-08-05T12:55:33.228Z] [LOG]    - /api
+[2025-08-05T12:55:33.228Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-05T12:55:33.228Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-05T12:55:33.229Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-05T12:55:37.076Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-05T12:55:37.080Z] [LOG] MongoDB Connected to: undefined
+[2025-08-05T12:55:37.081Z] [LOG] MongoDB connection state: 2
+[2025-08-05T12:55:37.100Z] [LOG] Registering route: /api/auth
+[2025-08-05T12:55:37.102Z] [LOG] Registering route: /api/customers
+[2025-08-05T12:55:37.102Z] [LOG] Registering route: /api/products
+[2025-08-05T12:55:37.102Z] [LOG] Registering route: /api/sales
+[2025-08-05T12:55:37.102Z] [LOG] Registering route: /api/repairs
+[2025-08-05T12:55:37.105Z] [LOG] Registering route: /api/notifications
+[2025-08-05T12:55:37.105Z] [LOG] Registering route: /api/stores
+[2025-08-05T12:55:37.106Z] [LOG] Registering route: /api/reports
+[2025-08-05T12:55:37.106Z] [LOG] Registering route: /api/users
+[2025-08-05T12:55:37.106Z] [LOG] Registering route: /api
+[2025-08-05T12:55:37.108Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-05T12:55:37.116Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-05T12:55:37.118Z] [ERROR] (node:12172) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-05T12:55:37.135Z] [LOG] 
+🚀 Server running at:
+[2025-08-05T12:55:37.135Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-05T12:55:37.136Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-05T12:55:37.136Z] [LOG] 
+🌐 Environment: development
+[2025-08-05T12:55:37.136Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-05T12:55:37.136Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-05T12:55:37.136Z] [LOG]    - /api/auth
+[2025-08-05T12:55:37.137Z] [LOG]    - /api/customers
+[2025-08-05T12:55:37.138Z] [LOG]    - /api/products
+[2025-08-05T12:55:37.138Z] [LOG]    - /api/sales
+[2025-08-05T12:55:37.138Z] [LOG]    - /api/repairs
+[2025-08-05T12:55:37.138Z] [LOG]    - /api/notifications
+[2025-08-05T12:55:37.138Z] [LOG]    - /api/stores
+[2025-08-05T12:55:37.138Z] [LOG]    - /api/reports
+[2025-08-05T12:55:37.139Z] [LOG]    - /api/users
+[2025-08-05T12:55:37.139Z] [LOG]    - /api
+[2025-08-05T12:55:37.139Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-05T12:55:37.139Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-05T12:55:37.139Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-05T12:55:37.616Z] [LOG] ✅ MongoDB Connected
+[2025-08-05T12:55:37.617Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-05T12:55:37.617Z] [LOG] 🏷️  Connection State: 1
+[2025-08-05T12:55:37.617Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-05T12:55:37.617Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-05T12:55:37.617Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-05T12:55:37.617Z] [LOG] 🏷️  Connection State: 1
+[2025-08-05T12:55:37.618Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-05T12:55:37.618Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-05T12:55:37.618Z] [LOG] 🏷️  Connection State: 1
+[2025-08-05T12:55:37.618Z] [LOG] ✅ MongoDB Connected
+[2025-08-05T12:55:37.621Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-05T12:55:37.622Z] [LOG] MongoDB connection state: 1
+[2025-08-05T12:57:20.593Z] [LOG] [2025-08-05T12:57:20.593Z] GET /api/api/health
+[2025-08-05T12:57:20.593Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:20.596Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T12:57:21.425Z] [LOG] [2025-08-05T12:57:21.425Z] GET /api/api/health
+[2025-08-05T12:57:21.425Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:21.426Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T12:57:21.535Z] [LOG] [2025-08-05T12:57:21.535Z] GET /api/api/auth/stores
+[2025-08-05T12:57:21.536Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:21.536Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T12:57:22.603Z] [LOG] [2025-08-05T12:57:22.603Z] POST /api/api/auth/check-role
+[2025-08-05T12:57:22.603Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"38","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:22.604Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-05T12:57:24.240Z] [LOG] [2025-08-05T12:57:24.240Z] POST /api/api/auth/check-role
+[2025-08-05T12:57:24.241Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"34","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:24.241Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-05T12:57:25.135Z] [LOG] [2025-08-05T12:57:25.135Z] POST /api/api/auth/check-role
+[2025-08-05T12:57:25.135Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"34","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:25.136Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-05T12:57:30.330Z] [LOG] [2025-08-05T12:57:30.330Z] POST /api/api/auth/check-role
+[2025-08-05T12:57:30.330Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"34","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:30.331Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-05T12:57:38.096Z] [LOG] [2025-08-05T12:57:38.096Z] POST /api/api/auth/check-role
+[2025-08-05T12:57:38.097Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"34","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:38.097Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-05T12:57:49.079Z] [LOG] [2025-08-05T12:57:49.079Z] POST /api/api/auth/check-role
+[2025-08-05T12:57:49.079Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"34","connection":"close","host":"localhost:3002"}
+[2025-08-05T12:57:49.080Z] [LOG] Incoming request from origin: http://localhost:8080
+[2025-08-05T13:07:59.935Z] [LOG] [2025-08-05T13:07:59.935Z] GET /api/api/health
+[2025-08-05T13:07:59.935Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:07:59.935Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:08:00.283Z] [LOG] [2025-08-05T13:08:00.283Z] GET /api/api/auth/stores
+[2025-08-05T13:08:00.283Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:08:00.284Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:08:17.345Z] [LOG] [2025-08-05T13:08:17.345Z] GET /api/api/health
+[2025-08-05T13:08:17.345Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:08:17.346Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:08:17.471Z] [LOG] [2025-08-05T13:08:17.471Z] GET /api/api/auth/stores
+[2025-08-05T13:08:17.471Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:08:17.472Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:08:50.588Z] [LOG] [2025-08-05T13:08:50.588Z] GET /api/api/health
+[2025-08-05T13:08:50.588Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:08:50.589Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:08:50.742Z] [LOG] [2025-08-05T13:08:50.742Z] GET /api/api/auth/stores
+[2025-08-05T13:08:50.742Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:08:50.742Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:09:45.347Z] [LOG] [2025-08-05T13:09:45.347Z] GET /api/api/health
+[2025-08-05T13:09:45.348Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:09:45.348Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:09:45.516Z] [LOG] [2025-08-05T13:09:45.516Z] GET /api/api/auth/stores
+[2025-08-05T13:09:45.516Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:09:45.516Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:10:28.961Z] [LOG] [2025-08-05T13:10:28.961Z] GET /api/api/health
+[2025-08-05T13:10:28.961Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:10:28.962Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:10:29.163Z] [LOG] [2025-08-05T13:10:29.163Z] GET /api/api/auth/stores
+[2025-08-05T13:10:29.163Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:10:29.164Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:10:52.700Z] [LOG] [2025-08-05T13:10:52.700Z] GET /api/api/health
+[2025-08-05T13:10:52.700Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:10:52.700Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-05T13:10:52.853Z] [LOG] [2025-08-05T13:10:52.853Z] GET /api/api/auth/stores
+[2025-08-05T13:10:52.853Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-05T13:10:52.853Z] [LOG] Incoming request from origin: No origin (non-browser request)

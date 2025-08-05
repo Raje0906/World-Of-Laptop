@@ -152,6 +152,66 @@ export default function CustomerManagement() {
     console.log('[handleAddCustomer] called with:', Object.fromEntries(formData.entries()));
     setIsLoading(true);
     try {
+      // Validate required fields
+      const name = (formData.get("name") as string || '').trim();
+      const email = (formData.get("email") as string || '').trim();
+      const phone = (formData.get("phone") as string || '').trim();
+      
+      // Check if all required fields are filled
+      if (!name) {
+        toast({
+          title: "Validation Error",
+          description: "Full Name is required",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!email) {
+        toast({
+          title: "Validation Error",
+          description: "Email is required",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!phone) {
+        toast({
+          title: "Validation Error",
+          description: "Phone Number is required",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate phone number format (exactly 10 digits)
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(phone)) {
+        toast({
+          title: "Validation Error",
+          description: "Phone number must be exactly 10 digits (numbers only)",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast({
+          title: "Validation Error",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       // Ensure all required address fields are present and not empty
       const address = {
         line1: (formData.get("line1") as string || '').trim(),
@@ -203,10 +263,70 @@ export default function CustomerManagement() {
 
     setIsLoading(true);
     try {
+      // Validate required fields
+      const name = (formData.get("name") as string || '').trim();
+      const email = (formData.get("email") as string || '').trim();
+      const phone = (formData.get("phone") as string || '').trim();
+      
+      // Check if all required fields are filled
+      if (!name) {
+        toast({
+          title: "Validation Error",
+          description: "Full Name is required",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!email) {
+        toast({
+          title: "Validation Error",
+          description: "Email is required",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!phone) {
+        toast({
+          title: "Validation Error",
+          description: "Phone Number is required",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate phone number format (exactly 10 digits)
+      const phoneRegex = /^[0-9]{10}$/;
+      if (!phoneRegex.test(phone)) {
+        toast({
+          title: "Validation Error",
+          description: "Phone number must be exactly 10 digits (numbers only)",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        toast({
+          title: "Validation Error",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const updatedCustomer = await updateCustomer(selectedCustomer.id, {
-        name: formData.get("name") as string,
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
+        name: name,
+        email: email.toLowerCase(),
+        phone: phone,
         address: {
           line1: formData.get("address") as string,
           city: formData.get("city") as string,
@@ -391,7 +511,26 @@ export default function CustomerManagement() {
 
                 <div>
                   <Label htmlFor="add-phone">Phone Number *</Label>
-                  <Input id="add-phone" name="phone" required />
+                  <Input 
+                    id="add-phone" 
+                    name="phone" 
+                    type="tel"
+                    required 
+                    placeholder="9876543210"
+                    pattern="[0-9]{10}"
+                    maxLength={10}
+                    onKeyPress={(e) => {
+                      // Only allow numbers
+                      if (!/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    onChange={(e) => {
+                      // Remove any non-numeric characters
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      e.target.value = value;
+                    }}
+                  />
                 </div>
 
                 <div>
@@ -804,8 +943,23 @@ export default function CustomerManagement() {
                                   <Input
                                     id="edit-phone"
                                     name="phone"
+                                    type="tel"
                                     defaultValue={selectedCustomer.phone}
                                     required
+                                    placeholder="9876543210"
+                                    pattern="[0-9]{10}"
+                                    maxLength={10}
+                                    onKeyPress={(e) => {
+                                      // Only allow numbers
+                                      if (!/[0-9]/.test(e.key)) {
+                                        e.preventDefault();
+                                      }
+                                    }}
+                                    onChange={(e) => {
+                                      // Remove any non-numeric characters
+                                      const value = e.target.value.replace(/[^0-9]/g, '');
+                                      e.target.value = value;
+                                    }}
                                   />
                                 </div>
 
