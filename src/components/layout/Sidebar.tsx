@@ -10,7 +10,9 @@ import {
   Package,
   Settings,
   Laptop,
+  LogOut,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface SidebarProps {
@@ -62,7 +64,11 @@ const navigation = [
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <div className="flex flex-col bg-white border-r border-gray-200 h-full shadow-md">
@@ -144,19 +150,31 @@ export function Sidebar({ onNavigate }: SidebarProps) {
 
       {/* User Section */}
       <div className="px-4 py-4 border-t border-gray-200">
-        <div className="flex items-center gap-3 px-3 py-2">
+        <div className="flex items-center gap-3 px-3 py-2 mb-3">
           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-            <span className="text-sm font-medium text-white">A</span>
+            <span className="text-sm font-medium text-white">
+              {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
+            </span>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">
-              Admin User
+              {user?.name || "Admin User"}
             </p>
             <p className="text-xs text-gray-500 truncate">
-              admin@laptopstore.com
+              {user?.email || "admin@laptopstore.com"}
             </p>
           </div>
         </div>
+        
+        {/* Sign Out Button */}
+        <Button
+          onClick={handleLogout}
+          variant="ghost"
+          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign Out
+        </Button>
       </div>
     </div>
   );
