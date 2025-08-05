@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  BarChart3,
-  ShoppingCart,
-  Wrench,
-  Store,
-  TrendingUp,
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  DollarSign, 
+  Users, 
+  Wrench, 
   Calendar,
-  Users,
-  Package,
+  Download,
+  RefreshCw,
+  Loader2,
+  ShoppingCart,
+  Store,
+  Package
 } from "lucide-react";
-import { toast } from "sonner";
+import { reportsService } from "@/services/api";
+import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 // Type definitions
 interface SummaryData {
@@ -76,27 +78,33 @@ export function ReportsOverview() {
   const [repairData, setRepairData] = useState<ChartDataPoint[]>([]);
   const [storeData, setStoreData] = useState<StoreDataPoint[]>([]);
   const [trendLoading, setTrendLoading] = useState<boolean>(false);
+  const { toast } = useToast();
 
   const fetchSummary = async () => {
     try {
-      const response = await fetch("/api/reports/summary", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-        },
-      });
-      const data = await response.json();
+      const response = await reportsService.getSummary();
       
-      if (data.success && data.data) {
+      if (response.success && response.data) {
         setSummary({
-          totalSales: data.data.totalSales,
-          totalRevenue: data.data.totalRevenue,
-          activeRepairs: data.data.activeRepairs,
-          totalCustomers: data.data.totalCustomers,
+          totalSales: response.data.totalSales,
+          totalRevenue: response.data.totalRevenue,
+          activeRepairs: response.data.activeRepairs,
+          totalCustomers: response.data.totalCustomers,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: response.message || "Failed to load summary data",
+          variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Error fetching summary:", error);
-      toast.error("Failed to load summary data");
+      toast({
+        title: "Error",
+        description: "Failed to load summary data. Please check your connection and try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -105,111 +113,63 @@ export function ReportsOverview() {
   const fetchReportData = async (): Promise<void> => {
     setTrendLoading(true);
     try {
-      let endpoint = '';
-      const params = new URLSearchParams();
-      
+      let response: any;
       if (periodType === 'monthly') {
-        endpoint = '/api/reports/monthly';
-        params.append('year', selectedYear.toString());
-        params.append('month', selectedMonth.toString());
-        
-        const response = await fetch(`${endpoint}?${params.toString()}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-          },
-        });
-        
-        const data: ReportResponse = await response.json();
-        
-        if (data.success && data.data?.repairs) {
-          const { repairs } = data.data;
-          
-          // Create trend data (repairs by status)
-          const statusCounts = repairs.statusCounts || {};
-          const newTrendData: ChartDataPoint[] = Object.entries(statusCounts).map(([status, count]) => ({
-            name: status,
-            value: count as number
-          }));
-          
-          // Create repair completion data
-          const newRepairData: ChartDataPoint[] = [
-            { name: 'Completed', value: repairs.completedRepairs || 0 },
-            { 
-              name: 'In Progress', 
-              value: Math.max(0, (repairs.totalRepairs || 0) - (repairs.completedRepairs || 0)) 
-            }
-          ];
-          
-          // Create store performance data
-          const newStoreData: StoreDataPoint[] = Array.isArray(repairs.storePerformance) 
-            ? repairs.storePerformance.map(store => ({
-                name: store.storeId || 'Unknown',
-                revenue: store.revenue || 0,
-                repairs: store.repairs || 0
-              }))
-            : [];
-          
-          setTrendData(newTrendData);
-          setRepairData(newRepairData);
-          setStoreData(newStoreData);
-        }
+        response = await reportsService.getMonthlyReport(selectedYear, selectedMonth);
       } else if (periodType === 'quarterly') {
-        // Handle quarterly report
-        endpoint = '/api/reports/quarterly';
-        params.append('year', selectedYear.toString());
-        params.append('quarter', selectedQuarter.toString());
-        
-        const response = await fetch(`${endpoint}?${params.toString()}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-          },
-        });
-        
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          // Similar mapping as monthly but for quarterly data
-          const repairs = data.data.repairs || {};
-          const trendData = [];
-          const repairData = [];
-          const storeData = [];
-          
-          // Add your quarterly data mapping logic here
-          
-          setTrendData(trendData);
-          setRepairData(repairData);
-          setStoreData(storeData);
-        }
+        response = await reportsService.getQuarterlyReport(selectedYear, selectedQuarter);
       } else if (periodType === 'annual') {
-        // Handle annual report
-        endpoint = '/api/reports/annual';
-        params.append('year', selectedYear.toString());
+        response = await reportsService.getAnnualReport(selectedYear);
+      }
+      
+      if (response.success && response.data) {
+        const { repairs } = response.data;
         
-        const response = await fetch(`${endpoint}?${params.toString()}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-          },
+        // Create trend data (repairs by status)
+        const statusCounts = repairs.statusCounts || {};
+        const newTrendData: ChartDataPoint[] = Object.entries(statusCounts).map(([status, count]) => ({
+          name: status,
+          value: count as number
+        }));
+        
+        // Create repair completion data
+        const newRepairData: ChartDataPoint[] = [
+          { name: 'Completed', value: repairs.completedRepairs || 0 },
+          { 
+            name: 'In Progress', 
+            value: Math.max(0, (repairs.totalRepairs || 0) - (repairs.completedRepairs || 0)) 
+          }
+        ];
+        
+        // Create store performance data
+        const newStoreData: StoreDataPoint[] = Array.isArray(repairs.storePerformance) 
+          ? repairs.storePerformance.map(store => ({
+              name: store.storeId || 'Unknown',
+              revenue: store.revenue || 0,
+              repairs: store.repairs || 0
+            }))
+          : [];
+        
+        setTrendData(newTrendData);
+        setRepairData(newRepairData);
+        setStoreData(newStoreData);
+      } else {
+        toast({
+          title: "Error",
+          description: response.message || "Failed to load report data",
+          variant: "destructive",
         });
-        
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          // Similar mapping as monthly but for annual data
-          const repairs = data.data.repairs || {};
-          const trendData = [];
-          const repairData = [];
-          const storeData = [];
-          
-          // Add your annual data mapping logic here
-          
-          setTrendData(trendData);
-          setRepairData(repairData);
-          setStoreData(storeData);
-        }
+        setTrendData([]);
+        setRepairData([]);
+        setStoreData([]);
       }
     } catch (error) {
       console.error("Error fetching report data:", error);
-      toast.error("Failed to load report data");
+      toast({
+        title: "Error",
+        description: "Failed to load report data. Please check your connection and try again.",
+        variant: "destructive",
+      });
       setTrendData([]);
       setRepairData([]);
       setStoreData([]);

@@ -543,6 +543,53 @@ class ApiClient {
   async getNotificationHistory(repairId: string) {
     return this.request(`/notifications/history/${repairId}`);
   }
+
+  // Reports API methods
+  async getReportsSummary() {
+    return this.request('/reports/summary');
+  }
+
+  async getMonthlyReport(year: number, month: number) {
+    return this.request(`/reports/monthly?year=${year}&month=${month}`);
+  }
+
+  async getQuarterlyReport(year: number, quarter: number) {
+    return this.request(`/reports/quarterly?year=${year}&quarter=${quarter}`);
+  }
+
+  async getAnnualReport(year: number) {
+    return this.request(`/reports/annual?year=${year}`);
+  }
+
+  async getRepairReport(params?: {
+    startDate?: string;
+    endDate?: string;
+    storeId?: string;
+    status?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.startDate) searchParams.append('startDate', params.startDate);
+    if (params?.endDate) searchParams.append('endDate', params.endDate);
+    if (params?.storeId) searchParams.append('storeId', params.storeId);
+    if (params?.status) searchParams.append('status', params.status);
+    
+    return this.request(`/reports/repairs?${searchParams.toString()}`);
+  }
+
+  async getSalesReport(params?: {
+    startDate?: string;
+    endDate?: string;
+    storeId?: string;
+    paymentMethod?: string;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.startDate) searchParams.append('startDate', params.startDate);
+    if (params?.endDate) searchParams.append('endDate', params.endDate);
+    if (params?.storeId) searchParams.append('storeId', params.storeId);
+    if (params?.paymentMethod) searchParams.append('paymentMethod', params.paymentMethod);
+    
+    return this.request(`/reports/sales?${searchParams.toString()}`);
+  }
 }
 
 // Create singleton instance
@@ -616,6 +663,15 @@ export const notificationService = {
     apiClient.request(`/notifications/repairs/${repairId}`, { method: 'POST', body: JSON.stringify(data) }),
   sendBulk: (data: any) => apiClient.request('/notifications/bulk', { method: 'POST', body: JSON.stringify(data) }),
   getHistory: (repairId: string) => apiClient.request(`/notifications/history/${repairId}`)
+};
+
+export const reportsService = {
+  getSummary: () => apiClient.getReportsSummary(),
+  getMonthly: (year: number, month: number) => apiClient.getMonthlyReport(year, month),
+  getQuarterly: (year: number, quarter: number) => apiClient.getQuarterlyReport(year, quarter),
+  getAnnual: (year: number) => apiClient.getAnnualReport(year),
+  getRepairReport: (params?: any) => apiClient.getRepairReport(params),
+  getSalesReport: (params?: any) => apiClient.getSalesReport(params),
 };
 
 export default apiClient;

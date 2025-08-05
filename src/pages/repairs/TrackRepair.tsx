@@ -261,6 +261,34 @@ export function TrackRepair() {
     setIsLoadingReceived(false);
   }, []);
 
+  // Function to navigate to track repair page (refresh/reset)
+  const handleReturnToRepairs = useCallback(() => {
+    try {
+      // Reset the current page state
+      resetPage();
+      
+      // Show loading state briefly
+      toast({
+        title: "Refreshing",
+        description: "Resetting the track repair page...",
+        variant: "default",
+      });
+      
+      // Use a small delay to show the loading state
+      setTimeout(() => {
+        // Navigate to the same route to ensure a fresh page load
+        window.location.href = '/repairs/track';
+      }, 500);
+    } catch (error) {
+      console.error('Error returning to repairs:', error);
+      toast({
+        title: "Error",
+        description: "Failed to refresh the page. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [resetPage, toast]);
+
   // Function to navigate to repair details
   const navigateToRepairDetails = (ticketNumber: string) => {
     navigate(`/repairs/details/${ticketNumber}`);
@@ -765,7 +793,7 @@ export function TrackRepair() {
       {/* Return Back Button */}
       <Button
         variant="ghost"
-        onClick={resetPage}
+        onClick={handleReturnToRepairs}
         className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-0 py-2 h-auto font-medium focus:ring-2 focus:ring-blue-200 focus:ring-offset-2"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
