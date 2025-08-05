@@ -25,6 +25,23 @@ import { useStore } from "@/contexts/StoreContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { emailService } from '@/services/emailService';
 
+// Test function for email notifications
+const testEmailNotification = async () => {
+  const testEmail = prompt('Enter test email address:');
+  if (!testEmail) return;
+  
+  try {
+    const result = await emailService.testRepairNotification(testEmail);
+    if (result.success) {
+      alert('Test email sent successfully!');
+    } else {
+      alert(`Test failed: ${result.message || result.error}`);
+    }
+  } catch (error) {
+    alert(`Test error: ${error.message}`);
+  }
+};
+
 // Production Configuration
 const REPAIR_CONFIG = {
   MAX_DEVICE_BRAND_LENGTH: 50,
@@ -519,8 +536,13 @@ export function NewRepair() {
 
       // Send notifications if consent was given
       if (formData.notificationConsent && newRepair) {
+        console.log('=== SENDING NOTIFICATIONS ===');
+        console.log('Notification consent:', formData.notificationConsent);
+        console.log('WhatsApp number:', formData.whatsappNumber);
+        console.log('Email address:', formData.notificationEmail);
+        
         try {
-          await sendRepairNotifications({
+          const notificationResult = await sendRepairNotifications({
             repairId: newRepair._id || newRepair.id,
             customerName: selectedCustomer?.name || 'Customer',
             deviceInfo: `${formData.deviceBrand} ${formData.deviceModel}`,
@@ -530,10 +552,41 @@ export function NewRepair() {
             whatsappNumber: formData.whatsappNumber,
             notificationEmail: formData.notificationEmail,
           });
+          
+          console.log('Notification result:', notificationResult);
+          
+          // Show success message for notifications
+          if (notificationResult.success) {
+            toast({
+              title: "Notifications Sent",
+              description: "Repair notifications have been sent successfully.",
+              variant: "default",
+            });
+          } else if (notificationResult.skipped) {
+            console.warn('Notifications skipped:', notificationResult.message);
+            toast({
+              title: "Notifications Skipped",
+              description: notificationResult.message,
+              variant: "default",
+            });
+          } else {
+            console.warn('Notification failed:', notificationResult.message);
+            toast({
+              title: "Notification Warning",
+              description: "Repair created but notifications failed to send.",
+              variant: "default",
+            });
+          }
         } catch (notificationError) {
           console.error('Failed to send notifications:', notificationError);
-          // Don't fail the main submission for notification errors
+          toast({
+            title: "Notification Error",
+            description: "Repair created but there was an issue sending notifications.",
+            variant: "default",
+          });
         }
+      } else {
+        console.log('Notifications not sent - consent not given or no repair data');
       }
       
     } catch (error: any) {
@@ -583,29 +636,70 @@ export function NewRepair() {
   const sendRepairNotifications = async (
     newRepair: RepairNotificationData
   ) => {
+    const results = {
+      whatsapp: { success: false, message: '' },
+      email: { success: false, message: '' }
+    };
+
     try {
       // Send WhatsApp notification
       if (newRepair.whatsappNumber) {
-            await sendWhatsAppNotification(
-          newRepair.whatsappNumber,
-          `🔧 Repair Ticket Created\n\nCustomer: ${newRepair.customerName}\nDevice: ${newRepair.deviceInfo}\nIssue: ${newRepair.issue}\nEstimated Cost: ₹${newRepair.estimatedCost}\nEstimated Days: ${newRepair.estimatedDays}\n\nWe'll keep you updated on the repair progress.`
-        );
+        console.log('Sending WhatsApp notification to:', newRepair.whatsappNumber);
+        try {
+          await sendWhatsAppNotification(
+            newRepair.whatsappNumber,
+            `🔧 Repair Ticket Created\n\nCustomer: ${newRepair.customerName}\nDevice: ${newRepair.deviceInfo}\nIssue: ${newRepair.issue}\nEstimated Cost: ₹${newRepair.estimatedCost}\nEstimated Days: ${newRepair.estimatedDays}\n\nWe'll keep you updated on the repair progress.`
+          );
+          results.whatsapp = { success: true, message: 'WhatsApp notification sent successfully' };
+        } catch (whatsappError) {
+          console.error('WhatsApp notification failed:', whatsappError);
+          results.whatsapp = { success: false, message: 'WhatsApp notification failed' };
+        }
+      } else {
+        console.log('No WhatsApp number provided');
+        results.whatsapp = { success: false, message: 'No WhatsApp number provided' };
       }
 
       // Send email notification
       if (newRepair.notificationEmail) {
-        await emailService.sendRepairNotification({
-          to: newRepair.notificationEmail,
-          customerName: newRepair.customerName,
-          deviceInfo: newRepair.deviceInfo,
-          issue: newRepair.issue,
-          estimatedCost: newRepair.estimatedCost,
-          estimatedDays: newRepair.estimatedDays,
-        });
+        console.log('Sending email notification to:', newRepair.notificationEmail);
+        try {
+          const emailResult = await emailService.sendRepairNotification({
+            to: newRepair.notificationEmail,
+            customerName: newRepair.customerName,
+            deviceInfo: newRepair.deviceInfo,
+            issue: newRepair.issue,
+            estimatedCost: newRepair.estimatedCost,
+            estimatedDays: newRepair.estimatedDays,
+          });
+          
+          if (emailResult.success) {
+            results.email = { success: true, message: 'Email notification sent successfully' };
+          } else {
+            results.email = { success: false, message: emailResult.message || 'Email notification failed' };
+          }
+        } catch (emailError) {
+          console.error('Email notification failed:', emailError);
+          results.email = { success: false, message: 'Email notification failed' };
+        }
+      } else {
+        console.log('No email address provided');
+        results.email = { success: false, message: 'No email address provided' };
       }
+
+      console.log('Notification results:', results);
+      return {
+        success: results.whatsapp.success || results.email.success,
+        whatsapp: results.whatsapp,
+        email: results.email
+      };
     } catch (error) {
       console.error("Error sending notifications:", error);
-      // Don't show error to user as the repair was created successfully
+      return {
+        success: false,
+        message: 'Failed to send notifications',
+        error: error
+      };
     }
   };
 
@@ -646,12 +740,22 @@ export function NewRepair() {
             Customer: <span className="font-semibold">{selectedCustomer?.name}</span>
           </p>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => setShowCustomerSearch(true)}
-        >
-          Change Customer
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={testEmailNotification}
+            className="text-xs"
+          >
+            Test Email
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowCustomerSearch(true)}
+          >
+            Change Customer
+          </Button>
+        </div>
       </div>
 
       {/* Error Alert */}

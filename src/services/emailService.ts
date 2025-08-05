@@ -237,6 +237,32 @@ export const emailService = {
   },
 
   /**
+   * Test the repair notification email
+   */
+  async testRepairNotification(testEmail: string) {
+    console.log('=== TESTING REPAIR NOTIFICATION ===');
+    console.log('Test email:', testEmail);
+    
+    const testParams = {
+      to: testEmail,
+      customerName: 'Test Customer',
+      deviceInfo: 'Test Laptop Model',
+      issue: 'Test issue description',
+      estimatedCost: 1500,
+      estimatedDays: 3
+    };
+    
+    try {
+      const result = await this.sendRepairNotification(testParams);
+      console.log('Test result:', result);
+      return result;
+    } catch (error) {
+      console.error('Test failed:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  /**
    * Send repair notification email
    */
   async sendRepairNotification(params: {
@@ -248,6 +274,25 @@ export const emailService = {
     estimatedDays: number;
   }) {
     try {
+      console.log('=== SENDING REPAIR NOTIFICATION ===');
+      console.log('EmailJS Configuration:', {
+        SERVICE_ID: CONFIG.SERVICE_ID ? 'SET' : 'MISSING',
+        TEMPLATE_ID: CONFIG.TEMPLATE_ID ? 'SET' : 'MISSING',
+        USER_ID: CONFIG.USER_ID ? 'SET' : 'MISSING',
+        serviceId: CONFIG.serviceId ? 'SET' : 'MISSING',
+        templateId: CONFIG.templateId ? 'SET' : 'MISSING',
+        userId: CONFIG.userId ? 'SET' : 'MISSING'
+      });
+      
+      console.log('Notification parameters:', {
+        to: params.to,
+        customerName: params.customerName,
+        deviceInfo: params.deviceInfo,
+        issue: params.issue,
+        estimatedCost: params.estimatedCost,
+        estimatedDays: params.estimatedDays
+      });
+
       const templateParams = {
         user_name: params.customerName,
         device_name: params.deviceInfo,
@@ -259,10 +304,29 @@ export const emailService = {
         estimated_days: params.estimatedDays.toString()
       };
 
-      return await this.sendEmail(templateParams);
+      console.log('Template parameters:', templateParams);
+
+      // Check if EmailJS is properly configured
+      if (!CONFIG.userId || !CONFIG.serviceId || !CONFIG.templateId) {
+        console.warn('EmailJS not properly configured. Email notification will be skipped.');
+        console.warn('Required environment variables: VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, VITE_EMAILJS_USER_ID');
+        return { 
+          success: false, 
+          message: 'EmailJS not configured. Please set up EmailJS environment variables.',
+          skipped: true 
+        };
+      }
+
+      const result = await this.sendEmail(templateParams);
+      console.log('Repair notification sent successfully:', result);
+      return result;
     } catch (error) {
       console.error('Error sending repair notification:', error);
-      throw error;
+      return { 
+        success: false, 
+        message: error.message || 'Failed to send repair notification',
+        error: error 
+      };
     }
   }
 };
