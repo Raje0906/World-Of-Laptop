@@ -1,5 +1,4 @@
 import React from "react";
-import QuietSystemStatus from "../components/QuietSystemStatus";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 
 export default function SimpleDashboard() {
@@ -73,8 +72,17 @@ export default function SimpleDashboard() {
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <QuietSystemStatus />
+      {/* Welcome Message */}
+      <div className="mt-12 flex justify-center items-center">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">
+            Welcome to World of Laptops
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl">
+            Your comprehensive laptop store management system. Track sales, manage repairs, 
+            and analyze performance with our powerful CRM tools.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -196,26 +196,7 @@ export function ReportsOverview() {
         </p>
       </div>
 
-      {/* Database Connection Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Database Connection Status</CardTitle>
-          <CardDescription>
-            Real-time connection to your MongoDB database
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4 p-4 bg-green-50 rounded-lg">
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <div>
-              <h4 className="font-semibold text-green-900">Connected to Database</h4>
-              <p className="text-sm text-green-700">
-                All data shown is live from your MongoDB database
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
 
       {/* Live Data Stats */}
       <div className="grid gap-4 md:grid-cols-4">

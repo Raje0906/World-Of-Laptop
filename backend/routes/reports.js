@@ -1,5 +1,4 @@
 import express from 'express';
-import { authenticateToken } from '../middleware/auth.js';
 import Repair from '../models/Repair.js';
 import Sale from '../models/Sale.js';
 import Customer from '../models/Customer.js';
@@ -7,8 +6,8 @@ import db from '../database/db.js';
 
 const router = express.Router();
 
-// Summary route
-router.get('/summary', authenticateToken, async (req, res) => {
+// Summary route (public for now)
+router.get('/summary', async (req, res) => {
   try {
     const salesStatsArr = await Sale.aggregate([
       {
@@ -140,7 +139,7 @@ function calculateSalesMetrics(sales) {
 }
 
 // Monthly report
-router.get('/monthly', authenticateToken, async (req, res) => {
+router.get('/monthly', async (req, res) => {
   try {
     const { year, month } = req.query;
     const user = req.user || {}; // Handle case where user might be undefined
@@ -190,7 +189,7 @@ router.get('/monthly', authenticateToken, async (req, res) => {
 });
 
 // Monthly Sales Report
-router.get('/sales/monthly', authenticateToken, async (req, res) => {
+router.get('/sales/monthly', async (req, res) => {
   try {
     const { year, month } = req.query;
     const user = req.user || {};
@@ -232,7 +231,7 @@ router.get('/sales/monthly', authenticateToken, async (req, res) => {
 });
 
 // Monthly Store Report
-router.get('/store/monthly', authenticateToken, async (req, res) => {
+router.get('/store/monthly', async (req, res) => {
   try {
     const { year, month } = req.query;
     if (!year || !month) return res.status(400).json({ message: 'Year and month are required' });
@@ -263,7 +262,7 @@ router.get('/store/monthly', authenticateToken, async (req, res) => {
 });
 
 // Quarterly report
-router.get('/quarterly', authenticateToken, async (req, res) => {
+router.get('/quarterly', async (req, res) => {
   try {
     const { year, quarter } = req.query;
     const user = req.user || {};
@@ -324,7 +323,7 @@ router.get('/quarterly', authenticateToken, async (req, res) => {
 });
 
 // Annual report
-router.get('/annual', authenticateToken, async (req, res) => {
+router.get('/annual', async (req, res) => {
   try {
     const { year } = req.query;
     const user = req.user || {};

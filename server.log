@@ -10446,3 +10446,344 @@
 [2025-08-05T13:10:52.853Z] [LOG] [2025-08-05T13:10:52.853Z] GET /api/api/auth/stores
 [2025-08-05T13:10:52.853Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
 [2025-08-05T13:10:52.853Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-12T15:13:07.078Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-12T15:13:07.085Z] [LOG] MongoDB Connected to: undefined
+[2025-08-12T15:13:07.086Z] [LOG] MongoDB connection state: 2
+[2025-08-12T15:13:07.131Z] [LOG] Registering route: /api/auth
+[2025-08-12T15:13:07.131Z] [LOG] Registering route: /api/customers
+[2025-08-12T15:13:07.133Z] [LOG] Registering route: /api/products
+[2025-08-12T15:13:07.133Z] [LOG] Registering route: /api/sales
+[2025-08-12T15:13:07.133Z] [LOG] Registering route: /api/repairs
+[2025-08-12T15:13:07.133Z] [LOG] Registering route: /api/notifications
+[2025-08-12T15:13:07.133Z] [LOG] Registering route: /api/stores
+[2025-08-12T15:13:07.134Z] [LOG] Registering route: /api/reports
+[2025-08-12T15:13:07.134Z] [LOG] Registering route: /api/users
+[2025-08-12T15:13:07.134Z] [LOG] Registering route: /api
+[2025-08-12T15:13:07.134Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-12T15:13:07.139Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-12T15:13:07.141Z] [ERROR] (node:10864) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-12T15:13:07.165Z] [LOG] 
+🚀 Server running at:
+[2025-08-12T15:13:07.165Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-12T15:13:07.165Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-12T15:13:07.165Z] [LOG] 
+🌐 Environment: development
+[2025-08-12T15:13:07.165Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-12T15:13:07.165Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-12T15:13:07.165Z] [LOG]    - /api/auth
+[2025-08-12T15:13:07.166Z] [LOG]    - /api/customers
+[2025-08-12T15:13:07.166Z] [LOG]    - /api/products
+[2025-08-12T15:13:07.166Z] [LOG]    - /api/sales
+[2025-08-12T15:13:07.166Z] [LOG]    - /api/repairs
+[2025-08-12T15:13:07.166Z] [LOG]    - /api/notifications
+[2025-08-12T15:13:07.166Z] [LOG]    - /api/stores
+[2025-08-12T15:13:07.166Z] [LOG]    - /api/reports
+[2025-08-12T15:13:07.181Z] [LOG]    - /api/users
+[2025-08-12T15:13:07.182Z] [LOG]    - /api
+[2025-08-12T15:13:07.182Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-12T15:13:07.182Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-12T15:13:07.182Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-12T15:13:08.200Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:08.201Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:08.201Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:08.201Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-12T15:13:08.201Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:08.201Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:08.201Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:08.202Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:08.202Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:08.202Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:08.202Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:08.206Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:08.206Z] [LOG] MongoDB connection state: 1
+[2025-08-12T15:13:19.508Z] [LOG] [2025-08-12T15:13:19.508Z] GET /api/api/health
+[2025-08-12T15:13:19.509Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-12T15:13:19.514Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-12T15:13:33.109Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-12T15:13:33.122Z] [LOG] MongoDB Connected to: undefined
+[2025-08-12T15:13:33.123Z] [LOG] MongoDB connection state: 2
+[2025-08-12T15:13:33.189Z] [LOG] Registering route: /api/auth
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/customers
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/products
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/sales
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/repairs
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/notifications
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/stores
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/reports
+[2025-08-12T15:13:33.190Z] [LOG] Registering route: /api/users
+[2025-08-12T15:13:33.191Z] [LOG] Registering route: /api
+[2025-08-12T15:13:33.191Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-12T15:13:33.208Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-12T15:13:33.209Z] [ERROR] (node:12304) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-12T15:13:33.274Z] [LOG] 
+🚀 Server running at:
+[2025-08-12T15:13:33.274Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-12T15:13:33.274Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-12T15:13:33.274Z] [LOG] 
+🌐 Environment: development
+[2025-08-12T15:13:33.274Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-12T15:13:33.275Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/auth
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/customers
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/products
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/sales
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/repairs
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/notifications
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/stores
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/reports
+[2025-08-12T15:13:33.275Z] [LOG]    - /api/users
+[2025-08-12T15:13:33.275Z] [LOG]    - /api
+[2025-08-12T15:13:33.276Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-12T15:13:33.276Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-12T15:13:33.276Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-12T15:13:35.151Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:35.152Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:35.152Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:35.152Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-12T15:13:35.152Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:35.153Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:35.153Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:35.153Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:35.153Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:35.153Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:35.153Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:35.157Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:35.157Z] [LOG] MongoDB connection state: 1
+[2025-08-12T15:13:46.332Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-12T15:13:46.340Z] [LOG] MongoDB Connected to: undefined
+[2025-08-12T15:13:46.343Z] [LOG] MongoDB connection state: 2
+[2025-08-12T15:13:46.361Z] [LOG] Registering route: /api/auth
+[2025-08-12T15:13:46.361Z] [LOG] Registering route: /api/customers
+[2025-08-12T15:13:46.362Z] [LOG] Registering route: /api/products
+[2025-08-12T15:13:46.377Z] [LOG] Registering route: /api/sales
+[2025-08-12T15:13:46.377Z] [LOG] Registering route: /api/repairs
+[2025-08-12T15:13:46.377Z] [LOG] Registering route: /api/notifications
+[2025-08-12T15:13:46.377Z] [LOG] Registering route: /api/stores
+[2025-08-12T15:13:46.378Z] [LOG] Registering route: /api/reports
+[2025-08-12T15:13:46.378Z] [LOG] Registering route: /api/users
+[2025-08-12T15:13:46.378Z] [LOG] Registering route: /api
+[2025-08-12T15:13:46.378Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-12T15:13:46.391Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-12T15:13:46.393Z] [ERROR] (node:936) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-12T15:13:46.447Z] [LOG] 
+🚀 Server running at:
+[2025-08-12T15:13:46.448Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-12T15:13:46.448Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-12T15:13:46.448Z] [LOG] 
+🌐 Environment: development
+[2025-08-12T15:13:46.448Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-12T15:13:46.448Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/auth
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/customers
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/products
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/sales
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/repairs
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/notifications
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/stores
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/reports
+[2025-08-12T15:13:46.448Z] [LOG]    - /api/users
+[2025-08-12T15:13:46.448Z] [LOG]    - /api
+[2025-08-12T15:13:46.448Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-12T15:13:46.448Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-12T15:13:46.449Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-12T15:13:47.209Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:47.209Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:47.210Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:47.210Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-12T15:13:47.210Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:47.210Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:47.210Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:47.210Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:47.210Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:47.210Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:47.211Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:47.214Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:13:47.214Z] [LOG] MongoDB connection state: 1
+[2025-08-12T15:13:52.149Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-12T15:13:52.153Z] [LOG] MongoDB Connected to: undefined
+[2025-08-12T15:13:52.153Z] [LOG] MongoDB connection state: 2
+[2025-08-12T15:13:52.173Z] [LOG] Registering route: /api/auth
+[2025-08-12T15:13:52.173Z] [LOG] Registering route: /api/customers
+[2025-08-12T15:13:52.174Z] [LOG] Registering route: /api/products
+[2025-08-12T15:13:52.174Z] [LOG] Registering route: /api/sales
+[2025-08-12T15:13:52.174Z] [LOG] Registering route: /api/repairs
+[2025-08-12T15:13:52.174Z] [LOG] Registering route: /api/notifications
+[2025-08-12T15:13:52.175Z] [LOG] Registering route: /api/stores
+[2025-08-12T15:13:52.175Z] [LOG] Registering route: /api/reports
+[2025-08-12T15:13:52.175Z] [LOG] Registering route: /api/users
+[2025-08-12T15:13:52.175Z] [LOG] Registering route: /api
+[2025-08-12T15:13:52.175Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-12T15:13:52.179Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-12T15:13:52.180Z] [ERROR] (node:5216) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-12T15:13:52.198Z] [LOG] 
+🚀 Server running at:
+[2025-08-12T15:13:52.199Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-12T15:13:52.199Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-12T15:13:52.199Z] [LOG] 
+🌐 Environment: development
+[2025-08-12T15:13:52.199Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-12T15:13:52.199Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-12T15:13:52.199Z] [LOG]    - /api/auth
+[2025-08-12T15:13:52.199Z] [LOG]    - /api/customers
+[2025-08-12T15:13:52.200Z] [LOG]    - /api/products
+[2025-08-12T15:13:52.200Z] [LOG]    - /api/sales
+[2025-08-12T15:13:52.200Z] [LOG]    - /api/repairs
+[2025-08-12T15:13:52.200Z] [LOG]    - /api/notifications
+[2025-08-12T15:13:52.200Z] [LOG]    - /api/stores
+[2025-08-12T15:13:52.200Z] [LOG]    - /api/reports
+[2025-08-12T15:13:52.200Z] [LOG]    - /api/users
+[2025-08-12T15:13:52.201Z] [LOG]    - /api
+[2025-08-12T15:13:52.201Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-12T15:13:52.201Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-12T15:13:52.201Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-12T15:13:57.346Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:57.347Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:57.347Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:57.347Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-12T15:13:57.347Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-12T15:13:57.347Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:57.348Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:57.348Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-12T15:13:57.348Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:13:57.348Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:13:57.348Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:13:57.351Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-12T15:13:57.351Z] [LOG] MongoDB connection state: 1
+[2025-08-12T15:14:32.245Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-12T15:14:32.249Z] [LOG] MongoDB Connected to: undefined
+[2025-08-12T15:14:32.250Z] [LOG] MongoDB connection state: 2
+[2025-08-12T15:14:32.263Z] [LOG] Registering route: /api/auth
+[2025-08-12T15:14:32.267Z] [LOG] Registering route: /api/customers
+[2025-08-12T15:14:32.268Z] [LOG] Registering route: /api/products
+[2025-08-12T15:14:32.268Z] [LOG] Registering route: /api/sales
+[2025-08-12T15:14:32.269Z] [LOG] Registering route: /api/repairs
+[2025-08-12T15:14:32.269Z] [LOG] Registering route: /api/notifications
+[2025-08-12T15:14:32.269Z] [LOG] Registering route: /api/stores
+[2025-08-12T15:14:32.270Z] [LOG] Registering route: /api/reports
+[2025-08-12T15:14:32.270Z] [LOG] Registering route: /api/users
+[2025-08-12T15:14:32.270Z] [LOG] Registering route: /api
+[2025-08-12T15:14:32.275Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-12T15:14:32.282Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-12T15:14:32.283Z] [ERROR] (node:6220) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-12T15:14:32.303Z] [LOG] 
+🚀 Server running at:
+[2025-08-12T15:14:32.303Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-12T15:14:32.303Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-12T15:14:32.303Z] [LOG] 
+🌐 Environment: development
+[2025-08-12T15:14:32.303Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-12T15:14:32.303Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-12T15:14:32.303Z] [LOG]    - /api/auth
+[2025-08-12T15:14:32.303Z] [LOG]    - /api/customers
+[2025-08-12T15:14:32.304Z] [LOG]    - /api/products
+[2025-08-12T15:14:32.304Z] [LOG]    - /api/sales
+[2025-08-12T15:14:32.304Z] [LOG]    - /api/repairs
+[2025-08-12T15:14:32.304Z] [LOG]    - /api/notifications
+[2025-08-12T15:14:32.304Z] [LOG]    - /api/stores
+[2025-08-12T15:14:32.304Z] [LOG]    - /api/reports
+[2025-08-12T15:14:32.304Z] [LOG]    - /api/users
+[2025-08-12T15:14:32.304Z] [LOG]    - /api
+[2025-08-12T15:14:32.304Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-12T15:14:32.304Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-12T15:14:32.304Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-12T15:14:32.787Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:14:32.788Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:14:32.788Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:14:32.788Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-12T15:14:32.789Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:14:32.789Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:14:32.789Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:14:32.789Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:14:32.789Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:14:32.789Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:14:32.790Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:14:32.793Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-12T15:14:32.793Z] [LOG] MongoDB connection state: 1
+[2025-08-12T15:14:58.403Z] [LOG] [2025-08-12T15:14:58.403Z] GET /api/auth/me
+[2025-08-12T15:14:58.403Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:4173/","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","accept":"*/*","sec-ch-ua-mobile":"?1","sec-ch-ua":"\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"","user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36","authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OTBlNTliNmJmOWQwYzIwOWY1ZTY4YiIsImVtYWlsIjoiaGVhZEBnbWFpbC5jb20iLCJuYW1lIjoiaGVhZCIsInJvbGUiOiJhZG1pbiIsInN0b3JlX2lkIjpudWxsLCJpYXQiOjE3NTQzNzA4NTYsImV4cCI6MTc1NDQ1NzI1Nn0.L6PfZLeDtMGrII4-7dondc4zOEN9QBkCHxQ2YdBB6zI","sec-ch-ua-platform":"\"Android\"","cache-control":"no-cache","pragma":"no-cache","connection":"close","host":"localhost:3002"}
+[2025-08-12T15:14:58.406Z] [LOG] Incoming request from origin: No origin (non-browser request)
+[2025-08-12T15:14:58.417Z] [ERROR] Get user error: TokenExpiredError: jwt expired
+    at C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\jsonwebtoken\verify.js:190:21
+    at getSecret (C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\jsonwebtoken\verify.js:97:14)
+    at module.exports [as verify] (C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\jsonwebtoken\verify.js:101:10)
+    at file:///C:/Users/Rajea/OneDrive/Desktop/build_3%20deploy/Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386/backend/routes/auth.js:480:25
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\Rajea\OneDrive\Desktop\build_3 deploy\Builder-mystic-field-871ddc5540f90aa78102bd02f38cc22142eea386\node_modules\express\lib\router\index.js:346:12)
+[2025-08-12T15:16:00.931Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-12T15:16:00.934Z] [LOG] MongoDB Connected to: undefined
+[2025-08-12T15:16:00.934Z] [LOG] MongoDB connection state: 2
+[2025-08-12T15:16:00.945Z] [LOG] Registering route: /api/auth
+[2025-08-12T15:16:00.946Z] [LOG] Registering route: /api/customers
+[2025-08-12T15:16:00.946Z] [LOG] Registering route: /api/products
+[2025-08-12T15:16:00.946Z] [LOG] Registering route: /api/sales
+[2025-08-12T15:16:00.947Z] [LOG] Registering route: /api/repairs
+[2025-08-12T15:16:00.947Z] [LOG] Registering route: /api/notifications
+[2025-08-12T15:16:00.947Z] [LOG] Registering route: /api/stores
+[2025-08-12T15:16:00.947Z] [LOG] Registering route: /api/reports
+[2025-08-12T15:16:00.947Z] [LOG] Registering route: /api/users
+[2025-08-12T15:16:00.947Z] [LOG] Registering route: /api
+[2025-08-12T15:16:00.948Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-12T15:16:00.951Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-12T15:16:00.952Z] [ERROR] (node:13952) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-12T15:16:00.965Z] [LOG] 
+🚀 Server running at:
+[2025-08-12T15:16:00.965Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-12T15:16:00.965Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-12T15:16:00.965Z] [LOG] 
+🌐 Environment: development
+[2025-08-12T15:16:00.965Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-12T15:16:00.965Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-12T15:16:00.965Z] [LOG]    - /api/auth
+[2025-08-12T15:16:00.965Z] [LOG]    - /api/customers
+[2025-08-12T15:16:00.965Z] [LOG]    - /api/products
+[2025-08-12T15:16:00.965Z] [LOG]    - /api/sales
+[2025-08-12T15:16:00.966Z] [LOG]    - /api/repairs
+[2025-08-12T15:16:00.966Z] [LOG]    - /api/notifications
+[2025-08-12T15:16:00.966Z] [LOG]    - /api/stores
+[2025-08-12T15:16:00.966Z] [LOG]    - /api/reports
+[2025-08-12T15:16:00.966Z] [LOG]    - /api/users
+[2025-08-12T15:16:00.966Z] [LOG]    - /api
+[2025-08-12T15:16:00.966Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-12T15:16:00.966Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-12T15:16:00.966Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-12T15:16:01.412Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:16:01.412Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:16:01.413Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:16:01.413Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-12T15:16:01.413Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-12T15:16:01.413Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:16:01.413Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:16:01.413Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-12T15:16:01.413Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-12T15:16:01.414Z] [LOG] 🏷️  Connection State: 1
+[2025-08-12T15:16:01.414Z] [LOG] ✅ MongoDB Connected
+[2025-08-12T15:16:01.417Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-12T15:16:01.417Z] [LOG] MongoDB connection state: 1

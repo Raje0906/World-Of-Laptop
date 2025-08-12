@@ -123,17 +123,17 @@ export function DailySales() {
   const formatCurrency = (value: number): string => {
     try {
       if (typeof value !== 'number' || isNaN(value)) {
-        return '$0.00';
+        return '₹0.00';
       }
-      return new Intl.NumberFormat('en-US', {
+      return new Intl.NumberFormat('en-IN', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'INR',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(value);
     } catch (error) {
       console.error('Currency formatting error:', error);
-      return '$0.00';
+      return '₹0.00';
     }
   };
 
@@ -150,12 +150,12 @@ export function DailySales() {
 
     const now = new Date();
     const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-    const oneYearFromNow = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+    const twoYearsFromNow = new Date(now.getFullYear() + 2, now.getMonth(), now.getDate());
     
-    if (date < oneYearAgo || date > oneYearFromNow) {
+    if (date < oneYearAgo || date > twoYearsFromNow) {
       setError({
         type: 'validation',
-        message: 'Date must be within a reasonable range (1 year past to 1 year future)',
+        message: 'Date must be within a reasonable range (1 year past to 2 years future)',
         retryable: false
       });
       return false;

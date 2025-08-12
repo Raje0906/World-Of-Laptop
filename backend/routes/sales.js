@@ -585,11 +585,11 @@ router.get(
           const date = new Date(value);
           const now = new Date();
           const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-          const oneYearFromNow = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+          const twoYearsFromNow = new Date(now.getFullYear() + 2, now.getMonth(), now.getDate());
           
-          // Allow dates within a reasonable range (1 year past to 1 year future)
-          if (date < oneYearAgo || date > oneYearFromNow) {
-            throw new Error("Date must be within a reasonable range (1 year past to 1 year future)");
+          // Allow dates within a reasonable range (1 year past to 2 years future)
+          if (date < oneYearAgo || date > twoYearsFromNow) {
+            throw new Error("Date must be within a reasonable range (1 year past to 2 years future)");
           }
         }
         return true;
