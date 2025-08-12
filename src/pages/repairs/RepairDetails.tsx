@@ -448,40 +448,7 @@ export function RepairDetails() {
   );
 }
 
-export default RepairDetails; 
-        >
-
-          <ArrowLeft className="h-4 w-4 mr-2" />
-
-          ← Return to Track Repair
-
-        </Button>
-
-        
-
-        <div className="text-center py-12">
-
-          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-
-          <h2 className="text-xl font-semibold mb-2">Repair Not Found</h2>
-
-          <p className="text-muted-foreground mb-4">
-
-            {error || 'The repair ticket you are looking for could not be found.'}
-
-          </p>
-
-          <Button onClick={() => navigate('/repairs/track')}>
-
-            Back to Track Repair
-
-          </Button>
-
-        </div>
-
-      </div>
-
-    );
+export default RepairDetails;
 
   }
 
