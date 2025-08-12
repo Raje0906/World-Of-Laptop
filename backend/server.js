@@ -189,16 +189,16 @@ app.options('*', (req, res) => {
 
 app.use(compression());
 
-// Rate limiting (relaxed for /api/auth)
+// Rate limiting (relaxed for /api/auth and /api/health)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: "Too many requests from this IP, please try again later.",
 });
-// Only apply limiter to non-auth routes
+// Only apply limiter to non-auth and non-health routes
 app.use((req, res, next) => {
-  if (req.path.startsWith('/api/auth')) {
-    return next(); // No rate limit for /api/auth
+  if (req.path.startsWith('/api/auth') || req.path === '/api/health') {
+    return next(); // No rate limit for /api/auth and /api/health
   }
   limiter(req, res, next);
 });
@@ -213,7 +213,7 @@ const notificationLimiter = rateLimit({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Health check
+// Health check (not rate limited)
 app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
