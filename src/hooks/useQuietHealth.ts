@@ -27,10 +27,10 @@ export function useQuietHealth() {
     // Initial check
     checkHealth();
 
-    // Periodic check every 60 seconds (less frequent to reduce noise)
+    // Periodic check every 2 minutes (less frequent to reduce rate limiting)
     const interval = setInterval(() => {
       checkHealth();
-    }, 60000);
+    }, 120000);
 
     return () => clearInterval(interval);
   }, []);

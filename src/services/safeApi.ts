@@ -29,7 +29,7 @@ const API_BASE_URL = getApiBaseUrl();
 class SafeApiClient {
   private isBackendAvailable: boolean = false;
   private lastCheck: number = 0;
-  private checkInterval: number = 30000; // Check every 30 seconds
+  private checkInterval: number = 60000; // Check every 60 seconds
 
   constructor() {
     console.log('SafeApiClient initialized with API_BASE_URL:', API_BASE_URL);
@@ -57,12 +57,27 @@ class SafeApiClient {
       });
 
       clearTimeout(timeoutId);
+      
+      if (response.status === 429) {
+        // Rate limit exceeded - don't mark backend as unavailable
+        console.warn('Rate limit exceeded during health check, but backend is available');
+        this.isBackendAvailable = true;
+        return;
+      }
+      
       this.isBackendAvailable = response.ok;
 
       if (this.isBackendAvailable) {
         console.log("✅ Backend server is available at", API_BASE_URL);
       }
-    } catch (error) {
+    } catch (error: any) {
+      // Don't mark as unavailable for rate limit errors
+      if (error.message && error.message.includes('429')) {
+        console.warn('Rate limit exceeded during health check, but backend is available');
+        this.isBackendAvailable = true; // Keep it as available
+        return;
+      }
+      
       this.isBackendAvailable = false;
       // Only log once per check interval to avoid spam
       console.warn(
@@ -134,6 +149,15 @@ class SafeApiClient {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
+        if (response.status === 429) {
+          // Rate limit exceeded - don't mark backend as unavailable
+          console.warn('Rate limit exceeded, but backend is available');
+          return {
+            success: false,
+            error: "Rate limit exceeded. Please try again later.",
+            offline: false,
+          };
+        }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
