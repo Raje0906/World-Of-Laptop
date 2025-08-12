@@ -580,6 +580,78 @@ router.get("/admin/users", authenticateToken, async (req, res) => {
   }
 });
 
+// @route   PUT /api/auth/admin/users/:userId
+// @desc    Update user's general information (admin only)
+// @access  Private (admin only)
+router.put("/admin/users/:userId", authenticateToken, async (req, res) => {
+  try {
+    // Check if user is admin
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Admin only.",
+      });
+    }
+
+    const { userId } = req.params;
+    const { name, email, phone, isActive } = req.body;
+
+    // Verify user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Check if email is being changed and if it's already taken by another user
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is already taken by another user",
+        });
+      }
+    }
+
+    // Check if phone is being changed and if it's already taken by another user
+    if (phone && phone !== user.phone) {
+      const existingUser = await User.findOne({ phone, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "Phone number is already taken by another user",
+        });
+      }
+    }
+
+    // Update user fields
+    if (name !== undefined) user.name = name;
+    if (email !== undefined) user.email = email;
+    if (phone !== undefined) user.phone = phone;
+    if (isActive !== undefined) user.isActive = isActive;
+
+    await user.save();
+
+    // Return updated user data
+    const updatedUser = await User.findById(userId).select('-password').populate('store_id', 'name address');
+
+    res.json({
+      success: true,
+      message: "User updated successfully",
+      data: { user: updatedUser },
+    });
+  } catch (error) {
+    console.error("Update user error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating user",
+    });
+  }
+});
+
 // @route   PUT /api/auth/admin/users/:userId/store
 // @desc    Update user's store assignment (admin only)
 // @access  Private (admin only)
