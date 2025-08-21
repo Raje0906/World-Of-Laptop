@@ -105,70 +105,84 @@ app.use(
 // Very permissive CORS configuration for debugging
 const corsOptions = {
   origin: function (origin, callback) {
-    // Log the incoming origin for debugging
-    console.log('Incoming request from origin:', origin || 'No origin (non-browser request)');
-    
-    // Allow all origins for now to debug the issue
-    // WARNING: This is not secure for production
-    return callback(null, true);
-    
-    /* Production CORS settings (commented out for now)
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:8080',
-      'https://world-of-laptop.vercel.app',
-      'https://world-of-laptop.onrender.com',
-      'https://world-of-laptop.netlify.app',
-      /^https?:\/\/world-of-laptop(-\w+)?\.vercel\.app$/,
-      /^https?:\/\/world-of-laptop(-\w+)?\.netlify\.app$/,
-    ];
-
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3002',
+      'http://localhost:3003',
+      'https://world-of-laptop.vercel.app',
+      'https://world-of-laptop.onrender.com',
+      'https://world-of-laptop-api.onrender.com',
+      'https://world-of-laptop-api.vercel.app',
+      'https://world-of-laptop-git-main-world-of-laptop.vercel.app',
+      'https://world-of-laptop-7o8v0qk4z-world-of-laptop.vercel.app',
+      'https://world-of-laptop-7o8v0qk4z-world-of-laptop.vercel.app',
+      'https://world-of-laptop.vercel.app',
+      'https://world-of-laptop-git-main-world-of-laptop.vercel.app',
+      /^https:\/\/world-of-laptop-[a-z0-9]+-world-of-laptop\.vercel\.app$/,
+      /^https:\/\/world-of-laptop-[a-z0-9]+\.vercel\.app$/,
+      /^https?:\/\/localhost(:[0-9]+)?$/,
+      /^https?:\/\/127\.0\.0\.1(:[0-9]+)?$/,
+      /^https?:\/\/\d+\.\d+\.\d+\.\d+(:\d+)?$/
+    ];
+
+    // Check if the origin matches any of the allowed patterns
     const isAllowed = allowedOrigins.some(allowedOrigin => {
-      if (typeof allowedOrigin === 'string') return origin === allowedOrigin;
-      if (allowedOrigin instanceof RegExp) return allowedOrigin.test(origin);
+      if (typeof allowedOrigin === 'string') {
+        return origin === allowedOrigin;
+      } else if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
       return false;
     });
 
-    if (!isAllowed) {
-      const msg = `The CORS policy for this site does not allow access from ${origin}`;
-      console.warn(msg);
-      return callback(new Error(msg), false);
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.warn('CORS blocked request from origin:', origin);
+      callback(new Error('Not allowed by CORS'));
     }
-    
-    return callback(null, true);
-    */
   },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type', 
     'content-type',
     'Content-type',
-    'CONTENT-TYPE',
     'Authorization', 
     'authorization',
-    'X-Requested-With', 
-    'Accept', 
-    'accept',
-    'Origin', 
-    'origin',
-    'Cache-Control', 
-    'X-File-Name',
-    'X-API-Key',
-    'X-Client-Version',
-    'X-Request-ID',
-    'User-Agent',
-    'Referer',
+    'X-Requested-With',
     'x-requested-with',
-    'cache-control'
+    'Accept',
+    'accept',
+    'Origin',
+    'origin',
+    'Access-Control-Allow-Origin',
+    'access-control-allow-origin',
+    'Access-Control-Allow-Headers',
+    'access-control-allow-headers',
+    'Access-Control-Allow-Methods',
+    'access-control-allow-methods',
+    'Access-Control-Allow-Credentials',
+    'access-control-allow-credentials'
   ],
-  credentials: true,
-  optionsSuccessStatus: 204,
-  exposedHeaders: ['*'],
-  preflightContinue: false,
+  exposedHeaders: [
+    'Content-Range',
+    'X-Total-Count',
+    'x-total-count',
+    'Content-Type',
+    'content-type',
+    'Authorization',
+    'authorization'
+  ],
   maxAge: 86400 // Cache preflight for 24 hours
 };
+
+// Add specific route for OPTIONS preflight requests
+app.options('*', cors(corsOptions));
 
 app.use(cors(corsOptions));
 
@@ -247,12 +261,20 @@ const apiRoutes = [
   { path: '/api', router: testEmailRouter },
 ];
 
+// Add specific route for /api/auth/check-role to handle preflight
+app.options('/api/auth/check-role', cors(corsOptions));
+
 apiRoutes.forEach(route => {
   console.log(`Registering route: ${route.path}`);
   if (route.middleware) {
-    app.use(route.path, route.middleware, route.router);
+    app.use(route.path, cors(corsOptions), route.middleware, route.router);
   } else {
-    app.use(route.path, route.router);
+    app.use(route.path, cors(corsOptions), route.router);
+  }
+  
+  // Add logging for the check-role endpoint
+  if (route.path === '/api/auth') {
+    console.log('  - POST /api/auth/check-role - Check user role by email/phone');
   }
 });
 
