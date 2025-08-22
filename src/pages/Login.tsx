@@ -198,18 +198,10 @@ export function Login() {
   };
 
   const onSubmit = async (data: LoginFormData) => {
-    // Always check role before submit
-    await checkUserRole(data.identifier);
+    // Do not block submit on role check, allow admin to proceed without store
     setIsLoading(true);
     
     try {
-      // For staff users, store selection is required
-      if (!isAdmin && !data.store_id) {
-        toast({ title: "Error", description: "Please select your assigned store to log in" });
-        setIsLoading(false);
-        return;
-      }
-
       // Prepare login payload
       const payload = {
         identifier: data.identifier,
@@ -240,6 +232,11 @@ export function Login() {
           toast({ title: "Too Many Requests", description: "You have made too many login attempts. Please wait and try again later." });
         } else if (isJson && (response.status === 401 || response.status === 403)) {
           toast({ title: "Error", description: result.message || "Unauthorized: Invalid credentials or access denied." });
+        } else if (isJson && response.status === 400 && typeof result.message === 'string' && (result.message.toLowerCase().includes('store selection') || result.message.toLowerCase().includes('store is required'))) {
+          // Backend indicates store is required for staff users
+          toast({ title: "Store Required", description: "Please select your assigned store to log in." });
+          setIsAdmin(false);
+          setUserRole('staff');
         } else if (isJson) {
           toast({ title: "Error", description: result.message || "Login failed" });
         } else {
