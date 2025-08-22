@@ -39,10 +39,18 @@ type LoginFormData = {
   store_id?: string;
 };
 
+type StoreAddress = {
+  street?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
+};
+
 interface Store {
   _id: string;
   name: string;
-  address: string;
+  address: string | StoreAddress;
 }
 
 export function Login() {
@@ -72,6 +80,16 @@ export function Login() {
   });
 
   const selectedStoreId = watch("store_id");
+
+  const formatStoreAddress = (address: Store["address"]): string => {
+    if (typeof address === "object" && address) {
+      const a = address as StoreAddress;
+      return [a.street, a.city, a.state, a.zipCode, a.country]
+        .filter(Boolean)
+        .join(", ");
+    }
+    return address || "";
+  };
 
   useEffect(() => {
     const loadStores = async () => {
@@ -127,6 +145,13 @@ export function Login() {
     setIsCheckingRole(true);
     try {
       const response = await apiClient.post("/auth/check-role", { identifier });
+      // Gracefully handle missing endpoint in older backends
+      if (response.status === 404) {
+        console.warn("/auth/check-role not found on backend. Defaulting to staff role (store required).");
+        setUserRole("staff");
+        setIsAdmin(false);
+        return "staff";
+      }
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
@@ -306,9 +331,7 @@ export function Login() {
                     <SelectContent>
                       {stores.map((store) => (
                         <SelectItem key={store._id} value={store._id}>
-                          {store.name} - {typeof store.address === 'object' && store.address !== null
-                            ? [store.address.street, store.address.city, store.address.state, store.address.zipCode, store.address.country].filter(Boolean).join(', ')
-                            : store.address}
+                          {store.name} - {formatStoreAddress(store.address)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -356,7 +379,7 @@ export function Login() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading || isCheckingRole || !userRole}
+                disabled={isLoading || isCheckingRole}
               >
                 {isLoading ? (
                   <>

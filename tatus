@@ -1,0 +1,19 @@
+[33m5910b54[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix syntax error in RepairDetails.tsx - remove orphaned JSX code
+[33m3761679[m update user changes
+[33m838b144[m Fix: Move /daily route before /:id route to prevent routing conflict
+[33m41049d9[m error solved
+[33me1bfd45[m Fix: Reduce health check frequency and handle rate limits
+[33m6eb7483[m Fix: Exclude health endpoint from rate limiting
+[33m940b88a[m new additions #11
+[33m84e9667[m new additions #10
+[33m23cf2fe[m new additions #9
+[33m91bd34e[m new additions #8
+[33m590cc02[m new additions #7
+[33mca152d5[m new additions #6
+[33mb18802d[m new additions #5
+[33m0430144[m new additions #4
+[33m57c4fac[m new additions #2
+[33m53c2e81[m new additions #1
+[33m708b118[m new additions
+[33m2929dc0[m Fix hardcoded localhost URLs in API calls for production deployment #2
+[33macdbc9e[m Fix hardcoded localhost URLs in API calls for production deployment
