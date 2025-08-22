@@ -4,7 +4,7 @@ import { useRepairs } from "../hooks/useRepairs";
 export default function SimpleRepairs() {
   const { repairs, loading, error } = useRepairs();
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
       case "delivered":
@@ -20,7 +20,7 @@ export default function SimpleRepairs() {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
         return "bg-red-100 text-red-800";
@@ -112,9 +112,7 @@ export default function SimpleRepairs() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Cost
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -160,16 +158,7 @@ export default function SimpleRepairs() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     ₹{repair.totalCost.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-900">
-                        View
-                      </button>
-                      <button className="text-green-600 hover:text-green-900">
-                        Edit
-                      </button>
-                    </div>
-                  </td>
+                  
                 </tr>
               ))}
             </tbody>
