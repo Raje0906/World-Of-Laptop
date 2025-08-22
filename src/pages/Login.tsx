@@ -14,22 +14,22 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient } from "@/lib/apiClient";
 
-// Dynamic schema based on user role
-const createLoginSchema = (isAdmin: boolean) => {
+// Dynamic schema based on whether store selection is required
+const createLoginSchema = (storeRequired: boolean) => {
   const baseSchema = {
     identifier: z.string().min(1, "Email or phone number is required"),
     password: z.string().min(1, "Password is required"),
   };
 
-  if (isAdmin) {
-    // Admin users don't need store selection during login
-    return z.object(baseSchema);
-  } else {
-    // Staff users must select a store
+  if (storeRequired) {
+    // When store is required (staff), enforce selection
     return z.object({
       ...baseSchema,
       store_id: z.string().min(1, "Please select your assigned store"),
     });
+  } else {
+    // Otherwise, don't require store (admin or unknown yet)
+    return z.object(baseSchema);
   }
 };
 
@@ -61,12 +61,13 @@ export function Login() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
   const [isCheckingRole, setIsCheckingRole] = useState(false);
+  const [requireStoreSelection, setRequireStoreSelection] = useState(false);
   const { toast } = useToast();
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Create dynamic schema based on user role
-  const loginSchema = createLoginSchema(isAdmin);
+  // Create dynamic schema based on whether store is required
+  const loginSchema = createLoginSchema(requireStoreSelection);
 
   const {
     register,
@@ -177,16 +178,10 @@ export function Login() {
 
   const handleIdentifierChange = (identifier: string) => {
     setValue("identifier", identifier);
-    if (identifier.length > 3 && (window as any).__DISABLE_CHECK_ROLE__ !== true) {
-      checkUserRole(identifier);
-    }
   };
 
   const handleIdentifierBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const identifier = e.target.value;
-    if (identifier.length > 3 && (window as any).__DISABLE_CHECK_ROLE__ !== true) {
-      checkUserRole(identifier);
-    }
   };
 
   const handleRegisterClick = () => {
@@ -237,6 +232,7 @@ export function Login() {
           toast({ title: "Store Required", description: "Please select your assigned store to log in." });
           setIsAdmin(false);
           setUserRole('staff');
+          setRequireStoreSelection(true);
         } else if (isJson) {
           toast({ title: "Error", description: result.message || "Login failed" });
         } else {
@@ -320,8 +316,8 @@ export function Login() {
                 )}
               </div>
 
-              {/* Show store selection only for staff users */}
-              {!isAdmin && (
+              {/* Show store selection only when required (staff) */}
+              {requireStoreSelection && (
                 <div>
                   <Label htmlFor="store">Select Your Store</Label>
                   <Select
