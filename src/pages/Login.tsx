@@ -14,22 +14,22 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiClient } from "@/lib/apiClient";
 
-// Dynamic schema based on whether store selection is required
-const createLoginSchema = (storeRequired: boolean) => {
+// Dynamic schema based on user role
+const createLoginSchema = (isAdmin: boolean) => {
   const baseSchema = {
     identifier: z.string().min(1, "Email or phone number is required"),
     password: z.string().min(1, "Password is required"),
   };
 
-  if (storeRequired) {
-    // When store is required (staff), enforce selection
+  if (isAdmin) {
+    // Admin users don't need store selection during login
+    return z.object(baseSchema);
+  } else {
+    // Staff users must select a store
     return z.object({
       ...baseSchema,
       store_id: z.string().min(1, "Please select your assigned store"),
     });
-  } else {
-    // Otherwise, don't require store (admin or unknown yet)
-    return z.object(baseSchema);
   }
 };
 
@@ -39,18 +39,10 @@ type LoginFormData = {
   store_id?: string;
 };
 
-type StoreAddress = {
-  street?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  country?: string;
-};
-
 interface Store {
   _id: string;
   name: string;
-  address: string | StoreAddress;
+  address: string;
 }
 
 export function Login() {
@@ -61,13 +53,12 @@ export function Login() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
   const [isCheckingRole, setIsCheckingRole] = useState(false);
-  const [requireStoreSelection, setRequireStoreSelection] = useState(false);
   const { toast } = useToast();
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Create dynamic schema based on whether store is required
-  const loginSchema = createLoginSchema(requireStoreSelection);
+  // Create dynamic schema based on user role
+  const loginSchema = createLoginSchema(isAdmin);
 
   const {
     register,
@@ -81,16 +72,6 @@ export function Login() {
   });
 
   const selectedStoreId = watch("store_id");
-
-  const formatStoreAddress = (address: Store["address"]): string => {
-    if (typeof address === "object" && address) {
-      const a = address as StoreAddress;
-      return [a.street, a.city, a.state, a.zipCode, a.country]
-        .filter(Boolean)
-        .join(", ");
-    }
-    return address || "";
-  };
 
   useEffect(() => {
     const loadStores = async () => {
@@ -142,23 +123,10 @@ export function Login() {
   // Check if user is admin based on identifier (email/phone)
   const checkUserRole = async (identifier: string) => {
     if (identifier.length < 3) return null;
-    // Avoid calling unsupported endpoint repeatedly
-    if ((window as any).__DISABLE_CHECK_ROLE__ === true) {
-      return null;
-    }
     
     setIsCheckingRole(true);
     try {
       const response = await apiClient.post("/auth/check-role", { identifier });
-      // Gracefully handle missing endpoint in older backends
-      if (response.status === 404) {
-        console.warn("/auth/check-role not found on backend. Defaulting to staff role (store required).");
-        // Disable further attempts for this session
-        (window as any).__DISABLE_CHECK_ROLE__ = true;
-        setUserRole("staff");
-        setIsAdmin(false);
-        return "staff";
-      }
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
@@ -178,10 +146,16 @@ export function Login() {
 
   const handleIdentifierChange = (identifier: string) => {
     setValue("identifier", identifier);
+    if (identifier.length > 3) {
+      checkUserRole(identifier);
+    }
   };
 
   const handleIdentifierBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const identifier = e.target.value;
+    if (identifier.length > 3) {
+      checkUserRole(identifier);
+    }
   };
 
   const handleRegisterClick = () => {
@@ -193,10 +167,18 @@ export function Login() {
   };
 
   const onSubmit = async (data: LoginFormData) => {
-    // Do not block submit on role check, allow admin to proceed without store
+    // Always check role before submit
+    await checkUserRole(data.identifier);
     setIsLoading(true);
     
     try {
+      // For staff users, store selection is required
+      if (!isAdmin && !data.store_id) {
+        toast({ title: "Error", description: "Please select your assigned store to log in" });
+        setIsLoading(false);
+        return;
+      }
+
       // Prepare login payload
       const payload = {
         identifier: data.identifier,
@@ -227,12 +209,6 @@ export function Login() {
           toast({ title: "Too Many Requests", description: "You have made too many login attempts. Please wait and try again later." });
         } else if (isJson && (response.status === 401 || response.status === 403)) {
           toast({ title: "Error", description: result.message || "Unauthorized: Invalid credentials or access denied." });
-        } else if (isJson && response.status === 400 && typeof result.message === 'string' && (result.message.toLowerCase().includes('store selection') || result.message.toLowerCase().includes('store is required'))) {
-          // Backend indicates store is required for staff users
-          toast({ title: "Store Required", description: "Please select your assigned store to log in." });
-          setIsAdmin(false);
-          setUserRole('staff');
-          setRequireStoreSelection(true);
         } else if (isJson) {
           toast({ title: "Error", description: result.message || "Login failed" });
         } else {
@@ -316,8 +292,8 @@ export function Login() {
                 )}
               </div>
 
-              {/* Show store selection only when required (staff) */}
-              {requireStoreSelection && (
+              {/* Show store selection only for staff users */}
+              {!isAdmin && (
                 <div>
                   <Label htmlFor="store">Select Your Store</Label>
                   <Select
@@ -330,7 +306,9 @@ export function Login() {
                     <SelectContent>
                       {stores.map((store) => (
                         <SelectItem key={store._id} value={store._id}>
-                          {store.name} - {formatStoreAddress(store.address)}
+                          {store.name} - {typeof store.address === 'object' && store.address !== null
+                            ? [store.address.street, store.address.city, store.address.state, store.address.zipCode, store.address.country].filter(Boolean).join(', ')
+                            : store.address}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -378,7 +356,7 @@ export function Login() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isLoading || isCheckingRole}
+                disabled={isLoading || isCheckingRole || !userRole}
               >
                 {isLoading ? (
                   <>
