@@ -122,6 +122,10 @@ const corsOptions = {
       'https://world-of-laptop-7o8v0qk4z-world-of-laptop.vercel.app',
       'https://world-of-laptop.vercel.app',
       'https://world-of-laptop-git-main-world-of-laptop.vercel.app',
+      // Allow current Vercel preview domain
+      'https://world-of-laptop-ar3tjbuo2-raje0906s-projects.vercel.app',
+      // Generic allow for Vercel preview deployments for this project
+      /^https:\/\/[a-z0-9-]+\.vercel\.app$/,
       /^https:\/\/world-of-laptop-[a-z0-9]+-world-of-laptop\.vercel\.app$/,
       /^https:\/\/world-of-laptop-[a-z0-9]+\.vercel\.app$/,
       /^https?:\/\/localhost(:[0-9]+)?$/,
@@ -156,6 +160,8 @@ const corsOptions = {
     'authorization',
     'X-Requested-With',
     'x-requested-with',
+    // Needed for Vercel preview tooling
+    'x-vercel-skip-toolbar',
     'Accept',
     'accept',
     'Origin',
