@@ -141,6 +141,10 @@ export function Login() {
   // Check if user is admin based on identifier (email/phone)
   const checkUserRole = async (identifier: string) => {
     if (identifier.length < 3) return null;
+    // Avoid calling unsupported endpoint repeatedly
+    if ((window as any).__DISABLE_CHECK_ROLE__ === true) {
+      return null;
+    }
     
     setIsCheckingRole(true);
     try {
@@ -148,6 +152,8 @@ export function Login() {
       // Gracefully handle missing endpoint in older backends
       if (response.status === 404) {
         console.warn("/auth/check-role not found on backend. Defaulting to staff role (store required).");
+        // Disable further attempts for this session
+        (window as any).__DISABLE_CHECK_ROLE__ = true;
         setUserRole("staff");
         setIsAdmin(false);
         return "staff";
@@ -171,14 +177,14 @@ export function Login() {
 
   const handleIdentifierChange = (identifier: string) => {
     setValue("identifier", identifier);
-    if (identifier.length > 3) {
+    if (identifier.length > 3 && (window as any).__DISABLE_CHECK_ROLE__ !== true) {
       checkUserRole(identifier);
     }
   };
 
   const handleIdentifierBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const identifier = e.target.value;
-    if (identifier.length > 3) {
+    if (identifier.length > 3 && (window as any).__DISABLE_CHECK_ROLE__ !== true) {
       checkUserRole(identifier);
     }
   };

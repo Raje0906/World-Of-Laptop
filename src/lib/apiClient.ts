@@ -11,18 +11,29 @@ class ApiClient {
     const isLocalhost = window.location.hostname === 'localhost' || 
                        window.location.hostname === '127.0.0.1';
     
-    // Check if VITE_API_URL is explicitly set (production environment)
-    const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+    // Prefer explicitly defined API URL via build-time define or env
+    const definedApiUrl = (typeof __API_URL__ !== 'undefined' ? __API_URL__ : import.meta.env.VITE_API_URL) as string | undefined;
+    const hasExplicitApiUrl = definedApiUrl && definedApiUrl.trim() !== '';
+
+    // Helper to normalize base URL to avoid double /api
+    const normalizeBase = (url: string) => {
+      let u = url.trim();
+      // Remove trailing slash
+      if (u.endsWith('/')) u = u.slice(0, -1);
+      // Remove trailing /api if present
+      if (u.toLowerCase().endsWith('/api')) u = u.slice(0, -4);
+      return u;
+    };
     
-    if (hasExplicitApiUrl) {
-      // Use the explicitly set API URL (production)
-      this.baseUrl = import.meta.env.VITE_API_URL + '/api';
+    if (hasExplicitApiUrl && definedApiUrl) {
+      // Use explicitly set API URL from define/env
+      this.baseUrl = normalizeBase(definedApiUrl) + '/api';
     } else if (this.isDevelopment || isLocalhost) {
       // In development or localhost, use proxy to localhost
       this.baseUrl = '/api';
     } else {
       // In production without explicit URL, use the default production backend URL
-      this.baseUrl = 'https://world-of-laptop.onrender.com/api';
+      this.baseUrl = normalizeBase('https://world-of-laptop.onrender.com') + '/api';
     }
     
     console.log('API Client initialized:', {
@@ -30,7 +41,7 @@ class ApiClient {
       isDevelopment: this.isDevelopment,
       isLocalhost,
       hasExplicitApiUrl,
-      VITE_API_URL: import.meta.env.VITE_API_URL,
+      definedApiUrl,
       hostname: window.location.hostname,
       port: window.location.port,
       env: import.meta.env.MODE
