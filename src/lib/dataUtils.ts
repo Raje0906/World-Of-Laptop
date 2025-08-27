@@ -433,22 +433,6 @@ export const updateProductStock = async (
 };
 
 // Sales operations
-export const getStores = async (): Promise<any[]> => {
-  const apiUrl = getApiBaseUrl();
-  
-  try {
-    const response = await fetch(`${apiUrl}/stores`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch sales');
-    }
-    const data = await response.json();
-    return Array.isArray(data.data) ? data.data : [];
-  } catch (error) {
-    console.error('Error fetching sales:', error);
-    return [];
-  }
-};
-
 export const getSales = async (): Promise<Sale[]> => {
   const apiUrl = getApiBaseUrl();
   try {
@@ -1090,108 +1074,97 @@ export const addRepair = async (repairData: any): Promise<Repair> => {
 };
 
 // Define repair metrics interface
-interface RepairMetrics {
+export interface RepairMetrics {
   totalRepairs: number;
   completedRepairs: number;
   completionRate: number;
   averageRepairTime: number;
   topIssues: Array<{ issue: string; count: number }>;
+  totalRevenue: number;
+  storePerformance: Array<{
+    storeId: string;
+    storeName?: string;
+    repairs: number;
+    revenue: number;
+  }>;
 }
 
 // Calculate repair metrics
-const calculateRepairMetrics = async (repairsPromise: Promise<Repair[]>): Promise<RepairMetrics> => {
-  const repairsData = await repairsPromise;
-  const totalRepairs = repairsData.length;
-  const completedRepairs = repairsData.filter(
-    (r) => r.status === "completed",
-  ).length;
-  const totalRevenue = repairsData.reduce(
-    (sum, repair) => sum + repair.actualCost,
-    0,
-  );
-
-  // Average repair time for completed repairs
-  const completedRepairsWithTime = repairsData.filter(
-    (r) => r.status === "completed" && r.actualCompletion,
-  );
-
-  const averageRepairTime =
-    completedRepairsWithTime.length > 0
-      ? completedRepairsWithTime.reduce((sum, repair) => {
-          const start = new Date(repair.dateReceived);
-          const end = new Date(repair.actualCompletion!);
-          const days = Math.ceil(
-            (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
-          );
-          return sum + days;
-        }, 0) / completedRepairsWithTime.length
-      : 0;
-
-  // Find the most common repair issue
-  const issues = repairsData.reduce((acc, repair) => {
-    const issue = repair.issue || repair.issueDescription || 'Unknown';
-    acc[issue] = (acc[issue] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const topIssues = Object.entries(issues)
-    .map(([issue, count]) => ({ issue, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-
-  // Store performance
-  const storePerformance = stores.map((store) => {
-    const storeRepairs = repairsData.filter(
-      (repair) => repair.storeId === store.id,
-    );
-    return {
-      storeId: store.id,
-      repairs: storeRepairs.length,
-      revenue: storeRepairs.reduce((sum, repair) => sum + repair.actualCost, 0),
-    };
-  });
-
-  return {
-    totalRepairs,
-    completedRepairs,
-    averageRepairTime,
-    totalRevenue,
-    topIssues,
-    storePerformance,
-  };
-};
-
-// Barcode scanning simulation
-export const simulateBarcodeScan = async (): Promise<BarcodeResult> => {
+export const calculateRepairMetrics = async (repairsPromise: Promise<Repair[]>, stores: any[] = []): Promise<RepairMetrics> => {
   try {
-    // Get products first
-    const products = await getProducts();
+    const repairsData = await repairsPromise;
+    const totalRepairs = repairsData.length;
+    const completedRepairs = repairsData.filter(
+      (r) => r.status === "completed",
+    ).length;
+    const completionRate = totalRepairs > 0 ? (completedRepairs / totalRepairs) * 100 : 0;
     
-    if (!products || products.length === 0) {
-      throw new Error('No products available');
-    }
+    const totalRevenue = repairsData.reduce(
+      (sum, repair) => sum + (repair.actualCost || 0),
+      0,
+    );
 
-    // Simulate scanning delay
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const randomProduct = products[Math.floor(Math.random() * products.length)];
-        
-        if (!randomProduct || !randomProduct.barcode) {
-          throw new Error('Invalid product data');
-        }
-        
-        resolve({
-          text: randomProduct.barcode,
-          format: "CODE_128",
-        });
-      }, 2000);
+    // Calculate average repair time for completed repairs
+    const completedRepairsWithTime = repairsData.filter(
+      (r) => r.status === "completed" && r.actualCompletion,
+    );
+
+    const averageRepairTime =
+      completedRepairsWithTime.length > 0
+        ? completedRepairsWithTime.reduce((sum, repair) => {
+            const start = new Date(repair.dateReceived);
+            const end = new Date(repair.actualCompletion!);
+            const days = Math.ceil(
+              (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
+            );
+            return sum + days;
+          }, 0) / completedRepairsWithTime.length
+        : 0;
+
+    // Find the most common repair issues
+    const issues = repairsData.reduce((acc, repair) => {
+      const issue = repair.issue || repair.issueDescription || 'Unknown';
+      acc[issue] = (acc[issue] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const topIssues = Object.entries(issues)
+      .map(([issue, count]) => ({ issue, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // Calculate store performance
+    const storePerformance = stores.map((store) => {
+      const storeRepairs = repairsData.filter(
+        (repair) => repair.storeId === store.id,
+      );
+      return {
+        storeId: store.id,
+        storeName: store.name || store.id,
+        repairs: storeRepairs.length,
+        revenue: storeRepairs.reduce((sum, repair) => sum + (repair.actualCost || 0), 0),
+      };
     });
-  } catch (error) {
-    console.error('Error in barcode simulation:', error);
-    // Return a default barcode if there's an error
+
     return {
-      text: '123456789012',
-      format: 'CODE_128',
+      totalRepairs,
+      completedRepairs,
+      completionRate,
+      averageRepairTime,
+      totalRevenue,
+      topIssues,
+      storePerformance,
+    };
+  } catch (error) {
+    console.error('Error calculating repair metrics:', error);
+    return {
+      totalRepairs: 0,
+      completedRepairs: 0,
+      completionRate: 0,
+      averageRepairTime: 0,
+      totalRevenue: 0,
+      topIssues: [],
+      storePerformance: [],
     };
   }
 };
@@ -1282,24 +1255,9 @@ export const sendEmailNotification = async (
   }
 };
 
-export const getStores = async (): Promise<any[]> => {
-  // Check if VITE_API_URL is explicitly set (production environment)
-  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
-  
-  let apiUrl: string;
-  
-  if (hasExplicitApiUrl) {
-    // Use the explicitly set API URL (production)
-    apiUrl = import.meta.env.VITE_API_URL + '/api';
-  } else {
-    // Check if we're running on localhost (development or preview)
-    const isLocalhost = typeof window !== 'undefined' && (
-      window.location.hostname === 'localhost' || 
-      window.location.hostname === '127.0.0.1'
-    );
-    
-    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
-  }
+// Single getStores function with proper typing
+export const getStores = async (): Promise<Array<{ id: string; name: string; [key: string]: any }>> => {
+  const apiUrl = getApiBaseUrl();
   
   try {
     const response = await fetch(`${apiUrl}/stores`);
@@ -1314,4 +1272,5 @@ export const getStores = async (): Promise<any[]> => {
   }
 };
 
-export { getStores as fetchStores };
+// Alias for backward compatibility
+export const fetchStores = getStores;
