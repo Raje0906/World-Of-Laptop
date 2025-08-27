@@ -10787,3 +10787,238 @@
 [2025-08-12T15:16:01.414Z] [LOG] ✅ MongoDB Connected
 [2025-08-12T15:16:01.417Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
 [2025-08-12T15:16:01.417Z] [LOG] MongoDB connection state: 1
+[2025-08-22T08:50:16.486Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-22T08:50:16.500Z] [LOG] MongoDB Connected to: undefined
+[2025-08-22T08:50:16.501Z] [LOG] MongoDB connection state: 2
+[2025-08-22T08:50:16.564Z] [LOG] Registering route: /api/auth
+[2025-08-22T08:50:16.565Z] [LOG]   - POST /api/auth/check-role - Check user role by email/phone
+[2025-08-22T08:50:16.565Z] [LOG] Registering route: /api/customers
+[2025-08-22T08:50:16.565Z] [LOG] Registering route: /api/products
+[2025-08-22T08:50:16.565Z] [LOG] Registering route: /api/sales
+[2025-08-22T08:50:16.565Z] [LOG] Registering route: /api/repairs
+[2025-08-22T08:50:16.566Z] [LOG] Registering route: /api/notifications
+[2025-08-22T08:50:16.566Z] [LOG] Registering route: /api/stores
+[2025-08-22T08:50:16.566Z] [LOG] Registering route: /api/reports
+[2025-08-22T08:50:16.566Z] [LOG] Registering route: /api/users
+[2025-08-22T08:50:16.566Z] [LOG] Registering route: /api
+[2025-08-22T08:50:16.566Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-22T08:50:16.573Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-22T08:50:16.576Z] [ERROR] (node:12568) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-22T08:50:16.601Z] [LOG] 
+🚀 Server running at:
+[2025-08-22T08:50:16.601Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-22T08:50:16.601Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-22T08:50:16.601Z] [LOG] 
+🌐 Environment: development
+[2025-08-22T08:50:16.601Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-22T08:50:16.601Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-22T08:50:16.601Z] [LOG]    - /api/auth
+[2025-08-22T08:50:16.601Z] [LOG]    - /api/customers
+[2025-08-22T08:50:16.601Z] [LOG]    - /api/products
+[2025-08-22T08:50:16.601Z] [LOG]    - /api/sales
+[2025-08-22T08:50:16.601Z] [LOG]    - /api/repairs
+[2025-08-22T08:50:16.602Z] [LOG]    - /api/notifications
+[2025-08-22T08:50:16.602Z] [LOG]    - /api/stores
+[2025-08-22T08:50:16.602Z] [LOG]    - /api/reports
+[2025-08-22T08:50:16.602Z] [LOG]    - /api/users
+[2025-08-22T08:50:16.602Z] [LOG]    - /api
+[2025-08-22T08:50:16.602Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-22T08:50:16.602Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-22T08:50:16.602Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-22T08:50:17.180Z] [LOG] ✅ MongoDB Connected
+[2025-08-22T08:50:17.181Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T08:50:17.181Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T08:50:17.181Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-22T08:50:17.181Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-22T08:50:17.181Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T08:50:17.181Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T08:50:17.181Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-22T08:50:17.181Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T08:50:17.181Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T08:50:17.181Z] [LOG] ✅ MongoDB Connected
+[2025-08-22T08:50:17.184Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-22T08:50:17.185Z] [LOG] MongoDB connection state: 1
+[2025-08-22T08:50:22.238Z] [LOG] [2025-08-22T08:50:22.238Z] GET /api/api/health
+[2025-08-22T08:50:22.238Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-22T08:50:23.200Z] [LOG] [2025-08-22T08:50:23.200Z] GET /api/api/health
+[2025-08-22T08:50:23.201Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-22T08:50:23.324Z] [LOG] [2025-08-22T08:50:23.324Z] GET /api/auth/stores
+[2025-08-22T08:50:23.324Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?0","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","connection":"close","host":"localhost:3002"}
+[2025-08-22T08:50:23.326Z] [LOG] Fetching stores...
+[2025-08-22T08:50:23.377Z] [LOG] Found stores: [{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"},{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"}]
+[2025-08-22T08:50:24.708Z] [LOG] [2025-08-22T08:50:24.708Z] POST /api/auth/check-role
+[2025-08-22T08:50:24.708Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"38","connection":"close","host":"localhost:3002"}
+[2025-08-22T08:50:24.783Z] [LOG] Checking role for identifier: admin@laptopstore.com
+[2025-08-22T08:50:30.484Z] [LOG] [2025-08-22T08:50:30.484Z] POST /api/auth/check-role
+[2025-08-22T08:50:30.484Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?0","content-type":"application/json","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36","sec-ch-ua-platform":"\"Windows\"","content-length":"38","connection":"close","host":"localhost:3002"}
+[2025-08-22T08:50:30.489Z] [LOG] Checking role for identifier: admin@laptopstore.com
+[2025-08-22T08:53:44.598Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-22T08:53:44.602Z] [LOG] MongoDB Connected to: undefined
+[2025-08-22T08:53:44.606Z] [LOG] MongoDB connection state: 2
+[2025-08-22T08:53:44.619Z] [LOG] Registering route: /api/auth
+[2025-08-22T08:53:44.619Z] [LOG]   - POST /api/auth/check-role - Check user role by email/phone
+[2025-08-22T08:53:44.619Z] [LOG] Registering route: /api/customers
+[2025-08-22T08:53:44.619Z] [LOG] Registering route: /api/products
+[2025-08-22T08:53:44.619Z] [LOG] Registering route: /api/sales
+[2025-08-22T08:53:44.620Z] [LOG] Registering route: /api/repairs
+[2025-08-22T08:53:44.621Z] [LOG] Registering route: /api/notifications
+[2025-08-22T08:53:44.621Z] [LOG] Registering route: /api/stores
+[2025-08-22T08:53:44.621Z] [LOG] Registering route: /api/reports
+[2025-08-22T08:53:44.621Z] [LOG] Registering route: /api/users
+[2025-08-22T08:53:44.621Z] [LOG] Registering route: /api
+[2025-08-22T08:53:44.622Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-22T08:53:44.625Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-22T08:53:44.626Z] [ERROR] (node:13760) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-22T08:53:44.646Z] [LOG] 
+🚀 Server running at:
+[2025-08-22T08:53:44.646Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-22T08:53:44.646Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-22T08:53:44.646Z] [LOG] 
+🌐 Environment: development
+[2025-08-22T08:53:44.646Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-22T08:53:44.646Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-22T08:53:44.646Z] [LOG]    - /api/auth
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/customers
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/products
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/sales
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/repairs
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/notifications
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/stores
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/reports
+[2025-08-22T08:53:44.647Z] [LOG]    - /api/users
+[2025-08-22T08:53:44.647Z] [LOG]    - /api
+[2025-08-22T08:53:44.647Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-22T08:53:44.647Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-22T08:53:44.647Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-22T08:53:45.094Z] [LOG] ✅ MongoDB Connected
+[2025-08-22T08:53:45.094Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T08:53:45.095Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T08:53:45.095Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-22T08:53:45.095Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-22T08:53:45.095Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T08:53:45.095Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T08:53:45.095Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-22T08:53:45.095Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T08:53:45.095Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T08:53:45.095Z] [LOG] ✅ MongoDB Connected
+[2025-08-22T08:53:45.098Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-22T08:53:45.098Z] [LOG] MongoDB connection state: 1
+[2025-08-22T09:18:51.858Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-22T09:18:51.865Z] [LOG] MongoDB Connected to: undefined
+[2025-08-22T09:18:51.866Z] [LOG] MongoDB connection state: 2
+[2025-08-22T09:18:51.877Z] [LOG] Registering route: /api/auth
+[2025-08-22T09:18:51.879Z] [LOG]   - POST /api/auth/check-role - Check user role by email/phone
+[2025-08-22T09:18:51.880Z] [LOG] Registering route: /api/customers
+[2025-08-22T09:18:51.880Z] [LOG] Registering route: /api/products
+[2025-08-22T09:18:51.880Z] [LOG] Registering route: /api/sales
+[2025-08-22T09:18:51.881Z] [LOG] Registering route: /api/repairs
+[2025-08-22T09:18:51.881Z] [LOG] Registering route: /api/notifications
+[2025-08-22T09:18:51.881Z] [LOG] Registering route: /api/stores
+[2025-08-22T09:18:51.882Z] [LOG] Registering route: /api/reports
+[2025-08-22T09:18:51.882Z] [LOG] Registering route: /api/users
+[2025-08-22T09:18:51.882Z] [LOG] Registering route: /api
+[2025-08-22T09:18:51.882Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-22T09:18:51.886Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-22T09:18:51.886Z] [ERROR] (node:1328) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-22T09:18:51.919Z] [LOG] 
+🚀 Server running at:
+[2025-08-22T09:18:51.919Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-22T09:18:51.919Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-22T09:18:51.919Z] [LOG] 
+🌐 Environment: development
+[2025-08-22T09:18:51.919Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-22T09:18:51.919Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-22T09:18:51.919Z] [LOG]    - /api/auth
+[2025-08-22T09:18:51.919Z] [LOG]    - /api/customers
+[2025-08-22T09:18:51.919Z] [LOG]    - /api/products
+[2025-08-22T09:18:51.919Z] [LOG]    - /api/sales
+[2025-08-22T09:18:51.919Z] [LOG]    - /api/repairs
+[2025-08-22T09:18:51.919Z] [LOG]    - /api/notifications
+[2025-08-22T09:18:51.919Z] [LOG]    - /api/stores
+[2025-08-22T09:18:51.920Z] [LOG]    - /api/reports
+[2025-08-22T09:18:51.920Z] [LOG]    - /api/users
+[2025-08-22T09:18:51.920Z] [LOG]    - /api
+[2025-08-22T09:18:51.920Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-22T09:18:51.920Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-22T09:18:51.920Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-22T09:18:52.525Z] [LOG] ✅ MongoDB Connected
+[2025-08-22T09:18:52.525Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T09:18:52.526Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T09:18:52.526Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-22T09:18:52.526Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-22T09:18:52.526Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T09:18:52.526Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T09:18:52.526Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-22T09:18:52.526Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-22T09:18:52.526Z] [LOG] 🏷️  Connection State: 1
+[2025-08-22T09:18:52.526Z] [LOG] ✅ MongoDB Connected
+[2025-08-22T09:18:52.532Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-22T09:18:52.532Z] [LOG] MongoDB connection state: 1
+[2025-08-22T09:19:54.411Z] [LOG] [2025-08-22T09:19:54.411Z] GET /api/api/health
+[2025-08-22T09:19:54.412Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?1","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36","sec-ch-ua-platform":"\"Android\"","connection":"close","host":"localhost:3002"}
+[2025-08-22T09:19:59.686Z] [LOG] [2025-08-22T09:19:59.686Z] GET /api/api/health
+[2025-08-22T09:19:59.687Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?1","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36","sec-ch-ua-platform":"\"Android\"","connection":"close","host":"localhost:3002"}
+[2025-08-22T09:20:00.356Z] [LOG] [2025-08-22T09:20:00.356Z] GET /api/auth/stores
+[2025-08-22T09:20:00.356Z] [LOG] Request headers: {"if-none-match":"W/\"29b-kuNVmynFQhESrSBtVzCYYEQdvlA\"","accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","sec-ch-ua-mobile":"?1","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36","sec-ch-ua-platform":"\"Android\"","connection":"close","host":"localhost:3002"}
+[2025-08-22T09:20:00.358Z] [LOG] Fetching stores...
+[2025-08-22T09:20:00.427Z] [LOG] Found stores: [{"_id":"686be7376d105189a96cf790","name":"Laptop Store - Central","address":{"street":"123 Main Street","city":"Mumbai","state":"Maharashtra","zipCode":"400001","country":"India"},"id":"686be7376d105189a96cf790"},{"_id":"686be7376d105189a96cf791","name":"Laptop Store - North","address":{"street":"456 Innovation Plaza","city":"Delhi","state":"Delhi","zipCode":"110001","country":"India"},"id":"686be7376d105189a96cf791"},{"_id":"686be7376d105189a96cf792","name":"Laptop Store - South","address":{"street":"789 Tech Hub","city":"Bangalore","state":"Karnataka","zipCode":"560001","country":"India"},"id":"686be7376d105189a96cf792"}]
+[2025-08-22T09:20:14.377Z] [LOG] [2025-08-22T09:20:14.377Z] POST /api/auth/check-role
+[2025-08-22T09:20:14.377Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?1","content-type":"application/json","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36","sec-ch-ua-platform":"\"Android\"","content-length":"38","connection":"close","host":"localhost:3002"}
+[2025-08-22T09:20:14.425Z] [LOG] Checking role for identifier: admin@laptopstore.com
+[2025-08-22T09:20:18.887Z] [LOG] [2025-08-22T09:20:18.887Z] POST /api/auth/check-role
+[2025-08-22T09:20:18.888Z] [LOG] Request headers: {"accept-language":"en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,mr;q=0.6,bn;q=0.5,hi;q=0.4","accept-encoding":"gzip, deflate, br, zstd","referer":"http://localhost:8080/login","sec-fetch-dest":"empty","sec-fetch-mode":"cors","sec-fetch-site":"same-origin","origin":"http://localhost:8080","sec-ch-ua-mobile":"?1","content-type":"application/json","sec-ch-ua":"\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\"","accept":"*/*","user-agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36","sec-ch-ua-platform":"\"Android\"","content-length":"38","connection":"close","host":"localhost:3002"}
+[2025-08-22T09:20:18.891Z] [LOG] Checking role for identifier: admin@laptopstore.com
+[2025-08-22T09:24:31.852Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-22T09:24:31.856Z] [LOG] MongoDB Connected to: undefined
+[2025-08-22T09:24:31.856Z] [LOG] MongoDB connection state: 2
+[2025-08-22T09:24:31.868Z] [LOG] Registering route: /api/auth
+[2025-08-22T09:24:31.868Z] [LOG]   - POST /api/auth/check-role - Check user role by email/phone
+[2025-08-22T09:24:31.868Z] [LOG] Registering route: /api/customers
+[2025-08-22T09:24:31.868Z] [LOG] Registering route: /api/products
+[2025-08-22T09:24:31.868Z] [LOG] Registering route: /api/sales
+[2025-08-22T09:24:31.868Z] [LOG] Registering route: /api/repairs
+[2025-08-22T09:24:31.869Z] [LOG] Registering route: /api/notifications
+[2025-08-22T09:24:31.869Z] [LOG] Registering route: /api/stores
+[2025-08-22T09:24:31.869Z] [LOG] Registering route: /api/reports
+[2025-08-22T09:24:31.869Z] [LOG] Registering route: /api/users
+[2025-08-22T09:24:31.869Z] [LOG] Registering route: /api
+[2025-08-22T09:24:31.870Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-22T09:24:31.873Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-22T09:24:31.874Z] [ERROR] (node:12668) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-22T09:24:31.901Z] [LOG] 
+🚀 Server running at:
+[2025-08-22T09:24:31.901Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-22T09:24:31.901Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-22T09:24:31.901Z] [LOG] 
+🌐 Environment: development
+[2025-08-22T09:24:31.901Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-22T09:24:31.902Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/auth
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/customers
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/products
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/sales
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/repairs
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/notifications
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/stores
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/reports
+[2025-08-22T09:24:31.902Z] [LOG]    - /api/users
+[2025-08-22T09:24:31.902Z] [LOG]    - /api
+[2025-08-22T09:24:31.902Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-22T09:24:31.902Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-22T09:24:31.902Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com

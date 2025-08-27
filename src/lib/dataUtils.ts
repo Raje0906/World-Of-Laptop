@@ -173,25 +173,41 @@ export const initializeData = () => {
   }
 };
 
-// Customer operations
-export const getCustomers = async (status: 'active' | 'inactive' | 'all' = 'active'): Promise<Customer[]> => {
-  // Check if VITE_API_URL is explicitly set (production environment)
-  const hasExplicitApiUrl = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
+// Utility function to get the base API URL
+const getApiBaseUrl = (): string => {
+  // Safely get the environment variable with proper type checking
+  const envUrl = import.meta.env.VITE_API_URL;
+  let baseUrl = '';
   
-  let apiUrl: string;
-  
-  if (hasExplicitApiUrl) {
-    // Use the explicitly set API URL (production)
-    apiUrl = import.meta.env.VITE_API_URL + '/api';
+  // If environment variable is defined and not empty, use it
+  if (typeof envUrl === 'string' && envUrl.trim() !== '') {
+    baseUrl = envUrl.trim();
   } else {
-    // Check if we're running on localhost (development or preview)
+    // If no explicit API URL is set, determine based on environment
     const isLocalhost = typeof window !== 'undefined' && (
       window.location.hostname === 'localhost' || 
-      window.location.hostname === '127.0.0.1'
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname.startsWith('192.168.')
     );
-    
-    apiUrl = isLocalhost ? '/api' : 'https://world-of-laptop.onrender.com/api';
+    baseUrl = isLocalhost ? 'http://localhost:3002' : 'https://world-of-laptop.onrender.com';
   }
+  
+  // Ensure the URL doesn't end with a slash
+  baseUrl = baseUrl.replace(/\/+$/, '');
+  
+  // Add /api prefix if not already present and not localhost
+  const isLocalApi = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1') || baseUrl.includes('192.168.');
+  if (!baseUrl.endsWith('/api') && !isLocalApi) {
+    baseUrl = baseUrl + (baseUrl ? '/' : '') + 'api';
+  }
+  
+  console.log('Using API base URL:', baseUrl);
+  return baseUrl;
+};
+
+// Customer operations
+export const getCustomers = async (status: 'active' | 'inactive' | 'all' = 'active'): Promise<Customer[]> => {
+  const apiUrl = getApiBaseUrl();
   
   try {
     const response = await fetch(`${apiUrl}/customers${status !== 'all' ? `?status=${status}` : ''}`);
@@ -215,7 +231,7 @@ export const getCustomers = async (status: 'active' | 'inactive' | 'all' = 'acti
 };
 
 export const getCustomer = async (id: string): Promise<Customer | null> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = getApiBaseUrl();
   try {
     const response = await fetch(`${apiUrl}/customers/${id}`);
     if (!response.ok) {
@@ -302,54 +318,89 @@ export const updateCustomer = async (
   id: string,
   updates: Partial<Customer>,
 ): Promise<Customer | null> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = getApiBaseUrl();
+  
   try {
     const response = await fetch(`${apiUrl}/customers/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
       body: JSON.stringify(updates),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to update customer');
+    const responseText = await response.text();
+    let result;
+    
+    try {
+      result = responseText ? JSON.parse(responseText) : {};
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', responseText);
+      throw new Error('Received invalid JSON response from server');
     }
 
-    const result = await response.json();
+    if (!response.ok) {
+      const errorMessage = result.message || 
+                         result.error || 
+                         `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
+    }
+
+    // Handle different response formats
+    const responseData = result.data || result;
+    if (!responseData) {
+      throw new Error('No data received in response');
+    }
+
     return {
-      ...result.data,
-      id: result.data._id || result.data.id,
+      ...responseData,
+      id: responseData._id || responseData.id || id,
     };
   } catch (error) {
     console.error('Error updating customer:', error);
-    throw error;
+    throw error instanceof Error ? error : new Error('Failed to update customer');
   }
 };
 
 export const deleteCustomer = async (id: string): Promise<boolean> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = getApiBaseUrl();
+  
   try {
     const response = await fetch(`${apiUrl}/customers/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+      },
     });
 
+    const responseText = await response.text();
+    let result = {};
+    
+    try {
+      result = responseText ? JSON.parse(responseText) : {};
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', responseText);
+      // Continue even if response isn't JSON
+    }
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to delete customer');
+      const errorMessage = result.message || 
+                         result.error || 
+                         `HTTP error! status: ${response.status}`;
+      throw new Error(errorMessage);
     }
 
     return true;
   } catch (error) {
     console.error('Error deleting customer:', error);
-    throw error;
+    throw error instanceof Error ? error : new Error('Failed to delete customer');
   }
 };
 
 // Product operations
 export const getProducts = async (): Promise<Product[]> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = getApiBaseUrl();
   try {
     const response = await fetch(`${apiUrl}/products`);
     if (!response.ok) {
@@ -382,8 +433,24 @@ export const updateProductStock = async (
 };
 
 // Sales operations
+export const getStores = async (): Promise<any[]> => {
+  const apiUrl = getApiBaseUrl();
+  
+  try {
+    const response = await fetch(`${apiUrl}/stores`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch sales');
+    }
+    const data = await response.json();
+    return Array.isArray(data.data) ? data.data : [];
+  } catch (error) {
+    console.error('Error fetching sales:', error);
+    return [];
+  }
+};
+
 export const getSales = async (): Promise<Sale[]> => {
-  const apiUrl = import.meta.env.VITE_API_URL || '/api';
+  const apiUrl = getApiBaseUrl();
   try {
     const response = await fetch(`${apiUrl}/sales`);
     if (!response.ok) {
@@ -434,7 +501,7 @@ export const addSale = (sale: Omit<Sale, "id" | "date">): Sale => {
 // Helper function to find customer by email or phone
 const findCustomerByEmailOrPhone = async (email: string, phone: string): Promise<Customer | null> => {
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || '/api';
+    const apiUrl = getApiBaseUrl();
     const response = await fetch(`${apiUrl}/customers/search?email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
     
     if (!response.ok) {
@@ -709,8 +776,8 @@ export const searchCustomers = async (filters: SearchFilters): Promise<Customer[
 
 export const searchByBarcode = async (barcode: string): Promise<Product | null> => {
   try {
-    const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
-    const response = await fetch(`${baseUrl}/api/products/barcode/${barcode}`, {
+    const apiUrl = getApiBaseUrl();
+    const response = await fetch(`${apiUrl}/products/barcode/${barcode}`, {
       credentials: 'include'
     });
     

@@ -778,19 +778,30 @@ router.delete("/admin/users/:userId", authenticateToken, async (req, res) => {
     if (req.user.role !== "admin") {
       return res.status(403).json({
         success: false,
-        message: "Access denied. Admin only.",
+        message: "Not authorized to perform this action"
       });
     }
 
     const { userId } = req.params;
-    const user = await User.findByIdAndDelete(userId);
-
-    if (!user) {
+    
+    // Prevent deleting admin users
+    const userToDelete = await User.findById(userId);
+    if (!userToDelete) {
       return res.status(404).json({
         success: false,
-        message: "User not found",
+        message: "User not found"
       });
     }
+    
+    if (userToDelete.role === 'admin') {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete admin users"
+      });
+    }
+    
+    // Delete the user if not an admin
+    const user = await User.findByIdAndDelete(userId);
 
     res.json({
       success: true,
