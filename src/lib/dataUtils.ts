@@ -784,6 +784,41 @@ export const searchBySerialNumber = async (serialNumber: string): Promise<Produc
   return products.find((p) => p.serialNumber === serialNumber) || null;
 };
 
+// Barcode scanning simulation
+export const simulateBarcodeScan = async (): Promise<BarcodeResult> => {
+  try {
+    // Get products first
+    const products = await getProducts();
+    
+    if (!products || products.length === 0) {
+      throw new Error('No products available');
+    }
+
+    // Simulate scanning delay
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const randomProduct = products[Math.floor(Math.random() * products.length)];
+        
+        if (!randomProduct || !randomProduct.barcode) {
+          throw new Error('Invalid product data');
+        }
+        
+        resolve({
+          text: randomProduct.barcode,
+          format: "CODE_128",
+        });
+      }, 1000); // 1 second delay to simulate scanning
+    });
+  } catch (error) {
+    console.error('Error in barcode simulation:', error);
+    // Return a default barcode if there's an error
+    return {
+      text: '123456789012',
+      format: 'CODE_128',
+    };
+  }
+};
+
 // Report generation
 export const generateMonthlySalesReport = async (year: number, month: number): Promise<Report> => {
   // Check if VITE_API_URL is explicitly set (production environment)
