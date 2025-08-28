@@ -321,12 +321,16 @@ export const updateCustomer = async (
   const apiUrl = getApiBaseUrl();
   
   try {
+    // Log the request payload for debugging
+    console.log('Updating customer with data:', { id, updates });
+    
     const response = await fetch(`${apiUrl}/customers/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+      credentials: 'include', // Include cookies for authentication
       body: JSON.stringify(updates),
     });
 
@@ -341,8 +345,24 @@ export const updateCustomer = async (
     }
 
     if (!response.ok) {
+      // Log the full error response for debugging
+      console.error('Error response from server:', {
+        status: response.status,
+        statusText: response.statusText,
+        response: result
+      });
+      
+      // Handle validation errors specifically
+      if (response.status === 400 && result.errors) {
+        const validationErrors = Object.entries(result.errors)
+          .map(([field, error]) => `${field}: ${error}`)
+          .join('\n');
+        throw new Error(`Validation failed:\n${validationErrors}`);
+      }
+      
       const errorMessage = result.message || 
-                         result.error || 
+                         result.error?.message || 
+                         result.error ||
                          `HTTP error! status: ${response.status}`;
       throw new Error(errorMessage);
     }
@@ -353,10 +373,29 @@ export const updateCustomer = async (
       throw new Error('No data received in response');
     }
 
-    return {
-      ...responseData,
+    // Ensure we have a properly formatted customer object
+    const updatedCustomer = {
+      ...updates, // Include all updates
+      ...responseData, // Override with server response
       id: responseData._id || responseData.id || id,
+      // Ensure required fields are present
+      name: responseData.name || updates.name,
+      email: responseData.email || updates.email,
+      phone: responseData.phone || updates.phone,
+      // Ensure address is properly formatted
+      address: responseData.address || updates.address || {
+        line1: '',
+        city: '',
+        state: '',
+        pincode: ''
+      },
+      status: responseData.status || updates.status || 'active',
+      dateAdded: responseData.dateAdded || updates.dateAdded || new Date().toISOString().split('T')[0],
+      totalPurchases: responseData.totalPurchases || updates.totalPurchases || 0
     };
+    
+    console.log('Successfully updated customer:', updatedCustomer);
+    return updatedCustomer;
   } catch (error) {
     console.error('Error updating customer:', error);
     throw error instanceof Error ? error : new Error('Failed to update customer');
