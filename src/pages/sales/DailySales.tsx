@@ -1,14 +1,16 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { format, parseISO, isToday, isYesterday, isThisWeek, startOfDay, endOfDay, subDays, isValid } from 'date-fns';
+import { format, parseISO, isToday, isYesterday, isThisWeek, startOfDay, endOfDay, subDays, isValid, addDays } from 'date-fns';
 import { Calendar as CalendarIcon, Download, Loader2, RefreshCw, X, Info, Search, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 // Define types for our sales data
 interface SaleItem {
+  id: string;
   name: string;
   quantity: number;
   price: number;
+  date: string;
+  total: number;
 }
 
 interface Customer {
@@ -19,13 +21,16 @@ interface Customer {
 
 interface Sale {
   _id: string;
-  saleNumber: string;
+  id: string;
   customer?: Customer;
   items: SaleItem[];
   total: number;
   paymentMethod: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  date: string;
   createdAt: string;
   updatedAt: string;
+  __v: number;
 }
 
 interface SalesData {
@@ -37,26 +42,7 @@ interface SalesData {
   sales: Sale[];
 }
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Calendar } from '@/components/ui/calendar';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
 import { saleService } from "@/services/api";
-
-// Format currency helper function
-const formatCurrency = useCallback((value: number): string => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(value);
-}, []);
 
 // Using SalesData interface instead of DailySalesResponse
 
@@ -74,42 +60,35 @@ interface ErrorState {
 export function DailySales() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [dateRange, setDateRange] = useState<{
-    from: Date;
-    to: Date;
-  }>({
+  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: startOfDay(new Date()),
     to: endOfDay(new Date())
   });
-  const [dailyData, setDailyData] = useState<SalesData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
-  const [retryCount, setRetryCount] = useState(0);
   const [lastFetchTime, setLastFetchTime] = useState<Date | null>(null);
-
-  // Get date context for the current date range
-  const dateContext = useMemo(() => getDateContext(dateRange.from), [dateRange.from]);
-
+  const [retryCount, setRetryCount] = useState(0);
+  const [dailyData, setDailyData] = useState<SalesData>({
+    date: new Date().toISOString(),
+    totalSales: 0,
+    totalAmount: 0,
+    totalItemsSold: 0,
+    averageOrderValue: 0,
+    sales: []
+  });
 
   // Constants for retry logic
   const MAX_RETRY_ATTEMPTS = 3;
   const RETRY_DELAY = 2000; // 2 seconds
 
   // Check if we have sales data
-  const hasSalesData = useMemo(() => {
-    return dailyData && dailyData.totalSales > 0;
-  }, [dailyData]);
+  const hasSalesData = useMemo(() => dailyData && dailyData.totalSales > 0, [dailyData]);
 
-  // Get date context for better UX
-  function getDateContext(date: Date) {
-    if (isToday(date)) return { label: 'Today', variant: 'default' as const };
-    if (isYesterday(date)) return { label: 'Yesterday', variant: 'secondary' as const };
-    if (isThisWeek(date)) return { label: 'This Week', variant: 'outline' as const };
-    return { label: format(date, 'MMM d, yyyy'), variant: 'outline' as const };
-  }
+  // Date context for better UX (removed unused function)
+  // getDateContext was removed as it was unused
 
   // Format currency function with error handling
   const formatCurrency = useCallback((value: number): string => {
@@ -175,7 +154,7 @@ export function DailySales() {
   }, []);
 
   // Fetch daily sales data from API with comprehensive error handling
-  const fetchDailySales = async (startDate: string, endDate: string): Promise<SalesData> => {
+  const fetchDailySales = async (startDate: string, endDate: string): Promise<SalesData | void> => {
     // Cancel any ongoing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -228,6 +207,9 @@ export function DailySales() {
         if (retryCount > 0) {
           toast.success('Data refreshed successfully');
         }
+        
+        // Return the data to satisfy the Promise return type
+        return response.data;
       } else {
         throw new Error(response.message || 'Failed to load daily sales data');
       }
@@ -339,92 +321,42 @@ export function DailySales() {
   // Filter sales based on search query and active tab
   const filteredSales = useMemo(() => {
     if (!dailyData?.sales) return [];
-  
-    let filtered = [...dailyData.sales];
-  
-    // Apply search filter
+    
+    let result = [...dailyData.sales];
+    
+    // Apply search filter if search query exists
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(sale =>
-        sale.saleNumber.toLowerCase().includes(query) ||
-        (sale.customer?.name?.toLowerCase().includes(query) ?? false) ||
-        sale.items.some(item => item.name.toLowerCase().includes(query))
-      );
+      result = result.filter(sale => {
+        const customerName = sale.customer?.name?.toLowerCase() || '';
+        return (
+          sale.id.toLowerCase().includes(query) ||
+          customerName.includes(query) ||
+          sale.items.some(item => item.name.toLowerCase().includes(query))
+        );
+      });
     }
-  
-    // Apply date filters based on active tab
-    switch (activeTab) {
-      case 'today':
-        return filtered.filter(sale => isToday(parseISO(sale.createdAt)));
-      case 'yesterday':
-        return filtered.filter(sale => isYesterday(parseISO(sale.createdAt)));
-      case 'week':
-        return filtered.filter(sale => isThisWeek(parseISO(sale.createdAt)));
-      default:
-        return filtered;
+    
+    // Apply tab filter if not showing all
+    if (activeTab !== 'all') {
+      result = result.filter(sale => sale.status === activeTab);
     }
+    
+    // Sort by date (newest first) using createdAt if date is not available
+    return result.sort((a, b) => {
+      const dateA = a.date ? new Date(a.date) : new Date(a.createdAt);
+      const dateB = b.date ? new Date(b.date) : new Date(b.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
   }, [dailyData, searchQuery, activeTab]);
 
-  // Calculate summary statistics
-  interface SummaryStats {
-    totalSales: number;
-    totalAmount: number;
-    totalItemsSold: number;
-    averageOrderValue: number;
-  }
-
-  const summary: SummaryStats = useMemo(() => ({
-    totalSales: dailyData?.totalSales || 0,
-    totalAmount: dailyData?.totalAmount || 0,
-    totalItemsSold: dailyData?.totalItemsSold || 0,
-    averageOrderValue: dailyData?.averageOrderValue || 0
+  // Summary statistics
+  const summary = useMemo(() => ({
+    totalSales: dailyData.totalSales,
+    totalAmount: dailyData.totalAmount,
+    totalItemsSold: dailyData.totalItemsSold,
+    averageOrderValue: dailyData.averageOrderValue
   }), [dailyData]);
-
-  // Handle API errors
-  const handleApiError = useCallback((error: any): ErrorState => {
-    let errorState: ErrorState = {
-      type: 'unknown',
-      message: 'An unexpected error occurred',
-      retryable: true
-    };
-
-    if (error.name === 'AbortError' || error.message?.includes('timeout')) {
-      errorState = {
-        type: 'timeout',
-        message: 'Request timed out. Please try again.',
-        retryable: true
-      };
-    } else if (error.message?.includes('Network error') || error.message?.includes('fetch')) {
-      errorState = {
-        type: 'network',
-        message: 'Network error. Please check your connection and try again.',
-        retryable: true
-      };
-    } else if (error.message?.includes('Invalid date') || error.message?.includes('validation')) {
-      errorState = {
-        type: 'validation',
-        message: error.message,
-        retryable: false
-      };
-    } else if (error.response?.status >= 500) {
-      errorState = {
-        type: 'server',
-        message: 'Server error. Please try again later.',
-        retryable: true
-      };
-    }
-
-    setError(errorState);
-    toast.error(errorState.message);
-  
-    console.error('[DailySales] API Error:', {
-      error: error.message,
-      type: errorState.type,
-      retryable: errorState.retryable
-    });
-  
-    return errorState;
-  }, [setError, toast]);
 
   // Handle date selection
   const handleDateSelect = useCallback((date: Date | undefined) => {
