@@ -1,5 +1,6 @@
 import express from "express";
 import { body, param, query, validationResult } from "express-validator";
+import mongoose from "mongoose";
 import Sale from "../models/Sale.js";
 import Product from "../models/Product.js";
 import Customer from "../models/Customer.js";
@@ -210,8 +211,19 @@ router.get(
       }
 
       console.log(`[DAILY SALES] Final query:`, JSON.stringify(query, null, 2));
+      console.log(`[DAILY SALES] MongoDB connection state:`, mongoose.connection.readyState);
+
+      // Validate MongoDB connection
+      if (mongoose.connection.readyState !== 1) {
+        console.error('[DAILY SALES] MongoDB not connected. State:', mongoose.connection.readyState);
+        return res.status(500).json({
+          success: false,
+          message: "Database connection error",
+        });
+      }
 
       // Get sales for the specific date with pagination and proper error handling
+      console.log(`[DAILY SALES] Querying MongoDB sales collection...`);
       const sales = await Sale.find(query)
         .populate("customer", "name email phone")
         .populate("store", "name code address")
@@ -428,6 +440,18 @@ router.post(
         });
       }
 
+      // Validate MongoDB connection
+      if (mongoose.connection.readyState !== 1) {
+        console.error('[SALE CREATE] MongoDB not connected. State:', mongoose.connection.readyState);
+        return res.status(500).json({
+          success: false,
+          message: "Database connection error",
+        });
+      }
+
+      console.log('[SALE CREATE] MongoDB connection state:', mongoose.connection.readyState);
+      console.log('[SALE CREATE] Using store ID:', finalStoreId);
+
       let totalAmount = 0;
       const populatedItems = [];
 
@@ -492,9 +516,34 @@ router.post(
         notes,
       });
 
-      console.log('[SALE CREATE] Saving sale with store ID:', finalStoreId);
-      await newSale.save();
-      console.log('[SALE CREATE] Sale saved successfully with ID:', newSale._id);
+      console.log('[SALE CREATE] Sale object created:', {
+        customer: newSale.customer,
+        store: newSale.store,
+        totalAmount: newSale.totalAmount,
+        itemsCount: newSale.items.length,
+        paymentMethod: newSale.paymentMethod
+      });
+
+      console.log('[SALE CREATE] Attempting to save sale to MongoDB...');
+      
+      try {
+        await newSale.save();
+        console.log('[SALE CREATE] ✅ Sale saved successfully to MongoDB!');
+        console.log('[SALE CREATE] Sale ID:', newSale._id);
+        console.log('[SALE CREATE] Sale Number:', newSale.saleNumber);
+        console.log('[SALE CREATE] Created At:', newSale.createdAt);
+        
+        // Verify the sale was actually saved by querying it back
+        const savedSale = await Sale.findById(newSale._id);
+        if (savedSale) {
+          console.log('[SALE CREATE] ✅ Sale verified in database:', savedSale.saleNumber);
+        } else {
+          console.error('[SALE CREATE] ❌ Sale not found in database after save!');
+        }
+      } catch (saveError) {
+        console.error('[SALE CREATE] ❌ Error saving sale to MongoDB:', saveError);
+        throw saveError;
+      }
 
       const populatedSale = await Sale.findById(newSale._id)
         .populate("customer", "name email");
