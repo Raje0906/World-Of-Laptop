@@ -219,26 +219,12 @@ export function DailySales() {
           })) : []
         };
         
-        setDailyData(salesData);
-        setLastFetchTime(new Date());
-        setRetryCount(0);
-        return salesData;
-      } else {
-        throw new Error(response.message || 'Failed to load daily sales data');
-      }
-
-      if (response.success && response.data) {
-        setDailyData(response.data);
-        setLastFetchTime(new Date());
-        setRetryCount(0); // Reset retry count on success
-
         // Show success message for retries
         if (retryCount > 0) {
           toast.success('Data refreshed successfully');
         }
         
-        // Return the data to satisfy the Promise return type
-        return response.data;
+        return salesData;
       } else {
         throw new Error(response.message || 'Failed to load daily sales data');
       }
@@ -301,7 +287,7 @@ export function DailySales() {
       setIsLoading(false);
       abortControllerRef.current = null;
     }
-  };
+  });
 
   // Retry fetch with exponential backoff
   const retryFetch = useCallback(async () => {
