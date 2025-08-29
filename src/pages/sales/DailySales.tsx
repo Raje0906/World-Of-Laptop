@@ -134,12 +134,12 @@ export function DailySales() {
   }, [dailyData]);
 
   // Get date context for better UX
-  const getDateContext = useCallback((date: Date) => {
+  function getDateContext(date: Date) {
     if (isToday(date)) return { label: 'Today', variant: 'default' as const };
     if (isYesterday(date)) return { label: 'Yesterday', variant: 'secondary' as const };
     if (isThisWeek(date)) return { label: 'This Week', variant: 'outline' as const };
     return { label: format(date, 'MMM d, yyyy'), variant: 'outline' as const };
-  }, []);
+  }
   
   // Format currency function with error handling
   const formatCurrency = (value: number): string => {
