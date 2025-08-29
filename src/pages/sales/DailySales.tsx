@@ -47,26 +47,20 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
 import { saleService } from "@/services/api";
+
 // Format currency helper function
-const formatCurrency = (value: number): string => {
+const formatCurrency = useCallback((value: number): string => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(value);
-};
+}, []);
 
 // Using SalesData interface instead of DailySalesResponse
 
 // Removed duplicate interfaces
-
-interface SummaryStats {
-  totalSales: number;
-  totalAmount: number;
-  totalItemsSold: number;
-  averageOrderValue: number;
-}
 
 // Error types for better error handling
 type ErrorType = 'timeout' | 'network' | 'validation' | 'server' | 'unknown';
@@ -78,6 +72,8 @@ interface ErrorState {
 }
 
 export function DailySales() {
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [dateRange, setDateRange] = useState<{
     from: Date;
     to: Date;
@@ -97,9 +93,6 @@ export function DailySales() {
   // Get date context for the current date range
   const dateContext = useMemo(() => getDateContext(dateRange.from), [dateRange.from]);
 
-  // Initialize abort controller and timeout refs
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Constants for retry logic
   const MAX_RETRY_ATTEMPTS = 3;
@@ -182,7 +175,7 @@ export function DailySales() {
   }, []);
 
   // Fetch daily sales data from API with comprehensive error handling
-  const fetchDailySales = useCallback(async (isRetry = false) => {
+  const fetchDailySales = async (startDate: string, endDate: string): Promise<SalesData> => {
     // Cancel any ongoing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -193,23 +186,12 @@ export function DailySales() {
       clearTimeout(fetchTimeoutRef.current);
     }
 
-    // Validate date range before making request
-    if (!dateRange.from || !dateRange.to) {
-      return;
-    }
-
     try {
       setIsLoading(true);
       setError(null);
 
       // Create new abort controller for this request
       abortControllerRef.current = new AbortController();
-
-      // Format dates for API (YYYY-MM-DD)
-      const startDate = format(dateRange.from, 'yyyy-MM-dd');
-      const endDate = format(dateRange.to, 'yyyy-MM-dd');
-
-      console.log(`[DailySales] Fetching data from ${startDate} to ${endDate}${isRetry ? ' (retry attempt)' : ''}`);
 
       // Set timeout for the request
       fetchTimeoutRef.current = setTimeout(() => {
@@ -243,7 +225,7 @@ export function DailySales() {
         setRetryCount(0); // Reset retry count on success
 
         // Show success message for retries
-        if (isRetry) {
+        if (retryCount > 0) {
           toast.success('Data refreshed successfully');
         }
       } else {
@@ -305,254 +287,175 @@ export function DailySales() {
 
       setDailyData(null);
     } finally {
+      setIsLoading(false);
+      abortControllerRef.current = null;
+    }
+  };
+
+  // Retry fetch with exponential backoff
+  const retryFetch = useCallback(async () => {
+    if (retryCount >= MAX_RETRY_ATTEMPTS) {
+      setError({
+        type: 'unknown',
+        message: 'Maximum retry attempts reached. Please try again later.',
+        retryable: false
+      });
+      return;
+    }
+
+    setRetryCount(prev => prev + 1);
+  
+    // Exponential backoff delay
+    const delay = RETRY_DELAY * Math.pow(2, retryCount);
+  
+    toast.info(`Retrying in ${delay / 1000} seconds...`);
+  
+    setTimeout(() => {
+      const startDate = format(dateRange.from, 'yyyy-MM-dd');
+      const endDate = format(dateRange.to, 'yyyy-MM-dd');
+      fetchDailySales(startDate, endDate);
+    }, delay);
+  }, [retryCount, fetchDailySales, MAX_RETRY_ATTEMPTS]);
+
+  // Fetch data when component mounts or selected date changes
+  useEffect(() => {
+    const startDate = format(dateRange.from, 'yyyy-MM-dd');
+    const endDate = format(dateRange.to, 'yyyy-MM-dd');
+    fetchDailySales(startDate, endDate);
+  }, [fetchDailySales, dateRange.from]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
-    }, 30000); // 30 second timeout
-
-    // Fetch daily sales data from the backend API
-    const response = await saleService.getDailySales({
-      startDate,
-      endDate,
-      signal: abortControllerRef.current?.signal
-    });
-
-    // Clear timeout since request completed
-    if (fetchTimeoutRef.current) {
-      clearTimeout(fetchTimeoutRef.current);
-      fetchTimeoutRef.current = null;
-    }
-
-    console.log('[DailySales] API Response received:', {
-      success: response.success,
-      salesCount: response.data?.totalSales,
-      date: response.data?.date
-    });
-
-    if (response.success && response.data) {
-      setDailyData(response.data);
-      setLastFetchTime(new Date());
-      setRetryCount(0); // Reset retry count on success
-
-      // Show success message for retries
-      if (isRetry) {
-        toast.success('Data refreshed successfully');
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
       }
-    } else {
-      throw new Error(response.message || 'Failed to load daily sales data');
-    }
-  } catch (err: any) {
-    // Clear timeout
-    if (fetchTimeoutRef.current) {
-      clearTimeout(fetchTimeoutRef.current);
-      fetchTimeoutRef.current = null;
-    }
+    };
+  }, []);
 
-    let errorState: ErrorState;
+  // Filter sales based on search query and active tab
+  const filteredSales = useMemo(() => {
+    if (!dailyData?.sales) return [];
+  
+    let filtered = [...dailyData.sales];
+  
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(sale =>
+        sale.saleNumber.toLowerCase().includes(query) ||
+        (sale.customer?.name?.toLowerCase().includes(query) ?? false) ||
+        sale.items.some(item => item.name.toLowerCase().includes(query))
+      );
+    }
+  
+    // Apply date filters based on active tab
+    switch (activeTab) {
+      case 'today':
+        return filtered.filter(sale => isToday(parseISO(sale.createdAt)));
+      case 'yesterday':
+        return filtered.filter(sale => isYesterday(parseISO(sale.createdAt)));
+      case 'week':
+        return filtered.filter(sale => isThisWeek(parseISO(sale.createdAt)));
+      default:
+        return filtered;
+    }
+  }, [dailyData, searchQuery, activeTab]);
 
-    // Determine error type and create appropriate error state
-    if (err.name === 'AbortError' || err.message.includes('timeout')) {
+  // Calculate summary statistics
+  interface SummaryStats {
+    totalSales: number;
+    totalAmount: number;
+    totalItemsSold: number;
+    averageOrderValue: number;
+  }
+
+  const summary: SummaryStats = useMemo(() => ({
+    totalSales: dailyData?.totalSales || 0,
+    totalAmount: dailyData?.totalAmount || 0,
+    totalItemsSold: dailyData?.totalItemsSold || 0,
+    averageOrderValue: dailyData?.averageOrderValue || 0
+  }), [dailyData]);
+
+  // Handle API errors
+  const handleApiError = useCallback((error: any): ErrorState => {
+    let errorState: ErrorState = {
+      type: 'unknown',
+      message: 'An unexpected error occurred',
+      retryable: true
+    };
+
+    if (error.name === 'AbortError' || error.message?.includes('timeout')) {
       errorState = {
         type: 'timeout',
         message: 'Request timed out. Please try again.',
         retryable: true
       };
-    } else if (err.message.includes('Network error') || err.message.includes('fetch')) {
+    } else if (error.message?.includes('Network error') || error.message?.includes('fetch')) {
       errorState = {
         type: 'network',
         message: 'Network error. Please check your connection and try again.',
         retryable: true
       };
-    } else if (err.message.includes('Invalid date') || err.message.includes('validation')) {
+    } else if (error.message?.includes('Invalid date') || error.message?.includes('validation')) {
       errorState = {
         type: 'validation',
-        message: err.message,
+        message: error.message,
         retryable: false
       };
-    } else if (err.response?.status >= 500) {
+    } else if (error.response?.status >= 500) {
       errorState = {
         type: 'server',
         message: 'Server error. Please try again later.',
         retryable: true
       };
-    } else {
-      errorState = {
-        type: 'unknown',
-        message: err.message || 'An unexpected error occurred',
-        retryable: true
-      };
     }
 
     setError(errorState);
-
-    // Show error toast
     toast.error(errorState.message);
-
-    console.error('[DailySales] Error fetching data:', {
-      error: err.message,
+  
+    console.error('[DailySales] API Error:', {
+      error: error.message,
       type: errorState.type,
-      retryable: errorState.retryable,
-      date: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : 'N/A'
+      retryable: errorState.retryable
     });
+  
+    return errorState;
+  }, [setError, toast]);
 
-    setDailyData(null);
-  } finally {
-    setIsLoading(false);
-    abortControllerRef.current = null;
-  }
-}, [dateRange.from, validateDate]);
-
-// Retry fetch with exponential backoff
-const retryFetch = useCallback(async () => {
-  if (retryCount >= MAX_RETRY_ATTEMPTS) {
-    setError({
-      type: 'unknown',
-      message: 'Maximum retry attempts reached. Please try again later.',
-      retryable: false
+  // Handle date selection
+  const handleDateSelect = useCallback((date: Date | undefined) => {
+    if (!date) return;
+  
+    setDateRange({
+      from: startOfDay(date),
+      to: endOfDay(date)
     });
-    return;
-  }
+    setError(null); // Clear any previous errors
+  }, []);
 
-  setRetryCount(prev => prev + 1);
-  
-  // Exponential backoff delay
-  const delay = RETRY_DELAY * Math.pow(2, retryCount);
-  
-  toast.info(`Retrying in ${delay / 1000} seconds...`);
-  
-  setTimeout(() => {
-    fetchDailySales(true);
-  }, delay);
-}, [retryCount, fetchDailySales, MAX_RETRY_ATTEMPTS]);
+  // Handle quick date range selection
+  const handleQuickRange = useCallback((range: 'today' | 'yesterday' | 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth') => {
+    const today = new Date();
+    let from: Date;
+    let to: Date;
 
-// Fetch data when component mounts or selected date changes
-useEffect(() => {
-  fetchDailySales();
-}, [fetchDailySales]);
-
-// Cleanup on unmount
-useEffect(() => {
-  return () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    if (fetchTimeoutRef.current) {
-      clearTimeout(fetchTimeoutRef.current);
-    }
-  };
-}, []);
-
-// Filter sales based on search query and active tab
-const filteredSales = useMemo(() => {
-  if (!dailyData?.sales) return [];
-  
-  let filtered = [...dailyData.sales];
-  
-  // Apply search filter
-  if (searchQuery) {
-    const query = searchQuery.toLowerCase();
-    filtered = filtered.filter(sale =>
-      sale.saleNumber.toLowerCase().includes(query) ||
-      (sale.customer?.name?.toLowerCase().includes(query) ?? false) ||
-      sale.items.some(item => item.name.toLowerCase().includes(query))
-    );
-  }
-  
-  // Apply date filters based on active tab
-  switch (activeTab) {
-    case 'today':
-      return filtered.filter(sale => isToday(parseISO(sale.createdAt)));
-    case 'yesterday':
-      return filtered.filter(sale => isYesterday(parseISO(sale.createdAt)));
-    case 'week':
-      return filtered.filter(sale => isThisWeek(parseISO(sale.createdAt)));
-    default:
-      return filtered;
-  }
-}, [dailyData, searchQuery, activeTab]);
-
-// Calculate summary statistics
-const summary = useMemo(() => ({
-  totalSales: dailyData?.totalSales || 0,
-  totalAmount: dailyData?.totalAmount || 0,
-  totalItems: dailyData?.totalItemsSold || 0,
-  averageOrder: dailyData?.averageOrderValue || 0
-}), [dailyData]);
-
-// Handle API errors
-const handleApiError = useCallback((error: any): ErrorState => {
-  let errorState: ErrorState = {
-    type: 'unknown',
-    message: 'An unexpected error occurred',
-    retryable: true
-  };
-
-  if (error.name === 'AbortError' || error.message?.includes('timeout')) {
-    errorState = {
-      type: 'timeout',
-      message: 'Request timed out. Please try again.',
-      retryable: true
-    };
-  } else if (error.message?.includes('Network error') || error.message?.includes('fetch')) {
-    errorState = {
-      type: 'network',
-      message: 'Network error. Please check your connection and try again.',
-      retryable: true
-    };
-  } else if (error.message?.includes('Invalid date') || error.message?.includes('validation')) {
-    errorState = {
-      type: 'validation',
-      message: error.message,
-      retryable: false
-    };
-  } else if (error.response?.status >= 500) {
-    errorState = {
-      type: 'server',
-      message: 'Server error. Please try again later.',
-      retryable: true
-    };
-  }
-
-  setError(errorState);
-  toast.error(errorState.message);
-  
-  console.error('[DailySales] API Error:', {
-    error: error.message,
-    type: errorState.type,
-    retryable: errorState.retryable
-  });
-  
-  return errorState;
-}, [setError, toast]);
-
-// Handle date selection
-const handleDateSelect = useCallback((date: Date | undefined) => {
-  if (!date) return;
-  
-  setDateRange({
-    from: startOfDay(date),
-    to: endOfDay(date)
-  });
-  setError(null); // Clear any previous errors
-}, []);
-
-// Handle quick date range selection
-const handleQuickRange = useCallback((range: 'today' | 'yesterday' | 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth') => {
-  const today = new Date();
-  let from: Date;
-  let to: Date = endOfDay(today);
-
-  switch (range) {
-    case 'today':
-      from = startOfDay(today);
-      break;
-    case 'yesterday':
-      from = startOfDay(subDays(today, 1));
-      to = endOfDay(subDays(today, 1));
-      break;
-    case 'thisWeek':
-      from = startOfDay(subDays(today, today.getDay()));
-      break;
+    switch (range) {
+      case 'today':
+        from = startOfDay(today);
+        to = endOfDay(today);
+        break;
+      case 'yesterday':
+        from = startOfDay(subDays(today, 1));
+        to = endOfDay(subDays(today, 1));
+        break;
+      case 'thisWeek':
+        from = startOfDay(subDays(today, today.getDay()));
+        to = endOfDay(today);
+        break;
     case 'lastWeek':
       const lastWeek = subDays(today, 7);
       from = startOfDay(subDays(lastWeek, lastWeek.getDay()));
