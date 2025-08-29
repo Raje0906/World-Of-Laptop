@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { format, parseISO, isToday, isYesterday, isThisWeek, startOfDay, endOfDay, subDays, isValid, addDays, endOfMonth } from 'date-fns';
+import { format, parseISO, isToday, isYesterday, isThisWeek, startOfDay, endOfDay, subDays, isValid, addDays, endOfMonth, startOfMonth } from 'date-fns';
 import { Calendar as CalendarIcon, Download, Loader2, RefreshCw, X, Info, Search, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
