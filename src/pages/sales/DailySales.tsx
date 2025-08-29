@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { format, parseISO, isToday, isYesterday, isThisWeek, startOfDay, endOfDay, subDays, isValid, addDays } from 'date-fns';
+import { format, parseISO, isToday, isYesterday, isThisWeek, startOfDay, endOfDay, subDays, isValid, addDays, endOfMonth } from 'date-fns';
 import { Calendar as CalendarIcon, Download, Loader2, RefreshCw, X, Info, Search, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -68,7 +68,7 @@ export function DailySales() {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'completed' | 'pending' | 'cancelled'>('all');
   const [lastFetchTime, setLastFetchTime] = useState<Date | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [dailyData, setDailyData] = useState<SalesData>({
@@ -87,11 +87,16 @@ export function DailySales() {
   // Check if we have sales data
   const hasSalesData = useMemo(() => dailyData && dailyData.totalSales > 0, [dailyData]);
 
-  // Date context for better UX (removed unused function)
-  // getDateContext was removed as it was unused
+  // Date context for better UX
+  const getDateContext = useCallback((date: Date) => {
+    if (isToday(date)) return { label: 'Today', variant: 'default' as const };
+    if (isYesterday(date)) return { label: 'Yesterday', variant: 'secondary' as const };
+    if (isThisWeek(date)) return { label: 'This Week', variant: 'outline' as const };
+    return { label: format(date, 'MMM d, yyyy'), variant: 'outline' as const };
+  }, []);
 
-  // Format currency function with error handling
-  const formatCurrency = useCallback((value: number): string => {
+  // Format currency function with error handling (used in JSX)
+  const formatCurrency = useCallback((value: number | undefined): string => {
     try {
       if (typeof value !== 'number' || isNaN(value)) {
         return '₹0.00';
@@ -154,7 +159,7 @@ export function DailySales() {
   }, []);
 
   // Fetch daily sales data from API with comprehensive error handling
-  const fetchDailySales = async (startDate: string, endDate: string): Promise<SalesData | void> => {
+  const fetchDailySales = useCallback(async (startDate: string, endDate: string): Promise<SalesData | void> => {
     // Cancel any ongoing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -192,11 +197,35 @@ export function DailySales() {
         fetchTimeoutRef.current = null;
       }
 
-      console.log('[DailySales] API Response received:', {
-        success: response.success,
-        salesCount: response.data?.totalSales,
-        date: response.data?.date
-      });
+      if (response.success && response.data) {
+        const salesData: SalesData = {
+          date: response.data.date || new Date().toISOString(),
+          totalSales: response.data.totalSales || 0,
+          totalAmount: response.data.totalAmount || 0,
+          totalItemsSold: response.data.totalItemsSold || 0,
+          averageOrderValue: response.data.averageOrderValue || 0,
+          sales: Array.isArray(response.data.sales) ? response.data.sales.map(sale => ({
+            _id: sale._id || '',
+            id: sale.id || sale._id || '',
+            customer: sale.customer || { name: 'Guest' },
+            items: sale.items || [],
+            total: sale.total || 0,
+            paymentMethod: sale.paymentMethod || 'unknown',
+            status: sale.status || 'completed',
+            date: sale.date || new Date().toISOString(),
+            createdAt: sale.createdAt || new Date().toISOString(),
+            updatedAt: sale.updatedAt || new Date().toISOString(),
+            __v: sale.__v || 0
+          })) : []
+        };
+        
+        setDailyData(salesData);
+        setLastFetchTime(new Date());
+        setRetryCount(0);
+        return salesData;
+      } else {
+        throw new Error(response.message || 'Failed to load daily sales data');
+      }
 
       if (response.success && response.data) {
         setDailyData(response.data);
@@ -318,9 +347,9 @@ export function DailySales() {
     };
   }, []);
 
-  // Filter sales based on search query and active tab
+  // Filter and sort sales data based on search and active tab
   const filteredSales = useMemo(() => {
-    if (!dailyData?.sales) return [];
+    if (!dailyData?.sales?.length) return [];
     
     let result = [...dailyData.sales];
     
@@ -328,11 +357,15 @@ export function DailySales() {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(sale => {
-        const customerName = sale.customer?.name?.toLowerCase() || '';
+        const saleId = (sale.id || sale._id || '').toLowerCase();
+        const customerName = (sale.customer?.name || '').toLowerCase();
         return (
-          sale.id.toLowerCase().includes(query) ||
+          saleId.includes(query) ||
           customerName.includes(query) ||
-          sale.items.some(item => item.name.toLowerCase().includes(query))
+          (sale.items || []).some(item => 
+            (item.name || '').toLowerCase().includes(query) ||
+            (item.id || '').toLowerCase().includes(query)
+          )
         );
       });
     }
@@ -344,8 +377,8 @@ export function DailySales() {
     
     // Sort by date (newest first) using createdAt if date is not available
     return result.sort((a, b) => {
-      const dateA = a.date ? new Date(a.date) : new Date(a.createdAt);
-      const dateB = b.date ? new Date(b.date) : new Date(b.createdAt);
+      const dateA = a.date ? new Date(a.date) : new Date(a.createdAt || 0);
+      const dateB = b.date ? new Date(b.date) : new Date(b.createdAt || 0);
       return dateB.getTime() - dateA.getTime();
     });
   }, [dailyData, searchQuery, activeTab]);
