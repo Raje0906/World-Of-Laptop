@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { format, parseISO, isToday, isYesterday, isThisWeek, startOfDay, endOfDay, subDays, isValid } from 'date-fns';
-import { Calendar as CalendarIcon, Download, Loader2, RefreshCw, X, Info, Search } from 'lucide-react';
+import { Calendar as CalendarIcon, Download, Loader2, RefreshCw, X, Info, Search, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
 
 // Define types for our sales data
@@ -29,12 +28,13 @@ interface Sale {
   updatedAt: string;
 }
 
-interface DailySalesData {
-  sales: Sale[];
+interface SalesData {
+  date: string;
   totalSales: number;
   totalAmount: number;
-  totalItems: number;
-  averageOrder: number;
+  totalItemsSold: number;
+  averageOrderValue: number;
+  sales: Sale[];
 }
 
 import { Button } from '@/components/ui/button';
@@ -47,42 +47,17 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
 import { saleService } from "@/services/api";
-import { formatCurrency } from "@/lib/utils";
+// Format currency helper function
+const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(value);
+};
 
-// Define the daily sales response type
-interface DailySalesResponse {
-  success: boolean;
-  data: {
-    date: string;
-    totalSales: number;
-    totalAmount: number;
-    totalItemsSold: number;
-    averageOrderValue: number;
-    sales: Array<{
-      _id: string;
-      saleNumber: string;
-      customer?: {
-        name: string;
-        email?: string;
-        phone?: string;
-      };
-      items: Array<{
-        name: string;
-        quantity: number;
-        price: number;
-      }>;
-      total: number;
-      paymentMethod: string;
-      createdAt: string;
-    }>;
-  };
-  message?: string;
-  meta?: {
-    date: string;
-    queryTime: string;
-    resultCount: number;
-  };
-}
+// Using SalesData interface instead of DailySalesResponse
 
 // Removed duplicate interfaces
 
@@ -110,21 +85,23 @@ export function DailySales() {
     from: startOfDay(new Date()),
     to: endOfDay(new Date())
   });
-  const [dailyData, setDailyData] = useState<DailySalesResponse['data'] | null>(null);
+  const [dailyData, setDailyData] = useState<SalesData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<ErrorState | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
-  
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastFetchTime, setLastFetchTime] = useState<Date | null>(null);
+
   // Get date context for the current date range
   const dateContext = useMemo(() => getDateContext(dateRange.from), [dateRange.from]);
-  
-  // Refs for performance optimization
+
+  // Initialize abort controller and timeout refs
   const abortControllerRef = useRef<AbortController | null>(null);
   const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Maximum retry attempts
+  // Constants for retry logic
   const MAX_RETRY_ATTEMPTS = 3;
   const RETRY_DELAY = 2000; // 2 seconds
 
@@ -140,9 +117,9 @@ export function DailySales() {
     if (isThisWeek(date)) return { label: 'This Week', variant: 'outline' as const };
     return { label: format(date, 'MMM d, yyyy'), variant: 'outline' as const };
   }
-  
+
   // Format currency function with error handling
-  const formatCurrency = (value: number): string => {
+  const formatCurrency = useCallback((value: number): string => {
     try {
       if (typeof value !== 'number' || isNaN(value)) {
         return '₹0.00';
@@ -157,7 +134,25 @@ export function DailySales() {
       console.error('Currency formatting error:', error);
       return '₹0.00';
     }
-  };
+  }, []);
+
+  // Export to Excel function
+  const exportToExcel = useCallback(() => {
+    if (!dailyData) return;
+
+    setIsExporting(true);
+    try {
+      const worksheet = XLSX.utils.json_to_sheet(dailyData.sales);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Daily Sales');
+      XLSX.writeFile(workbook, `sales-${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      toast.error('Failed to export data');
+    } finally {
+      setIsExporting(false);
+    }
+  }, [dailyData]);
 
   // Validate date before fetching
   const validateDate = useCallback((date: Date): boolean => {
@@ -173,7 +168,7 @@ export function DailySales() {
     const now = new Date();
     const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
     const twoYearsFromNow = new Date(now.getFullYear() + 2, now.getMonth(), now.getDate());
-    
+
     if (date < oneYearAgo || date > twoYearsFromNow) {
       setError({
         type: 'validation',
@@ -206,16 +201,16 @@ export function DailySales() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Create new abort controller for this request
       abortControllerRef.current = new AbortController();
-      
+
       // Format dates for API (YYYY-MM-DD)
       const startDate = format(dateRange.from, 'yyyy-MM-dd');
       const endDate = format(dateRange.to, 'yyyy-MM-dd');
-      
+
       console.log(`[DailySales] Fetching data from ${startDate} to ${endDate}${isRetry ? ' (retry attempt)' : ''}`);
-      
+
       // Set timeout for the request
       fetchTimeoutRef.current = setTimeout(() => {
         if (abortControllerRef.current) {
@@ -229,24 +224,24 @@ export function DailySales() {
         endDate,
         signal: abortControllerRef.current?.signal
       });
-      
+
       // Clear timeout since request completed
       if (fetchTimeoutRef.current) {
         clearTimeout(fetchTimeoutRef.current);
         fetchTimeoutRef.current = null;
       }
-      
+
       console.log('[DailySales] API Response received:', {
         success: response.success,
         salesCount: response.data?.totalSales,
         date: response.data?.date
       });
-      
+
       if (response.success && response.data) {
         setDailyData(response.data);
         setLastFetchTime(new Date());
         setRetryCount(0); // Reset retry count on success
-        
+
         // Show success message for retries
         if (isRetry) {
           toast.success('Data refreshed successfully');
@@ -297,10 +292,10 @@ export function DailySales() {
       }
 
       setError(errorState);
-      
+
       // Show error toast
       toast.error(errorState.message);
-      
+
       console.error('[DailySales] Error fetching data:', {
         error: err.message,
         type: errorState.type,
@@ -310,194 +305,354 @@ export function DailySales() {
 
       setDailyData(null);
     } finally {
-      setIsLoading(false);
-      abortControllerRef.current = null;
-    }
-  }, [dateRange.from, validateDate]);
-
-  // Retry mechanism with exponential backoff
-  const retryFetch = useCallback(async () => {
-    if (retryCount >= MAX_RETRY_ATTEMPTS) {
-      setError({
-        type: 'unknown',
-        message: 'Maximum retry attempts reached. Please try again later.',
-        retryable: false
-      });
-      return;
-    }
-
-    setRetryCount(prev => prev + 1);
-    
-    // Exponential backoff delay
-    const delay = RETRY_DELAY * Math.pow(2, retryCount);
-    
-    toast.info(`Retrying in ${delay / 1000} seconds...`);
-    
-    setTimeout(() => {
-      fetchDailySales(true);
-    }, delay);
-  }, [retryCount, fetchDailySales]);
-
-  // Fetch data when component mounts or selected date changes
-  useEffect(() => {
-    fetchDailySales();
-  }, [fetchDailySales]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
+    }, 30000); // 30 second timeout
+
+    // Fetch daily sales data from the backend API
+    const response = await saleService.getDailySales({
+      startDate,
+      endDate,
+      signal: abortControllerRef.current?.signal
+    });
+
+    // Clear timeout since request completed
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+      fetchTimeoutRef.current = null;
+    }
+
+    console.log('[DailySales] API Response received:', {
+      success: response.success,
+      salesCount: response.data?.totalSales,
+      date: response.data?.date
+    });
+
+    if (response.success && response.data) {
+      setDailyData(response.data);
+      setLastFetchTime(new Date());
+      setRetryCount(0); // Reset retry count on success
+
+      // Show success message for retries
+      if (isRetry) {
+        toast.success('Data refreshed successfully');
       }
-    };
-  }, []);
-
-  // Filter sales based on search query and active tab
-  const filteredSales = useMemo(() => {
-    if (!dailyData?.sales) return [];
-    
-    let filtered = [...dailyData.sales];
-    
-    // Apply search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(sale =>
-        sale.saleNumber.toLowerCase().includes(query) ||
-        (sale.customer?.name?.toLowerCase().includes(query) ?? false) ||
-        sale.items.some(item => item.name.toLowerCase().includes(query))
-      );
+    } else {
+      throw new Error(response.message || 'Failed to load daily sales data');
     }
-    
-    // Apply date filters based on active tab
-    switch (activeTab) {
-      case 'today':
-        return filtered.filter(sale => isToday(parseISO(sale.createdAt)));
-      case 'yesterday':
-        return filtered.filter(sale => isYesterday(parseISO(sale.createdAt)));
-      case 'week':
-        return filtered.filter(sale => isThisWeek(parseISO(sale.createdAt)));
-      default:
-        return filtered;
+  } catch (err: any) {
+    // Clear timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+      fetchTimeoutRef.current = null;
     }
-  }, [dailyData, searchQuery, activeTab]);
 
-  // Calculate summary statistics
-  const summary = useMemo(() => {
-    if (!filteredSales.length) {
-      return {
-        totalSales: 0,
-        totalAmount: 0,
-        totalItems: 0,
-        averageOrder: 0
-      };
-    }
-    
-    return filteredSales.reduce((acc, sale) => {
-      const itemsCount = sale.items.reduce((sum, item) => sum + item.quantity, 0);
-      const newTotalSales = acc.totalSales + 1;
-      const newTotalAmount = acc.totalAmount + sale.total;
-      const newTotalItems = acc.totalItems + itemsCount;
-      
-      return {
-        totalSales: newTotalSales,
-        totalAmount: newTotalAmount,
-        totalItems: newTotalItems,
-        averageOrder: newTotalAmount / newTotalSales
-      };
-    }, { totalSales: 0, totalAmount: 0, totalItems: 0, averageOrder: 0 });
-  }, [filteredSales]);
+    let errorState: ErrorState;
 
-  // Handle API errors
-  const handleApiError = useCallback((error: any): ErrorState => {
-    let errorState: ErrorState = {
-      type: 'unknown',
-      message: 'An unexpected error occurred',
-      retryable: true
-    };
-
-    if (error.name === 'AbortError' || error.message?.includes('timeout')) {
+    // Determine error type and create appropriate error state
+    if (err.name === 'AbortError' || err.message.includes('timeout')) {
       errorState = {
         type: 'timeout',
         message: 'Request timed out. Please try again.',
         retryable: true
       };
-    } else if (error.message?.includes('Network error') || error.message?.includes('fetch')) {
+    } else if (err.message.includes('Network error') || err.message.includes('fetch')) {
       errorState = {
         type: 'network',
         message: 'Network error. Please check your connection and try again.',
         retryable: true
       };
-    } else if (error.message?.includes('Invalid date') || error.message?.includes('validation')) {
+    } else if (err.message.includes('Invalid date') || err.message.includes('validation')) {
       errorState = {
         type: 'validation',
-        message: error.message,
+        message: err.message,
         retryable: false
       };
-    } else if (error.response?.status >= 500) {
+    } else if (err.response?.status >= 500) {
       errorState = {
         type: 'server',
         message: 'Server error. Please try again later.',
         retryable: true
       };
+    } else {
+      errorState = {
+        type: 'unknown',
+        message: err.message || 'An unexpected error occurred',
+        retryable: true
+      };
     }
 
     setError(errorState);
+
+    // Show error toast
     toast.error(errorState.message);
-    
-    console.error('[DailySales] API Error:', {
-      error: error.message,
+
+    console.error('[DailySales] Error fetching data:', {
+      error: err.message,
       type: errorState.type,
-      retryable: errorState.retryable
+      retryable: errorState.retryable,
+      date: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : 'N/A'
     });
-    
-    return errorState;
-  }, [setError, toast]);
 
-  // Handle date selection
-  const handleDateSelect = useCallback((date: Date | undefined) => {
-    if (!date) return;
-    
-    setDateRange({
-      from: startOfDay(date),
-      to: endOfDay(date)
+    setDailyData(null);
+  } finally {
+    setIsLoading(false);
+    abortControllerRef.current = null;
+  }
+}, [dateRange.from, validateDate]);
+
+// Retry fetch with exponential backoff
+const retryFetch = useCallback(async () => {
+  if (retryCount >= MAX_RETRY_ATTEMPTS) {
+    setError({
+      type: 'unknown',
+      message: 'Maximum retry attempts reached. Please try again later.',
+      retryable: false
     });
-    setError(null); // Clear any previous errors
-  }, []);
+    return;
+  }
 
-  // Handle quick date range selection
-  const handleQuickRange = useCallback((days: number) => {
-    const today = new Date();
-    setDateRange({
-      from: startOfDay(subDays(today, days - 1)),
-      to: endOfDay(today)
-    });
-  }, []);
+  setRetryCount(prev => prev + 1);
+  
+  // Exponential backoff delay
+  const delay = RETRY_DELAY * Math.pow(2, retryCount);
+  
+  toast.info(`Retrying in ${delay / 1000} seconds...`);
+  
+  setTimeout(() => {
+    fetchDailySales(true);
+  }, delay);
+}, [retryCount, fetchDailySales, MAX_RETRY_ATTEMPTS]);
 
-  return (
-    <div className="container mx-auto p-4 md:p-6 space-y-6">
-      {/* Header with title and actions */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Daily Sales</h1>
-          <p className="text-sm text-muted-foreground">
-            View and analyze your sales data
-          </p>
-        </div>
+// Fetch data when component mounts or selected date changes
+useEffect(() => {
+  fetchDailySales();
+}, [fetchDailySales]);
+
+// Cleanup on unmount
+useEffect(() => {
+  return () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+  };
+}, []);
+
+// Filter sales based on search query and active tab
+const filteredSales = useMemo(() => {
+  if (!dailyData?.sales) return [];
+  
+  let filtered = [...dailyData.sales];
+  
+  // Apply search filter
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter(sale =>
+      sale.saleNumber.toLowerCase().includes(query) ||
+      (sale.customer?.name?.toLowerCase().includes(query) ?? false) ||
+      sale.items.some(item => item.name.toLowerCase().includes(query))
+    );
+  }
+  
+  // Apply date filters based on active tab
+  switch (activeTab) {
+    case 'today':
+      return filtered.filter(sale => isToday(parseISO(sale.createdAt)));
+    case 'yesterday':
+      return filtered.filter(sale => isYesterday(parseISO(sale.createdAt)));
+    case 'week':
+      return filtered.filter(sale => isThisWeek(parseISO(sale.createdAt)));
+    default:
+      return filtered;
+  }
+}, [dailyData, searchQuery, activeTab]);
+
+// Calculate summary statistics
+const summary = useMemo(() => ({
+  totalSales: dailyData?.totalSales || 0,
+  totalAmount: dailyData?.totalAmount || 0,
+  totalItems: dailyData?.totalItemsSold || 0,
+  averageOrder: dailyData?.averageOrderValue || 0
+}), [dailyData]);
+
+// Handle API errors
+const handleApiError = useCallback((error: any): ErrorState => {
+  let errorState: ErrorState = {
+    type: 'unknown',
+    message: 'An unexpected error occurred',
+    retryable: true
+  };
+
+  if (error.name === 'AbortError' || error.message?.includes('timeout')) {
+    errorState = {
+      type: 'timeout',
+      message: 'Request timed out. Please try again.',
+      retryable: true
+    };
+  } else if (error.message?.includes('Network error') || error.message?.includes('fetch')) {
+    errorState = {
+      type: 'network',
+      message: 'Network error. Please check your connection and try again.',
+      retryable: true
+    };
+  } else if (error.message?.includes('Invalid date') || error.message?.includes('validation')) {
+    errorState = {
+      type: 'validation',
+      message: error.message,
+      retryable: false
+    };
+  } else if (error.response?.status >= 500) {
+    errorState = {
+      type: 'server',
+      message: 'Server error. Please try again later.',
+      retryable: true
+    };
+  }
+
+  setError(errorState);
+  toast.error(errorState.message);
+  
+  console.error('[DailySales] API Error:', {
+    error: error.message,
+    type: errorState.type,
+    retryable: errorState.retryable
+  });
+  
+  return errorState;
+}, [setError, toast]);
+
+// Handle date selection
+const handleDateSelect = useCallback((date: Date | undefined) => {
+  if (!date) return;
+  
+  setDateRange({
+    from: startOfDay(date),
+    to: endOfDay(date)
+  });
+  setError(null); // Clear any previous errors
+}, []);
+
+// Handle quick date range selection
+const handleQuickRange = useCallback((range: 'today' | 'yesterday' | 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth') => {
+  const today = new Date();
+  let from: Date;
+  let to: Date = endOfDay(today);
+
+  switch (range) {
+    case 'today':
+      from = startOfDay(today);
+      break;
+    case 'yesterday':
+      from = startOfDay(subDays(today, 1));
+      to = endOfDay(subDays(today, 1));
+      break;
+    case 'thisWeek':
+      from = startOfDay(subDays(today, today.getDay()));
+      break;
+    case 'lastWeek':
+      const lastWeek = subDays(today, 7);
+      from = startOfDay(subDays(lastWeek, lastWeek.getDay()));
+      to = endOfDay(addDays(from, 6));
+      break;
+    case 'thisMonth':
+      from = startOfMonth(today);
+      break;
+    case 'lastMonth':
+      const firstDayOfThisMonth = startOfMonth(today);
+      const lastDayOfLastMonth = subDays(firstDayOfThisMonth, 1);
+      from = startOfMonth(lastDayOfLastMonth);
+      to = endOfMonth(lastDayOfLastMonth);
+      break;
+    default:
+      from = startOfDay(today);
+  }
+
+  setDateRange({ from, to });
+}, [addDays, endOfDay, endOfMonth, startOfDay, startOfMonth, subDays]);
+
+return (
+  <div className="container mx-auto p-4 md:p-6 space-y-6">
+    {/* Header with title and actions */}
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 className="text-2xl font-bold">Daily Sales</h1>
+        <p className="text-sm text-muted-foreground">
+          View and analyze your sales data
+        </p>
+      </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Daily Sales</h1>
+        <p className="text-muted-foreground">
+          View and analyze sales for a specific date
+        </p>
+      </div>
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Daily Sales</h1>
           <p className="text-muted-foreground">
             View and analyze sales for a specific date
           </p>
         </div>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Daily Sales</h1>
-            <p className="text-muted-foreground">
-              View and analyze sales for a specific date
-            </p>
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-[240px] justify-start text-left font-normal",
+                  !dateRange.from && "text-muted-foreground"
+                )}
+                disabled={isLoading}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateRange.from ? format(dateRange.from, "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="single"
+                selected={dateRange.from}
+                onSelect={handleDateSelect}
+                initialFocus
+                disabled={(date) => {
+                  const now = new Date();
+                  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                  return date < oneYearAgo || date > new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+          <Badge variant={dateContext.variant}>
+            {dateContext.label}
+          </Badge>
+          <Button 
+            onClick={() => fetchDailySales(false)} 
+            disabled={isLoading}
+            variant="outline"
+            size="icon"
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+          </Button>
+          <Button 
+            onClick={exportToExcel} 
+            disabled={!hasSalesData || isExporting}
+            variant="outline"
+          >
+            {isExporting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            Export
+          </Button>
           </div>
           <div className="flex items-center gap-2">
             <Popover>
