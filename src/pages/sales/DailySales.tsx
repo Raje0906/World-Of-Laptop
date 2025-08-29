@@ -117,6 +117,9 @@ export function DailySales() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   
+  // Get date context for the current date range
+  const dateContext = useMemo(() => getDateContext(dateRange.from), [dateRange.from]);
+  
   // Refs for performance optimization
   const abortControllerRef = useRef<AbortController | null>(null);
   const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -302,7 +305,7 @@ export function DailySales() {
         error: err.message,
         type: errorState.type,
         retryable: errorState.retryable,
-        date: format(selectedDate, 'yyyy-MM-dd')
+        date: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : 'N/A'
       });
 
       setDailyData(null);
@@ -310,7 +313,7 @@ export function DailySales() {
       setIsLoading(false);
       abortControllerRef.current = null;
     }
-  }, [selectedDate, validateDate]);
+  }, [dateRange.from, validateDate]);
 
   // Retry mechanism with exponential backoff
   const retryFetch = useCallback(async () => {
@@ -457,12 +460,12 @@ export function DailySales() {
   const handleDateSelect = useCallback((date: Date | undefined) => {
     if (!date) return;
     
-    setDateRange((prev: { from: Date; to: Date }) => ({
+    setDateRange({
       from: startOfDay(date),
       to: endOfDay(date)
-    }));
+    });
     setError(null); // Clear any previous errors
-  }, [setDateRange, setError]);
+  }, []);
 
   // Handle quick date range selection
   const handleQuickRange = useCallback((days: number) => {
@@ -503,18 +506,18 @@ export function DailySales() {
                   variant="outline"
                   className={cn(
                     "w-[240px] justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
+                    !dateRange.from && "text-muted-foreground"
                   )}
                   disabled={isLoading}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                  {dateRange.from ? format(dateRange.from, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
                 <Calendar
                   mode="single"
-                  selected={selectedDate}
+                  selected={dateRange.from}
                   onSelect={handleDateSelect}
                   initialFocus
                   disabled={(date) => {
@@ -600,7 +603,7 @@ export function DailySales() {
         <CardHeader>
           <CardTitle>Sales Details</CardTitle>
           <CardDescription>
-            Detailed view of all sales for {format(selectedDate, 'MMM d, yyyy')}
+            Detailed view of all sales for {format(dateRange.from, 'MMM d, yyyy')}
             {dailyData && (
               <span className="ml-2 text-sm text-muted-foreground">
                 ({dailyData.totalSales} sales)
@@ -640,7 +643,7 @@ export function DailySales() {
                 </svg>
               </div>
               <p className="text-muted-foreground">
-                No sales found for {format(selectedDate, 'MMM d, yyyy')}
+                No sales found for {format(dateRange.from, 'MMM d, yyyy')}
               </p>
               <p className="text-sm text-muted-foreground mt-2">
                 Try selecting a different date or check back later.
