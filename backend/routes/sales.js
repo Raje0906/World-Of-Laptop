@@ -369,7 +369,8 @@ router.post(
   "/",
   [
     body("customer").isMongoId().withMessage("Valid customer ID is required"),
-    body("store").isMongoId().withMessage("Valid store ID is required"),
+    body("store").optional().isMongoId().withMessage("Valid store ID is required"),
+    body("storeId").optional().isMongoId().withMessage("Valid store ID is required"),
     body("items").isArray({ min: 1 }).withMessage("At least one item required"),
     body("items.*").custom((item, { req }) => {
       // For manual entries, require productName
@@ -414,8 +415,18 @@ router.post(
   async (req, res) => {
     try {
       console.log('[SALE CREATE] Incoming body:', JSON.stringify(req.body, null, 2));
-      const { customer, store, items, paymentMethod, paymentDetails, notes } =
+      const { customer, store, storeId, items, paymentMethod, paymentDetails, notes } =
         req.body;
+      
+      // Handle both store and storeId field names
+      const finalStoreId = store || storeId;
+      
+      if (!finalStoreId) {
+        return res.status(400).json({
+          success: false,
+          message: "Store ID is required",
+        });
+      }
 
       let totalAmount = 0;
       const populatedItems = [];
@@ -473,7 +484,7 @@ router.post(
       // Create new sale
       const newSale = new Sale({
         customer,
-        store,
+        store: finalStoreId,
         items: populatedItems,
         totalAmount,
         paymentMethod,
@@ -481,7 +492,9 @@ router.post(
         notes,
       });
 
+      console.log('[SALE CREATE] Saving sale with store ID:', finalStoreId);
       await newSale.save();
+      console.log('[SALE CREATE] Sale saved successfully with ID:', newSale._id);
 
       const populatedSale = await Sale.findById(newSale._id)
         .populate("customer", "name email");

@@ -11304,3 +11304,293 @@
 [2025-08-29T16:36:08.271Z] [LOG] [2025-08-29T16:36:08.271Z] GET /api/sales
 [2025-08-29T16:36:08.272Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
 [2025-08-29T16:36:43.601Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-29T16:37:37.875Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-29T16:37:37.880Z] [LOG] MongoDB Connected to: undefined
+[2025-08-29T16:37:37.880Z] [LOG] MongoDB connection state: 2
+[2025-08-29T16:37:37.897Z] [LOG] Registering route: /api/auth
+[2025-08-29T16:37:37.898Z] [LOG]   - POST /api/auth/check-role - Check user role by email/phone
+[2025-08-29T16:37:37.900Z] [LOG] Registering route: /api/customers
+[2025-08-29T16:37:37.900Z] [LOG] Registering route: /api/products
+[2025-08-29T16:37:37.901Z] [LOG] Registering route: /api/sales
+[2025-08-29T16:37:37.901Z] [LOG] Registering route: /api/repairs
+[2025-08-29T16:37:37.902Z] [LOG] Registering route: /api/notifications
+[2025-08-29T16:37:37.908Z] [LOG] Registering route: /api/stores
+[2025-08-29T16:37:37.910Z] [LOG] Registering route: /api/reports
+[2025-08-29T16:37:37.913Z] [LOG] Registering route: /api/users
+[2025-08-29T16:37:37.919Z] [LOG] Registering route: /api
+[2025-08-29T16:37:37.922Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-29T16:37:37.926Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-29T16:37:37.928Z] [ERROR] (node:12644) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-29T16:37:37.949Z] [LOG] 
+🚀 Server running at:
+[2025-08-29T16:37:37.949Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-29T16:37:37.950Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-29T16:37:37.950Z] [LOG] 
+🌐 Environment: development
+[2025-08-29T16:37:37.950Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-29T16:37:37.951Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-29T16:37:37.951Z] [LOG]    - /api/auth
+[2025-08-29T16:37:37.952Z] [LOG]    - /api/customers
+[2025-08-29T16:37:37.952Z] [LOG]    - /api/products
+[2025-08-29T16:37:37.952Z] [LOG]    - /api/sales
+[2025-08-29T16:37:37.952Z] [LOG]    - /api/repairs
+[2025-08-29T16:37:37.953Z] [LOG]    - /api/notifications
+[2025-08-29T16:37:37.953Z] [LOG]    - /api/stores
+[2025-08-29T16:37:37.953Z] [LOG]    - /api/reports
+[2025-08-29T16:37:37.953Z] [LOG]    - /api/users
+[2025-08-29T16:37:37.954Z] [LOG]    - /api
+[2025-08-29T16:37:37.954Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-29T16:37:37.960Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-29T16:37:37.965Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-29T16:37:38.606Z] [LOG] ✅ MongoDB Connected
+[2025-08-29T16:37:38.607Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:37:38.607Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:37:38.608Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-29T16:37:38.608Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-29T16:37:38.608Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:37:38.608Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:37:38.609Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-29T16:37:38.609Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:37:38.613Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:37:38.620Z] [LOG] ✅ MongoDB Connected
+[2025-08-29T16:37:38.624Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-01.b57rwfe.mongodb.net
+[2025-08-29T16:37:38.624Z] [LOG] MongoDB connection state: 1
+[2025-08-29T16:37:40.610Z] [LOG] [2025-08-29T16:37:40.610Z] GET /api/sales/daily?date=2025-07-30
+[2025-08-29T16:37:40.611Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:37:40.634Z] [LOG] [DAILY SALES] Request: date=2025-07-29, storeId=not-provided, limit=1000
+[2025-08-29T16:37:40.635Z] [LOG] [DAILY SALES] Date range: 2025-07-29T18:30:00.000Z to 2025-07-30T18:29:59.999Z
+[2025-08-29T16:37:40.635Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-30","limit":1000}
+[2025-08-29T16:37:40.636Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-29T18:30:00.000Z",
+    "$lte": "2025-07-30T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:37:40.936Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:37:40.936Z] [LOG] [DAILY SALES] Sample sale: {"id":"688a41f3cfd69c3a74577a12","saleNumber":1016,"createdAt":"2025-07-30T16:01:55.091Z","totalAmount":21,"isActive":true}
+[2025-08-29T16:37:40.938Z] [LOG] [DAILY SALES] Success: date=2025-07-29, sales=1, revenue=21
+[2025-08-29T16:37:41.014Z] [LOG] [2025-08-29T16:37:41.014Z] GET /api/sales/daily?date=2025-07-27
+[2025-08-29T16:37:41.019Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:37:41.026Z] [LOG] [DAILY SALES] Request: date=2025-07-26, storeId=not-provided, limit=1000
+[2025-08-29T16:37:41.054Z] [LOG] [DAILY SALES] Date range: 2025-07-26T18:30:00.000Z to 2025-07-27T18:29:59.999Z
+[2025-08-29T16:37:41.057Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-27","limit":1000}
+[2025-08-29T16:37:41.066Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-26T18:30:00.000Z",
+    "$lte": "2025-07-27T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:37:41.105Z] [LOG] [DAILY SALES] Found 2 sales for the date range
+[2025-08-29T16:37:41.106Z] [LOG] [DAILY SALES] Sample sale: {"id":"688636abe907865e40369cdc","saleNumber":1015,"createdAt":"2025-07-27T14:24:43.441Z","totalAmount":50000,"isActive":true}
+[2025-08-29T16:37:41.111Z] [LOG] [DAILY SALES] Success: date=2025-07-26, sales=2, revenue=50225
+[2025-08-29T16:37:41.137Z] [LOG] [2025-08-29T16:37:41.137Z] GET /api/sales/daily?date=2025-07-20
+[2025-08-29T16:37:41.138Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:37:41.154Z] [LOG] [DAILY SALES] Request: date=2025-07-19, storeId=not-provided, limit=1000
+[2025-08-29T16:37:41.154Z] [LOG] [DAILY SALES] Date range: 2025-07-19T18:30:00.000Z to 2025-07-20T18:29:59.999Z
+[2025-08-29T16:37:41.155Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-20","limit":1000}
+[2025-08-29T16:37:41.155Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-19T18:30:00.000Z",
+    "$lte": "2025-07-20T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:37:41.199Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:37:41.200Z] [LOG] [DAILY SALES] Sample sale: {"id":"687cc8d6606f0529248c2636","saleNumber":1013,"createdAt":"2025-07-20T10:45:42.451Z","totalAmount":21,"isActive":true}
+[2025-08-29T16:37:41.201Z] [LOG] [DAILY SALES] Success: date=2025-07-19, sales=1, revenue=21
+[2025-08-29T16:37:51.443Z] [LOG] [2025-08-29T16:37:51.443Z] GET /api/sales/daily?date=2025-07-30
+[2025-08-29T16:37:51.444Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:37:51.448Z] [LOG] [DAILY SALES] Request: date=2025-07-29, storeId=not-provided, limit=1000
+[2025-08-29T16:37:51.457Z] [LOG] [DAILY SALES] Date range: 2025-07-29T18:30:00.000Z to 2025-07-30T18:29:59.999Z
+[2025-08-29T16:37:51.459Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-30","limit":1000}
+[2025-08-29T16:37:51.460Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-29T18:30:00.000Z",
+    "$lte": "2025-07-30T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:37:51.741Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:37:51.744Z] [LOG] [DAILY SALES] Sample sale: {"id":"688a41f3cfd69c3a74577a12","saleNumber":1016,"createdAt":"2025-07-30T16:01:55.091Z","totalAmount":21,"isActive":true}
+[2025-08-29T16:37:51.755Z] [LOG] [DAILY SALES] Success: date=2025-07-29, sales=1, revenue=21
+[2025-08-29T16:37:51.824Z] [LOG] [2025-08-29T16:37:51.824Z] GET /api/sales/daily?date=2025-07-27
+[2025-08-29T16:37:51.834Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:37:51.860Z] [LOG] [DAILY SALES] Request: date=2025-07-26, storeId=not-provided, limit=1000
+[2025-08-29T16:37:51.876Z] [LOG] [DAILY SALES] Date range: 2025-07-26T18:30:00.000Z to 2025-07-27T18:29:59.999Z
+[2025-08-29T16:37:51.877Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-27","limit":1000}
+[2025-08-29T16:37:51.880Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-26T18:30:00.000Z",
+    "$lte": "2025-07-27T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:37:52.155Z] [LOG] [DAILY SALES] Found 2 sales for the date range
+[2025-08-29T16:37:52.156Z] [LOG] [DAILY SALES] Sample sale: {"id":"688636abe907865e40369cdc","saleNumber":1015,"createdAt":"2025-07-27T14:24:43.441Z","totalAmount":50000,"isActive":true}
+[2025-08-29T16:37:52.157Z] [LOG] [DAILY SALES] Success: date=2025-07-26, sales=2, revenue=50225
+[2025-08-29T16:37:52.174Z] [LOG] [2025-08-29T16:37:52.174Z] GET /api/sales/daily?date=2025-07-20
+[2025-08-29T16:37:52.174Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:37:52.177Z] [LOG] [DAILY SALES] Request: date=2025-07-19, storeId=not-provided, limit=1000
+[2025-08-29T16:37:52.178Z] [LOG] [DAILY SALES] Date range: 2025-07-19T18:30:00.000Z to 2025-07-20T18:29:59.999Z
+[2025-08-29T16:37:52.178Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-20","limit":1000}
+[2025-08-29T16:37:52.178Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-19T18:30:00.000Z",
+    "$lte": "2025-07-20T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:37:52.435Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:37:52.435Z] [LOG] [DAILY SALES] Sample sale: {"id":"687cc8d6606f0529248c2636","saleNumber":1013,"createdAt":"2025-07-20T10:45:42.451Z","totalAmount":21,"isActive":true}
+[2025-08-29T16:37:52.436Z] [LOG] [DAILY SALES] Success: date=2025-07-19, sales=1, revenue=21
+[2025-08-29T16:43:24.360Z] [LOG] [2025-08-29T16:43:24.360Z] GET /api/sales
+[2025-08-29T16:43:24.365Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:43:43.825Z] [LOG] [2025-08-29T16:43:43.825Z] GET /api/sales
+[2025-08-29T16:43:43.826Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:43:56.981Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-29T16:44:45.919Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-29T16:44:45.924Z] [LOG] MongoDB Connected to: undefined
+[2025-08-29T16:44:45.928Z] [LOG] MongoDB connection state: 2
+[2025-08-29T16:44:45.953Z] [LOG] Registering route: /api/auth
+[2025-08-29T16:44:45.958Z] [LOG]   - POST /api/auth/check-role - Check user role by email/phone
+[2025-08-29T16:44:45.970Z] [LOG] Registering route: /api/customers
+[2025-08-29T16:44:45.977Z] [LOG] Registering route: /api/products
+[2025-08-29T16:44:45.979Z] [LOG] Registering route: /api/sales
+[2025-08-29T16:44:45.980Z] [LOG] Registering route: /api/repairs
+[2025-08-29T16:44:45.981Z] [LOG] Registering route: /api/notifications
+[2025-08-29T16:44:45.982Z] [LOG] Registering route: /api/stores
+[2025-08-29T16:44:45.982Z] [LOG] Registering route: /api/reports
+[2025-08-29T16:44:45.983Z] [LOG] Registering route: /api/users
+[2025-08-29T16:44:45.984Z] [LOG] Registering route: /api
+[2025-08-29T16:44:45.985Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-29T16:44:45.994Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-29T16:44:45.995Z] [ERROR] (node:1468) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-29T16:44:46.023Z] [LOG] 
+🚀 Server running at:
+[2025-08-29T16:44:46.023Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-29T16:44:46.024Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-29T16:44:46.025Z] [LOG] 
+🌐 Environment: development
+[2025-08-29T16:44:46.027Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-29T16:44:46.027Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-29T16:44:46.030Z] [LOG]    - /api/auth
+[2025-08-29T16:44:46.031Z] [LOG]    - /api/customers
+[2025-08-29T16:44:46.031Z] [LOG]    - /api/products
+[2025-08-29T16:44:46.032Z] [LOG]    - /api/sales
+[2025-08-29T16:44:46.033Z] [LOG]    - /api/repairs
+[2025-08-29T16:44:46.033Z] [LOG]    - /api/notifications
+[2025-08-29T16:44:46.035Z] [LOG]    - /api/stores
+[2025-08-29T16:44:46.036Z] [LOG]    - /api/reports
+[2025-08-29T16:44:46.037Z] [LOG]    - /api/users
+[2025-08-29T16:44:46.037Z] [LOG]    - /api
+[2025-08-29T16:44:46.038Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-29T16:44:46.039Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-29T16:44:46.041Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-29T16:44:46.718Z] [LOG] ✅ MongoDB Connected
+[2025-08-29T16:44:46.720Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:44:46.722Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:44:46.723Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-29T16:44:46.724Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-29T16:44:46.739Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:44:46.754Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:44:46.756Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-29T16:44:46.771Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:44:46.785Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:44:46.785Z] [LOG] ✅ MongoDB Connected
+[2025-08-29T16:44:46.838Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-00.b57rwfe.mongodb.net
+[2025-08-29T16:44:46.856Z] [LOG] MongoDB connection state: 1
+[2025-08-29T16:44:51.729Z] [LOG] [2025-08-29T16:44:51.729Z] GET /api/sales
+[2025-08-29T16:44:51.730Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:45:18.141Z] [LOG] ❌ MongoDB Disconnected
+[2025-08-29T16:50:19.677Z] [LOG] 🔗 Using MongoDB URI: mongodb+srv://rajeaditya999:***@cluster0.b57rwfe.mongodb.net/laptop-store?retryWrites=true&w=majority&appName=Cluster0
+[2025-08-29T16:50:19.687Z] [LOG] MongoDB Connected to: undefined
+[2025-08-29T16:50:19.691Z] [LOG] MongoDB connection state: 2
+[2025-08-29T16:50:19.725Z] [LOG] Registering route: /api/auth
+[2025-08-29T16:50:19.728Z] [LOG]   - POST /api/auth/check-role - Check user role by email/phone
+[2025-08-29T16:50:19.738Z] [LOG] Registering route: /api/customers
+[2025-08-29T16:50:19.794Z] [LOG] Registering route: /api/products
+[2025-08-29T16:50:19.822Z] [LOG] Registering route: /api/sales
+[2025-08-29T16:50:19.841Z] [LOG] Registering route: /api/repairs
+[2025-08-29T16:50:19.851Z] [LOG] Registering route: /api/notifications
+[2025-08-29T16:50:19.862Z] [LOG] Registering route: /api/stores
+[2025-08-29T16:50:19.867Z] [LOG] Registering route: /api/reports
+[2025-08-29T16:50:19.871Z] [LOG] Registering route: /api/users
+[2025-08-29T16:50:19.873Z] [LOG] Registering route: /api
+[2025-08-29T16:50:19.877Z] [LOG] 🔵 Starting server on port: 3002
+[2025-08-29T16:50:19.887Z] [LOG] testNotificationSystem function not found in the notification service
+[2025-08-29T16:50:19.890Z] [ERROR] (node:12728) [MONGOOSE] Warning: Duplicate schema index on {"saleNumber":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2025-08-29T16:50:19.932Z] [LOG] 
+🚀 Server running at:
+[2025-08-29T16:50:19.961Z] [LOG]    - Local:   http://localhost:3002
+[2025-08-29T16:50:19.964Z] [LOG]    - Network: http://0.0.0.0:3002
+[2025-08-29T16:50:19.982Z] [LOG] 
+🌐 Environment: development
+[2025-08-29T16:50:20.031Z] [LOG] 🔗 API Base URL: http://localhost:3002/api
+[2025-08-29T16:50:20.058Z] [LOG] 
+🔍 Registered API Routes:
+[2025-08-29T16:50:20.076Z] [LOG]    - /api/auth
+[2025-08-29T16:50:20.077Z] [LOG]    - /api/customers
+[2025-08-29T16:50:20.106Z] [LOG]    - /api/products
+[2025-08-29T16:50:20.110Z] [LOG]    - /api/sales
+[2025-08-29T16:50:20.126Z] [LOG]    - /api/repairs
+[2025-08-29T16:50:20.192Z] [LOG]    - /api/notifications
+[2025-08-29T16:50:20.223Z] [LOG]    - /api/stores
+[2025-08-29T16:50:20.228Z] [LOG]    - /api/reports
+[2025-08-29T16:50:20.258Z] [LOG]    - /api/users
+[2025-08-29T16:50:20.259Z] [LOG]    - /api
+[2025-08-29T16:50:20.270Z] [LOG] 
+📊 Database Status: ❌ Disconnected
+[2025-08-29T16:50:20.288Z] [LOG] 
+🔧 Testing repair endpoint...
+[2025-08-29T16:50:20.293Z] [LOG]    - Test URL: http://localhost:3002/api/repairs/track/status?email=test@example.com
+[2025-08-29T16:50:21.437Z] [LOG] ✅ MongoDB Connected
+[2025-08-29T16:50:21.453Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:50:21.555Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:50:21.646Z] [LOG] 🟢 Mongoose connected to MongoDB
+[2025-08-29T16:50:21.666Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-29T16:50:21.674Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:50:21.680Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:50:21.684Z] [LOG] ✅ MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-29T16:50:21.686Z] [LOG] 📊 Database Name: laptop-store
+[2025-08-29T16:50:21.692Z] [LOG] 🏷️  Connection State: 1
+[2025-08-29T16:50:21.701Z] [LOG] ✅ MongoDB Connected
+[2025-08-29T16:50:21.716Z] [LOG] MongoDB Connected to: ac-mtcnrd4-shard-00-02.b57rwfe.mongodb.net
+[2025-08-29T16:50:21.722Z] [LOG] MongoDB connection state: 1
+[2025-08-29T16:50:43.724Z] [LOG] [2025-08-29T16:50:43.724Z] GET /api/stores
+[2025-08-29T16:50:43.725Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:51:10.779Z] [LOG] [2025-08-29T16:51:10.779Z] POST /api/sales
+[2025-08-29T16:51:10.780Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","content-type":"application/json","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate","content-length":"242"}
+[2025-08-29T16:51:10.861Z] [LOG] [SALE CREATE] Incoming body: {
+  "customer": "687f9c8ffebe2d7e777f2a0d",
+  "store": "686be7376d105189a96cf790",
+  "items": [
+    {
+      "productName": "Test Product",
+      "serialNumber": "TEST-123",
+      "quantity": 1,
+      "unitPrice": 100,
+      "discount": 0
+    }
+  ],
+  "paymentMethod": "cash",
+  "notes": "Test sale created via API"
+}
+[2025-08-29T16:51:11.124Z] [LOG] [2025-08-29T16:51:11.124Z] GET /api/sales/daily?date=2025-08-29
+[2025-08-29T16:51:11.125Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:51:11.142Z] [LOG] [DAILY SALES] Request: date=2025-08-28, storeId=not-provided, limit=1000
+[2025-08-29T16:51:11.146Z] [LOG] [DAILY SALES] Date range: 2025-08-28T18:30:00.000Z to 2025-08-29T18:29:59.999Z
+[2025-08-29T16:51:11.157Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-08-29","limit":1000}
+[2025-08-29T16:51:11.158Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-08-28T18:30:00.000Z",
+    "$lte": "2025-08-29T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:51:11.196Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:51:11.225Z] [LOG] [DAILY SALES] Sample sale: {"id":"68b1da7e7c37924a96c549d1","saleNumber":1017,"createdAt":"2025-08-29T16:51:10.927Z","totalAmount":100,"isActive":true}
+[2025-08-29T16:51:11.238Z] [LOG] [DAILY SALES] Success: date=2025-08-28, sales=1, revenue=100
