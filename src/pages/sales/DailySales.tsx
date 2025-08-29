@@ -192,6 +192,8 @@ export function DailySales() {
       const dateString = format(selectedDate, 'yyyy-MM-dd');
       
       console.log(`[DailySales] Fetching data for date: ${dateString}${isRetry ? ' (retry attempt)' : ''}`);
+      console.log(`[DailySales] Selected date object:`, selectedDate);
+      console.log(`[DailySales] Date string being sent to API:`, dateString);
       
       // Set timeout for the request
       fetchTimeoutRef.current = setTimeout(() => {
@@ -214,7 +216,10 @@ export function DailySales() {
       console.log('[DailySales] API Response received:', {
         success: response.success,
         salesCount: response.data?.totalSales,
-        date: response.data?.date
+        date: response.data?.date,
+        sales: response.data?.sales?.length || 0,
+        totalAmount: response.data?.totalAmount,
+        message: response.message
       });
       
       if (response.success && response.data) {
@@ -225,6 +230,11 @@ export function DailySales() {
         // Show success message for retries
         if (isRetry) {
           toast.success('Data refreshed successfully');
+        }
+        
+        // Log if no sales found
+        if (response.data.totalSales === 0) {
+          console.log('[DailySales] No sales found for date:', format(selectedDate, 'yyyy-MM-dd'));
         }
       } else {
         throw new Error(response.message || 'Failed to load daily sales data');

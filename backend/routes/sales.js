@@ -194,10 +194,11 @@ router.get(
 
       // Log request for monitoring (sanitized)
       console.log(`[DAILY SALES] Request: date=${targetDate.toISOString().split('T')[0]}, storeId=${storeId ? 'provided' : 'not-provided'}, limit=${limit}`);
+      console.log(`[DAILY SALES] Date range: ${startOfDay.toISOString()} to ${endOfDay.toISOString()}`);
+      console.log(`[DAILY SALES] Query parameters:`, { date, storeId, limit });
 
       // Build query with proper validation
       let query = {
-        isActive: true,
         createdAt: {
           $gte: startOfDay,
           $lte: endOfDay
@@ -208,8 +209,7 @@ router.get(
         query.store = storeId;
       }
 
-      // Add index hints for better performance
-      const indexHints = storeId ? { store: 1, createdAt: -1, isActive: 1 } : { createdAt: -1, isActive: 1 };
+      console.log(`[DAILY SALES] Final query:`, JSON.stringify(query, null, 2));
 
       // Get sales for the specific date with pagination and proper error handling
       const sales = await Sale.find(query)
@@ -218,9 +218,19 @@ router.get(
         .populate("items.product", "name brand model sku")
         .sort({ createdAt: -1 })
         .limit(parseInt(limit))
-        .hint(indexHints)
         .lean() // Use lean() for better performance when not modifying documents
         .exec();
+
+      console.log(`[DAILY SALES] Found ${sales.length} sales for the date range`);
+      if (sales.length > 0) {
+        console.log(`[DAILY SALES] Sample sale:`, {
+          id: sales[0]._id,
+          saleNumber: sales[0].saleNumber,
+          createdAt: sales[0].createdAt,
+          totalAmount: sales[0].totalAmount,
+          isActive: sales[0].isActive
+        });
+      }
 
       // Calculate daily statistics with proper error handling
       const dailyStats = {
