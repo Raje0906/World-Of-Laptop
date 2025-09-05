@@ -565,6 +565,91 @@ router.post(
   },
 );
 
+// POST /api/sales/simple - Create a simple sale with minimal fields
+router.post(
+  "/simple",
+  [
+    body("customerName")
+      .isString()
+      .isLength({ min: 2, max: 50 }),
+    body("productId").isMongoId(),
+    body("quantity").isInt({ min: 1 }),
+    body("price").isFloat({ gt: 0 }),
+    body("paymentMethod").isIn(["cash", "card", "upi"]),
+    body("status").optional().isIn(["completed", "pending", "cancelled"]),
+    body("saleDate").optional().isISO8601(),
+  ],
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { customerName, productId, quantity, price, paymentMethod } = req.body;
+      const status = req.body.status || "completed";
+      const saleDate = req.body.saleDate ? new Date(req.body.saleDate) : new Date();
+
+      // Validate MongoDB connection
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(500).json({
+          success: false,
+          message: "Database connection error",
+        });
+      }
+
+      // Ensure product exists
+      const product = await Product.findById(productId).select("_id");
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found",
+        });
+      }
+
+      // Find or create customer by name (minimal)
+      let customer = await Customer.findOne({ name: customerName }).select("_id");
+      if (!customer) {
+        customer = await Customer.create({ name: customerName });
+      }
+
+      const totalAmount = Number(quantity) * Number(price);
+
+      const newSale = new Sale({
+        customer: customer._id,
+        items: [
+          {
+            product: product._id,
+            quantity: Number(quantity),
+            unitPrice: Number(price),
+            totalPrice: totalAmount,
+            discount: 0,
+            isManualEntry: false,
+          },
+        ],
+        totalAmount,
+        paymentMethod,
+        paymentStatus: status,
+        createdAt: saleDate,
+      });
+
+      await newSale.save();
+
+      const populatedSale = await Sale.findById(newSale._id)
+        .populate("customer", "name")
+        .populate("items.product", "name brand model");
+
+      return res.status(201).json({
+        success: true,
+        message: "Sale created successfully",
+        data: populatedSale,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Error creating simple sale",
+        error: error.message,
+      });
+    }
+  }
+);
+
 // PUT /api/sales/:id/status - Update sale status
 router.put(
   "/:id/status",

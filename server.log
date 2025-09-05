@@ -11594,3 +11594,132 @@
 [2025-08-29T16:51:11.196Z] [LOG] [DAILY SALES] Found 1 sales for the date range
 [2025-08-29T16:51:11.225Z] [LOG] [DAILY SALES] Sample sale: {"id":"68b1da7e7c37924a96c549d1","saleNumber":1017,"createdAt":"2025-08-29T16:51:10.927Z","totalAmount":100,"isActive":true}
 [2025-08-29T16:51:11.238Z] [LOG] [DAILY SALES] Success: date=2025-08-28, sales=1, revenue=100
+[2025-08-29T16:55:30.963Z] [LOG] [2025-08-29T16:55:30.963Z] GET /api/sales
+[2025-08-29T16:55:30.964Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:55:38.840Z] [LOG] [2025-08-29T16:55:38.840Z] GET /api/sales/daily?date=2025-07-30
+[2025-08-29T16:55:38.840Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:55:38.845Z] [LOG] [DAILY SALES] Request: date=2025-07-29, storeId=not-provided, limit=1000
+[2025-08-29T16:55:38.845Z] [LOG] [DAILY SALES] Date range: 2025-07-29T18:30:00.000Z to 2025-07-30T18:29:59.999Z
+[2025-08-29T16:55:38.845Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-30","limit":1000}
+[2025-08-29T16:55:38.846Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-29T18:30:00.000Z",
+    "$lte": "2025-07-30T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:55:38.888Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:55:38.888Z] [LOG] [DAILY SALES] Sample sale: {"id":"688a41f3cfd69c3a74577a12","saleNumber":1016,"createdAt":"2025-07-30T16:01:55.091Z","totalAmount":21,"isActive":true}
+[2025-08-29T16:55:38.890Z] [LOG] [DAILY SALES] Success: date=2025-07-29, sales=1, revenue=21
+[2025-08-29T16:55:39.043Z] [LOG] [2025-08-29T16:55:39.043Z] GET /api/sales/daily?date=2025-07-27
+[2025-08-29T16:55:39.053Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:55:39.058Z] [LOG] [DAILY SALES] Request: date=2025-07-26, storeId=not-provided, limit=1000
+[2025-08-29T16:55:39.060Z] [LOG] [DAILY SALES] Date range: 2025-07-26T18:30:00.000Z to 2025-07-27T18:29:59.999Z
+[2025-08-29T16:55:39.060Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-27","limit":1000}
+[2025-08-29T16:55:39.061Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-26T18:30:00.000Z",
+    "$lte": "2025-07-27T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:55:39.104Z] [LOG] [DAILY SALES] Found 2 sales for the date range
+[2025-08-29T16:55:39.104Z] [LOG] [DAILY SALES] Sample sale: {"id":"688636abe907865e40369cdc","saleNumber":1015,"createdAt":"2025-07-27T14:24:43.441Z","totalAmount":50000,"isActive":true}
+[2025-08-29T16:55:39.106Z] [LOG] [DAILY SALES] Success: date=2025-07-26, sales=2, revenue=50225
+[2025-08-29T16:55:39.146Z] [LOG] [2025-08-29T16:55:39.145Z] GET /api/sales/daily?date=2025-07-20
+[2025-08-29T16:55:39.156Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:55:39.161Z] [LOG] [DAILY SALES] Request: date=2025-07-19, storeId=not-provided, limit=1000
+[2025-08-29T16:55:39.161Z] [LOG] [DAILY SALES] Date range: 2025-07-19T18:30:00.000Z to 2025-07-20T18:29:59.999Z
+[2025-08-29T16:55:39.162Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-07-20","limit":1000}
+[2025-08-29T16:55:39.173Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-07-19T18:30:00.000Z",
+    "$lte": "2025-07-20T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:55:39.206Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:55:39.221Z] [LOG] [DAILY SALES] Sample sale: {"id":"687cc8d6606f0529248c2636","saleNumber":1013,"createdAt":"2025-07-20T10:45:42.451Z","totalAmount":21,"isActive":true}
+[2025-08-29T16:55:39.225Z] [LOG] [DAILY SALES] Success: date=2025-07-19, sales=1, revenue=21
+[2025-08-29T16:56:02.011Z] [LOG] [2025-08-29T16:56:02.011Z] GET /api/sales/daily?date=2025-08-29
+[2025-08-29T16:56:02.017Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:56:02.021Z] [LOG] [DAILY SALES] Request: date=2025-08-28, storeId=not-provided, limit=1000
+[2025-08-29T16:56:02.021Z] [LOG] [DAILY SALES] Date range: 2025-08-28T18:30:00.000Z to 2025-08-29T18:29:59.999Z
+[2025-08-29T16:56:02.032Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-08-29","limit":1000}
+[2025-08-29T16:56:02.034Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-08-28T18:30:00.000Z",
+    "$lte": "2025-08-29T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:56:02.308Z] [LOG] [DAILY SALES] Found 1 sales for the date range
+[2025-08-29T16:56:02.314Z] [LOG] [DAILY SALES] Sample sale: {"id":"68b1da7e7c37924a96c549d1","saleNumber":1017,"createdAt":"2025-08-29T16:51:10.927Z","totalAmount":100,"isActive":true}
+[2025-08-29T16:56:02.315Z] [LOG] [DAILY SALES] Success: date=2025-08-28, sales=1, revenue=100
+[2025-08-29T16:56:41.011Z] [LOG] [2025-08-29T16:56:41.011Z] POST /api/sales
+[2025-08-29T16:56:41.017Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","content-type":"application/json","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate","content-length":"308"}
+[2025-08-29T16:56:41.028Z] [LOG] [SALE CREATE] Incoming body: {
+  "customer": "687f9c8ffebe2d7e777f2a0d",
+  "storeId": "686be7376d105189a96cf791",
+  "items": [
+    {
+      "productName": "Test Product from Frontend",
+      "serialNumber": "FRONTEND-123",
+      "quantity": 1,
+      "unitPrice": 45555,
+      "discount": 0
+    }
+  ],
+  "paymentMethod": "cash",
+  "subtotal": 45555,
+  "tax": 8199.9,
+  "total": 53754.9,
+  "date": "2025-08-29T16:56:40.705Z"
+}
+[2025-08-29T16:56:41.275Z] [LOG] [2025-08-29T16:56:41.275Z] GET /api/sales/daily?date=2025-08-29
+[2025-08-29T16:56:41.296Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T16:56:41.307Z] [LOG] [DAILY SALES] Request: date=2025-08-28, storeId=not-provided, limit=1000
+[2025-08-29T16:56:41.350Z] [LOG] [DAILY SALES] Date range: 2025-08-28T18:30:00.000Z to 2025-08-29T18:29:59.999Z
+[2025-08-29T16:56:41.366Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-08-29","limit":1000}
+[2025-08-29T16:56:41.415Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-08-28T18:30:00.000Z",
+    "$lte": "2025-08-29T18:29:59.999Z"
+  }
+}
+[2025-08-29T16:56:41.492Z] [LOG] [DAILY SALES] Found 2 sales for the date range
+[2025-08-29T16:56:41.509Z] [LOG] [DAILY SALES] Sample sale: {"id":"68b1dbc97c37924a96c549f1","saleNumber":1018,"createdAt":"2025-08-29T16:56:41.041Z","totalAmount":45555,"isActive":true}
+[2025-08-29T16:56:41.511Z] [LOG] [DAILY SALES] Success: date=2025-08-28, sales=2, revenue=45655
+[2025-08-29T17:08:17.180Z] [LOG] [2025-08-29T17:08:17.178Z] GET /api/sales
+[2025-08-29T17:08:17.196Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T17:08:40.342Z] [LOG] [2025-08-29T17:08:40.342Z] GET /api/products
+[2025-08-29T17:08:40.343Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T17:13:21.312Z] [LOG] [2025-08-29T17:13:21.312Z] POST /api/sales
+[2025-08-29T17:13:21.313Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","content-type":"application/json","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate","content-length":"254"}
+[2025-08-29T17:13:21.331Z] [LOG] [SALE CREATE] Incoming body: {
+  "customer": "687f9c8ffebe2d7e777f2a0d",
+  "storeId": "686be7376d105189a96cf791",
+  "items": [
+    {
+      "productName": "Real Product Test",
+      "serialNumber": "REAL-TEST-001",
+      "quantity": 1,
+      "unitPrice": 15000,
+      "discount": 0
+    }
+  ],
+  "paymentMethod": "cash",
+  "notes": "Complete flow test sale"
+}
+[2025-08-29T17:13:22.660Z] [LOG] [2025-08-29T17:13:22.660Z] GET /api/sales
+[2025-08-29T17:13:22.722Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T17:13:22.967Z] [LOG] [2025-08-29T17:13:22.967Z] GET /api/sales/daily?date=2025-08-29
+[2025-08-29T17:13:22.973Z] [LOG] Request headers: {"host":"localhost:3002","connection":"keep-alive","accept":"*/*","accept-language":"*","sec-fetch-mode":"cors","user-agent":"node","accept-encoding":"gzip, deflate"}
+[2025-08-29T17:13:22.976Z] [LOG] [DAILY SALES] Request: date=2025-08-28, storeId=not-provided, limit=1000
+[2025-08-29T17:13:22.996Z] [LOG] [DAILY SALES] Date range: 2025-08-28T18:30:00.000Z to 2025-08-29T18:29:59.999Z
+[2025-08-29T17:13:22.997Z] [LOG] [DAILY SALES] Query parameters: {"date":"2025-08-29","limit":1000}
+[2025-08-29T17:13:23.001Z] [LOG] [DAILY SALES] Final query: {
+  "createdAt": {
+    "$gte": "2025-08-28T18:30:00.000Z",
+    "$lte": "2025-08-29T18:29:59.999Z"
+  }
+}
+[2025-08-29T17:13:23.314Z] [LOG] [DAILY SALES] Found 3 sales for the date range
+[2025-08-29T17:13:23.325Z] [LOG] [DAILY SALES] Sample sale: {"id":"68b1dfb17c37924a96c54a08","saleNumber":1019,"createdAt":"2025-08-29T17:13:21.350Z","totalAmount":15000,"isActive":true}
+[2025-08-29T17:13:23.327Z] [LOG] [DAILY SALES] Success: date=2025-08-28, sales=3, revenue=60655

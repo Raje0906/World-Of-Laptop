@@ -29,3 +29,4 @@ async function testStores() {
 }
 
 testStores();
+
